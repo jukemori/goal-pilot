@@ -9,7 +9,7 @@
     "supabase:start": "supabase start",
     "supabase:stop": "supabase stop",
     "supabase:reset": "supabase db reset",
-    "supabase:dev": "supabase start && npm run dev:local",
+    "supabase:dev": "supabase start && bun run dev:local",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",

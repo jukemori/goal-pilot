@@ -25,7 +25,7 @@ Use a local Supabase instance with email confirmation disabled by default.
 
 1. Install the Supabase CLI:
    ```bash
-   npm install -g @supabase/cli
+   bun install -g @supabase/cli
    ```
 
 2. Install Docker (required for local Supabase):
@@ -40,7 +40,7 @@ Use a local Supabase instance with email confirmation disabled by default.
 
 2. **Start the local Supabase instance**:
    ```bash
-   npm run supabase:start
+   bun run supabase:start
    ```
    
    This will:
@@ -50,7 +50,7 @@ Use a local Supabase instance with email confirmation disabled by default.
 
 3. **Run the development server with local Supabase**:
    ```bash
-   npm run dev:local
+   bun run dev:local
    ```
    
    This will:
@@ -65,11 +65,11 @@ Use a local Supabase instance with email confirmation disabled by default.
 
 #### Useful Commands
 
-- **Start local Supabase and dev server**: `npm run supabase:dev`
-- **Stop local Supabase**: `npm run supabase:stop`
-- **Reset local database**: `npm run supabase:reset`
-- **Switch to production**: `npm run dev:production`
-- **Switch to local development**: `npm run dev:local`
+- **Start local Supabase and dev server**: `bun run supabase:dev`
+- **Stop local Supabase**: `bun run supabase:stop`
+- **Reset local database**: `bun run supabase:reset`
+- **Switch to production**: `bun run dev:production`
+- **Switch to local development**: `bun run dev:local`
 
 #### Configuration Files
 
@@ -116,6 +116,6 @@ The local Supabase configuration (`supabase/config.toml`) has `enable_confirmati
 
 ## Switching Between Environments
 
-- **Local development**: `npm run dev:local`
-- **Production testing**: `npm run dev:production`
+- **Local development**: `bun run dev:local`
+- **Production testing**: `bun run dev:production`
 - **Check current environment**: Look at your `.env.local` file to see which Supabase URL is active
