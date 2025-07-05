@@ -37,6 +37,14 @@ export default function RegisterPage() {
       if (authError) {
         toast.error(authError.message)
       } else if (authData.user) {
+        // Check if email confirmation is required
+        if (!authData.session) {
+          // Redirect to confirmation page instead of showing toast and staying
+          router.push('/confirm')
+          return
+        }
+
+        // User is immediately authenticated (email confirmation disabled)
         // Create user profile
         const { error: profileError } = await supabase
           .from('users')
