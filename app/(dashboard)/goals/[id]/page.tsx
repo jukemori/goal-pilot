@@ -2,10 +2,11 @@ import { createClient } from '@/lib/supabase/server'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { DeleteGoalButton } from '@/components/molecules/delete-goal-button'
-import { Edit3, Calendar, Clock, Target, CheckCircle, Play, Pause } from 'lucide-react'
+import { Edit3, Calendar, Clock, Target, CheckCircle, Play, Pause, BarChart3, BookOpen, TrendingUp } from 'lucide-react'
 import { RoadmapView } from '@/components/organisms/roadmap-view/roadmap-view'
 import { TaskList } from '@/components/organisms/task-list/task-list'
 import { ProgressChart } from '@/components/molecules/progress-chart/progress-chart'
@@ -130,101 +131,131 @@ export default async function GoalPage({ params }: GoalPageProps) {
         </div>
       </div>
 
-      {/* Progress Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Progress</CardTitle>
-            <CheckCircle className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{progressPercentage}%</div>
-            <p className="text-xs text-muted-foreground">
-              {completedTasks.length} of {totalTasks} tasks completed
-            </p>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Days Active</CardTitle>
-            <Calendar className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {daysActive}
-            </div>
-            <p className="text-xs text-muted-foreground">Since start date</p>
-          </CardContent>
-        </Card>
+      {/* Tabbed Interface */}
+      <Tabs defaultValue="overview" className="w-full">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="overview" className="flex items-center gap-2">
+            <BarChart3 className="h-4 w-4" />
+            Overview
+          </TabsTrigger>
+          <TabsTrigger value="roadmap" className="flex items-center gap-2">
+            <BookOpen className="h-4 w-4" />
+            Roadmap
+          </TabsTrigger>
+          <TabsTrigger value="progress" className="flex items-center gap-2">
+            <TrendingUp className="h-4 w-4" />
+            Progress
+          </TabsTrigger>
+        </TabsList>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Time Invested</CardTitle>
-            <Clock className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {Math.round((completedTasks.reduce((acc: number, task: any) => 
-                acc + (task.actual_duration || task.estimated_duration || 0), 0)) / 60)}h
-            </div>
-            <p className="text-xs text-muted-foreground">Total hours</p>
-          </CardContent>
-        </Card>
-      </div>
+        {/* Overview Tab */}
+        <TabsContent value="overview" className="space-y-6">
+          {/* Progress Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Total Progress</CardTitle>
+                <CheckCircle className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{progressPercentage}%</div>
+                <p className="text-xs text-muted-foreground">
+                  {completedTasks.length} of {totalTasks} tasks completed
+                </p>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Days Active</CardTitle>
+                <Calendar className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">
+                  {daysActive}
+                </div>
+                <p className="text-xs text-muted-foreground">Since start date</p>
+              </CardContent>
+            </Card>
 
-      {/* Roadmap Section */}
-      <Card>
-        <CardHeader>
-          <div className="flex justify-between items-start">
-            <div>
-              <CardTitle>Roadmap</CardTitle>
-              <CardDescription>
-                {roadmap ? 'AI-generated learning path' : 'Generating your personalized roadmap...'}
-              </CardDescription>
-            </div>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Time Invested</CardTitle>
+                <Clock className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">
+                  {Math.round((completedTasks.reduce((acc: number, task: any) => 
+                    acc + (task.actual_duration || task.estimated_duration || 0), 0)) / 60)}h
+                </div>
+                <p className="text-xs text-muted-foreground">Total hours</p>
+              </CardContent>
+            </Card>
           </div>
-        </CardHeader>
-        <CardContent>
+
+          {/* Quick Roadmap Summary */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Roadmap Overview</CardTitle>
+              <CardDescription>
+                {roadmap ? 'Your AI-generated learning path at a glance' : 'Generating your personalized roadmap...'}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {roadmap ? (
+                <RoadmapView roadmap={roadmap} />
+              ) : (
+                <div className="text-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                  <p className="text-gray-500">Generating your roadmap...</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Roadmap Tab */}
+        <TabsContent value="roadmap" className="space-y-6">
+          {/* Learning Phases */}
           {roadmap ? (
-            <RoadmapView roadmap={roadmap} />
+            <Card>
+              <CardHeader>
+                <CardTitle>Learning Phases</CardTitle>
+                <CardDescription>Track your progress through each phase</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <LearningPhases roadmapId={roadmap.id} goalId={goal.id} />
+              </CardContent>
+            </Card>
           ) : (
-            <div className="text-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-              <p className="text-gray-500">Generating your roadmap...</p>
-            </div>
+            <Card>
+              <CardContent className="text-center py-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                <p className="text-gray-500">Generating your roadmap...</p>
+              </CardContent>
+            </Card>
           )}
-        </CardContent>
-      </Card>
+        </TabsContent>
 
-      {/* Learning Phases */}
-      {roadmap && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Learning Phases</CardTitle>
-            <CardDescription>Track your progress through each phase</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <LearningPhases roadmapId={roadmap.id} goalId={goal.id} />
-          </CardContent>
-        </Card>
-      )}
+        {/* Progress Tab */}
+        <TabsContent value="progress" className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Progress Chart */}
+            <ProgressChart tasks={tasks} />
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Progress Chart */}
-        <ProgressChart tasks={tasks} />
-
-        {/* Tasks */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Tasks</CardTitle>
-            <CardDescription>Your daily action items</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <TaskList tasks={tasks} goalId={goal.id} />
-          </CardContent>
-        </Card>
-      </div>
+            {/* Tasks */}
+            <Card className="lg:col-span-2">
+              <CardHeader>
+                <CardTitle>Tasks</CardTitle>
+                <CardDescription>Your daily action items</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <TaskList tasks={tasks} goalId={goal.id} />
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+      </Tabs>
     </div>
   )
 }
