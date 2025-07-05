@@ -128,6 +128,8 @@ export interface Database {
           completed_at: string | null
           rescheduled_count: number
           tags: string[] | null
+          phase_id: string | null
+          phase_number: number | null
           created_at: string
           updated_at: string
         }
@@ -144,6 +146,8 @@ export interface Database {
           completed_at?: string | null
           rescheduled_count?: number
           tags?: string[] | null
+          phase_id?: string | null
+          phase_number?: number | null
           created_at?: string
           updated_at?: string
         }
@@ -160,6 +164,55 @@ export interface Database {
           completed_at?: string | null
           rescheduled_count?: number
           tags?: string[] | null
+          phase_id?: string | null
+          phase_number?: number | null
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      learning_phases: {
+        Row: {
+          id: string
+          roadmap_id: string
+          phase_id: string
+          phase_number: number
+          title: string
+          description: string | null
+          duration_weeks: number | null
+          skills_to_learn: string[] | null
+          start_date: string | null
+          end_date: string | null
+          status: 'pending' | 'active' | 'completed'
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          roadmap_id: string
+          phase_id: string
+          phase_number: number
+          title: string
+          description?: string | null
+          duration_weeks?: number | null
+          skills_to_learn?: string[] | null
+          start_date?: string | null
+          end_date?: string | null
+          status?: 'pending' | 'active' | 'completed'
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          roadmap_id?: string
+          phase_id?: string
+          phase_number?: number
+          title?: string
+          description?: string | null
+          duration_weeks?: number | null
+          skills_to_learn?: string[] | null
+          start_date?: string | null
+          end_date?: string | null
+          status?: 'pending' | 'active' | 'completed'
           created_at?: string
           updated_at?: string
         }
