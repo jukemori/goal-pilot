@@ -81,9 +81,27 @@ export async function POST(request: NextRequest) {
       weekOffset += durationWeeks
     }
     
+    // Double-check for existing phases by roadmap_id and phase_id combinations
+    const existingPhaseIds = new Set()
+    const { data: existingPhasesDetailed } = await supabase
+      .from('learning_phases')
+      .select('phase_id')
+      .eq('roadmap_id', roadmapId)
+    
+    if (existingPhasesDetailed) {
+      existingPhasesDetailed.forEach(p => existingPhaseIds.add(p.phase_id))
+    }
+    
+    // Filter out phases that already exist
+    const newPhases = learningPhases.filter(phase => !existingPhaseIds.has(phase.phase_id))
+    
+    if (newPhases.length === 0) {
+      return NextResponse.json({ message: 'All learning phases already exist' })
+    }
+
     const { data, error } = await supabase
       .from('learning_phases')
-      .insert(learningPhases)
+      .insert(newPhases)
       .select()
     
     if (error) {
@@ -92,7 +110,7 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json({ 
-      message: 'Learning phases created successfully',
+      message: `${newPhases.length} learning phases created successfully`,
       phases: data
     })
   } catch (error) {
