@@ -51,7 +51,11 @@ export function RoadmapView({ roadmap }: RoadmapViewProps) {
                     <h4 className="font-medium text-sm">{milestone.title}</h4>
                     {milestone.target_date && (
                       <span className="text-xs text-gray-500">
-                        {new Date(milestone.target_date).toLocaleDateString()}
+                        {new Date(milestone.target_date).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric'
+                        })}
                       </span>
                     )}
                   </div>
@@ -61,7 +65,11 @@ export function RoadmapView({ roadmap }: RoadmapViewProps) {
                   {milestone.completed && milestone.completed_date && (
                     <div className="flex items-center gap-1 mt-2 text-xs text-green-600">
                       <CheckCircle className="h-3 w-3" />
-                      Completed {new Date(milestone.completed_date).toLocaleDateString()}
+                      Completed {new Date(milestone.completed_date).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric'
+                      })}
                     </div>
                   )}
                 </div>
@@ -79,7 +87,11 @@ export function RoadmapView({ roadmap }: RoadmapViewProps) {
               <div className="flex items-center gap-2">
                 <Target className="h-4 w-4 text-gray-500" />
                 <span className="text-gray-600">
-                  Est. completion: {new Date(plan.estimated_completion_date).toLocaleDateString()}
+                  Est. completion: {new Date(plan.estimated_completion_date).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                  })}
                 </span>
               </div>
             )}
