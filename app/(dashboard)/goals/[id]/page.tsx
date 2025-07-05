@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { DeleteGoalButton } from '@/components/molecules/delete-goal-button'
 import { Edit3, Calendar, Clock, Target, CheckCircle, Play, Pause } from 'lucide-react'
 import { RoadmapView } from '@/components/organisms/roadmap-view/roadmap-view'
 import { TaskList } from '@/components/organisms/task-list/task-list'
@@ -120,6 +121,7 @@ export default async function GoalPage({ params }: GoalPageProps) {
               </>
             )}
           </Button>
+          <DeleteGoalButton goalId={goal.id} goalTitle={goal.title} />
         </div>
       </div>
 

@@ -101,9 +101,24 @@ export async function updateGoal(goalId: string, formData: FormData) {
   if (error) {
     throw new Error('Failed to update goal')
   }
+
+  // Delete existing roadmap and tasks to regenerate
+  await supabase
+    .from('roadmaps')
+    .delete()
+    .eq('goal_id', goalId)
+
+  // Generate new roadmap with updated goal data
+  try {
+    await generateRoadmap(goalId)
+  } catch (error) {
+    console.error('Failed to regenerate roadmap:', error)
+    // Don't throw here - let the user see their updated goal even if AI fails
+  }
   
   revalidatePath('/dashboard')
   revalidatePath(`/goals/${goalId}`)
+  redirect(`/goals/${goalId}`)
 }
 
 export async function deleteGoal(goalId: string) {
@@ -126,5 +141,6 @@ export async function deleteGoal(goalId: string) {
   }
   
   revalidatePath('/dashboard')
-  redirect('/dashboard')
+  revalidatePath('/goals')
+  redirect('/goals')
 }
