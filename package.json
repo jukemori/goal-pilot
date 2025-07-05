@@ -4,6 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
+    "dev:local": "cp .env.local.dev .env.local && next dev --turbopack",
+    "dev:production": "cp .env.local.prod .env.local && next dev --turbopack",
+    "supabase:start": "supabase start",
+    "supabase:stop": "supabase stop",
+    "supabase:reset": "supabase db reset",
+    "supabase:dev": "supabase start && npm run dev:local",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
