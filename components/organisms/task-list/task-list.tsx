@@ -1,9 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { CheckCircle, Clock, Calendar, MoreHorizontal } from 'lucide-react'
+import { Input } from '@/components/ui/input'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { CheckCircle, Clock, Calendar, MoreHorizontal, Search, Filter, ChevronLeft, ChevronRight } from 'lucide-react'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { completeTask, uncompleteTask, rescheduleTask } from '@/app/actions/tasks'
 import { toast } from 'sonner'
@@ -23,23 +25,88 @@ interface Task {
 interface TaskListProps {
   tasks: Task[]
   goalId: string
+  pageSize?: number
 }
 
-export function TaskList({ tasks, goalId }: TaskListProps) {
+export function TaskList({ tasks, goalId, pageSize = 20 }: TaskListProps) {
   const [loadingTaskId, setLoadingTaskId] = useState<string | null>(null)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [statusFilter, setStatusFilter] = useState<'all' | 'completed' | 'pending'>('all')
+  const [priorityFilter, setPriorityFilter] = useState<'all' | '5' | '4' | '3' | '2' | '1'>('all')
+  const [currentPage, setCurrentPage] = useState(1)
+  const [dateFilter, setDateFilter] = useState<'all' | 'today' | 'week' | 'overdue'>('all')
 
-  // Group tasks by date
-  const groupedTasks = tasks.reduce((acc, task) => {
-    const date = task.scheduled_date
-    if (!acc[date]) {
-      acc[date] = []
+  // Filter and search tasks
+  const filteredTasks = useMemo(() => {
+    let filtered = tasks
+
+    // Search filter
+    if (searchQuery) {
+      filtered = filtered.filter(task => 
+        task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        task.description?.toLowerCase().includes(searchQuery.toLowerCase())
+      )
     }
-    acc[date].push(task)
-    return acc
-  }, {} as Record<string, Task[]>)
 
-  // Sort dates
+    // Status filter
+    if (statusFilter !== 'all') {
+      filtered = filtered.filter(task => 
+        statusFilter === 'completed' ? task.completed : !task.completed
+      )
+    }
+
+    // Priority filter
+    if (priorityFilter !== 'all') {
+      filtered = filtered.filter(task => task.priority === parseInt(priorityFilter))
+    }
+
+    // Date filter
+    if (dateFilter !== 'all') {
+      const today = new Date().toISOString().split('T')[0]
+      const weekFromNow = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+      
+      filtered = filtered.filter(task => {
+        switch (dateFilter) {
+          case 'today':
+            return task.scheduled_date === today
+          case 'week':
+            return task.scheduled_date >= today && task.scheduled_date <= weekFromNow
+          case 'overdue':
+            return task.scheduled_date < today && !task.completed
+          default:
+            return true
+        }
+      })
+    }
+
+    return filtered
+  }, [tasks, searchQuery, statusFilter, priorityFilter, dateFilter])
+
+  // Group filtered tasks by date
+  const groupedTasks = useMemo(() => {
+    return filteredTasks.reduce((acc, task) => {
+      const date = task.scheduled_date
+      if (!acc[date]) {
+        acc[date] = []
+      }
+      acc[date].push(task)
+      return acc
+    }, {} as Record<string, Task[]>)
+  }, [filteredTasks])
+
+  // Sort dates and paginate
   const sortedDates = Object.keys(groupedTasks).sort()
+  
+  // Calculate pagination for dates (not individual tasks)
+  const totalPages = Math.ceil(sortedDates.length / pageSize)
+  const startIndex = (currentPage - 1) * pageSize
+  const endIndex = startIndex + pageSize
+  const paginatedDates = sortedDates.slice(startIndex, endIndex)
+
+  // Reset page when filters change
+  useMemo(() => {
+    setCurrentPage(1)
+  }, [searchQuery, statusFilter, priorityFilter, dateFilter])
 
   async function handleToggleComplete(task: Task) {
     setLoadingTaskId(task.id)
@@ -98,8 +165,96 @@ export function TaskList({ tasks, goalId }: TaskListProps) {
   }
 
   return (
-    <div className="space-y-6">
-      {sortedDates.map((date) => {
+    <div className="space-y-4">
+      {/* Task Statistics */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-gray-50 rounded-lg">
+        <div className="text-center">
+          <div className="text-lg font-semibold text-blue-600">{tasks.length}</div>
+          <div className="text-xs text-gray-600">Total Tasks</div>
+        </div>
+        <div className="text-center">
+          <div className="text-lg font-semibold text-green-600">{tasks.filter(t => t.completed).length}</div>
+          <div className="text-xs text-gray-600">Completed</div>
+        </div>
+        <div className="text-center">
+          <div className="text-lg font-semibold text-orange-600">{tasks.filter(t => !t.completed && t.scheduled_date < new Date().toISOString().split('T')[0]).length}</div>
+          <div className="text-xs text-gray-600">Overdue</div>
+        </div>
+        <div className="text-center">
+          <div className="text-lg font-semibold text-purple-600">{filteredTasks.length}</div>
+          <div className="text-xs text-gray-600">Filtered</div>
+        </div>
+      </div>
+
+      {/* Search and Filters */}
+      <div className="space-y-3">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+          <Input
+            placeholder="Search tasks..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-10"
+          />
+        </div>
+        
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+          <Select value={statusFilter} onValueChange={(value: any) => setStatusFilter(value)}>
+            <SelectTrigger>
+              <SelectValue placeholder="Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Status</SelectItem>
+              <SelectItem value="pending">Pending</SelectItem>
+              <SelectItem value="completed">Completed</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Select value={priorityFilter} onValueChange={(value: any) => setPriorityFilter(value)}>
+            <SelectTrigger>
+              <SelectValue placeholder="Priority" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Priority</SelectItem>
+              <SelectItem value="5">Critical</SelectItem>
+              <SelectItem value="4">High</SelectItem>
+              <SelectItem value="3">Medium</SelectItem>
+              <SelectItem value="2">Low</SelectItem>
+              <SelectItem value="1">Lowest</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Select value={dateFilter} onValueChange={(value: any) => setDateFilter(value)}>
+            <SelectTrigger>
+              <SelectValue placeholder="Date" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Dates</SelectItem>
+              <SelectItem value="today">Today</SelectItem>
+              <SelectItem value="week">This Week</SelectItem>
+              <SelectItem value="overdue">Overdue</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Button
+            variant="outline"
+            onClick={() => {
+              setSearchQuery('')
+              setStatusFilter('all')
+              setPriorityFilter('all')
+              setDateFilter('all')
+            }}
+            className="gap-2"
+          >
+            <Filter className="h-4 w-4" />
+            Clear
+          </Button>
+        </div>
+      </div>
+
+      {/* Task List */}
+      <div className="space-y-6">
+        {paginatedDates.map((date) => {
         const dateTasks = groupedTasks[date]
         
         return (
@@ -215,6 +370,72 @@ export function TaskList({ tasks, goalId }: TaskListProps) {
           </div>
         )
       })}
+
+      {/* No results message */}
+      {filteredTasks.length === 0 && (
+        <div className="text-center py-8">
+          <Filter className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+          <p className="text-gray-500 mb-2">No tasks found</p>
+          <p className="text-sm text-gray-400">Try adjusting your filters or search query</p>
+        </div>
+      )}
+
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between pt-4">
+          <div className="text-sm text-gray-700">
+            Showing {startIndex + 1}-{Math.min(endIndex, sortedDates.length)} of {sortedDates.length} date groups
+          </div>
+          
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage(page => Math.max(1, page - 1))}
+              disabled={currentPage === 1}
+              className="gap-1"
+            >
+              <ChevronLeft className="h-4 w-4" />
+              Previous
+            </Button>
+            
+            <div className="flex items-center gap-1">
+              {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                const pageNumber = currentPage <= 3 
+                  ? i + 1 
+                  : currentPage + i - 2 <= totalPages 
+                    ? currentPage + i - 2 
+                    : totalPages - 4 + i
+                    
+                if (pageNumber > totalPages) return null
+                
+                return (
+                  <Button
+                    key={pageNumber}
+                    variant={pageNumber === currentPage ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setCurrentPage(pageNumber)}
+                    className="w-8 h-8 p-0"
+                  >
+                    {pageNumber}
+                  </Button>
+                )
+              })}
+            </div>
+            
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage(page => Math.min(totalPages, page + 1))}
+              disabled={currentPage === totalPages}
+              className="gap-1"
+            >
+              Next
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
