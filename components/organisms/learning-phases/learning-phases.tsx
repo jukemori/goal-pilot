@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -17,6 +17,7 @@ interface LearningPhasesProps {
 
 export function LearningPhases({ roadmapId, goalId }: LearningPhasesProps) {
   const [generatingPhase, setGeneratingPhase] = useState<string | null>(null)
+  const [hasTriggeredAutoCreate, setHasTriggeredAutoCreate] = useState(false)
   const queryClient = useQueryClient()
   const supabase = createClient()
 
@@ -78,6 +79,7 @@ export function LearningPhases({ roadmapId, goalId }: LearningPhasesProps) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['learning-phases', roadmapId] })
+      setHasTriggeredAutoCreate(false)
     }
   })
 
@@ -120,26 +122,15 @@ export function LearningPhases({ roadmapId, goalId }: LearningPhasesProps) {
     window.open(`/api/calendar/export?goalId=${goalId}&format=ics`, '_blank')
   }
 
-  if (isLoading) {
-    return <div className="animate-pulse space-y-4">
-      {[1, 2, 3].map(i => (
-        <div key={i} className="h-32 bg-gray-200 rounded-lg" />
-      ))}
-    </div>
-  }
-
-  if (error) {
-    return <div className="text-center py-8 text-red-500">
-      Error loading learning phases: {error.message}
-    </div>
-  }
-
   // Auto-trigger phase creation if needed
-  if (!phases || phases.length === 0) {
-    if (!isLoading && !error && !autoCreateMutation.isLoading && !autoCreateMutation.isSuccess) {
-      autoCreateMutation.mutate()
+  useEffect(() => {
+    if (!phases || phases.length === 0) {
+      if (!isLoading && !error && !autoCreateMutation.isLoading && !autoCreateMutation.isSuccess && !hasTriggeredAutoCreate) {
+        setHasTriggeredAutoCreate(true)
+        autoCreateMutation.mutate()
+      }
     }
-  }
+  }, [phases, isLoading, error, autoCreateMutation, hasTriggeredAutoCreate])
 
   if (isLoading || autoCreateMutation.isLoading) {
     return <div className="animate-pulse space-y-4">
@@ -224,8 +215,16 @@ export function LearningPhases({ roadmapId, goalId }: LearningPhasesProps) {
                 <div className="flex items-center gap-1">
                   <Calendar className="h-4 w-4" />
                   <span>
-                    {new Date(phase.start_date).toLocaleDateString()} - 
-                    {new Date(phase.end_date).toLocaleDateString()}
+                    {new Date(phase.start_date + 'T00:00:00').toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'short', 
+                      day: 'numeric'
+                    })} - 
+                    {new Date(phase.end_date + 'T00:00:00').toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric'
+                    })}
                   </span>
                 </div>
               </div>
