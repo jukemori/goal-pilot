@@ -32,6 +32,17 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+.env.local
+.env.production
+.env.staging
+
+# Prevent accidental secret commits
+**/secrets/**
+**/keys/**
+**/*secret*
+**/*key*
+**/*token*
+**/*password*
 
 # vercel
 .vercel
