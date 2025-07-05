@@ -370,6 +370,7 @@ export function TaskList({ tasks, goalId, pageSize = 20 }: TaskListProps) {
           </div>
         )
       })}
+      </div>
 
       {/* No results message */}
       {filteredTasks.length === 0 && (
