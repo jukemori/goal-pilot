@@ -25,7 +25,8 @@ export async function generateRoadmap(goalId: string) {
     goal.current_level,
     goal.daily_time_commitment,
     goal.target_date,
-    goal.weekly_schedule as Record<string, boolean>
+    goal.weekly_schedule as Record<string, boolean>,
+    goal.start_date
   )
 
   try {

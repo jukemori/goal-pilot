@@ -33,7 +33,8 @@ export async function POST(request: NextRequest) {
       goal.current_level,
       goal.daily_time_commitment,
       goal.target_date,
-      goal.weekly_schedule as Record<string, boolean>
+      goal.weekly_schedule as Record<string, boolean>,
+      goal.start_date
     )
 
     const completion = await openai.chat.completions.create({

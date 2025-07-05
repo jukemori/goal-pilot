@@ -8,6 +8,7 @@ import { Edit3, Calendar, Clock, Target, CheckCircle, Play, Pause } from 'lucide
 import { RoadmapView } from '@/components/organisms/roadmap-view/roadmap-view'
 import { TaskList } from '@/components/organisms/task-list/task-list'
 import { ProgressChart } from '@/components/molecules/progress-chart/progress-chart'
+import { cn } from '@/lib/utils'
 
 interface GoalPageProps {
   params: Promise<{ id: string }>
@@ -165,46 +166,41 @@ export default async function GoalPage({ params }: GoalPageProps) {
         </Card>
       </div>
 
+      {/* Roadmap Section */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Roadmap</CardTitle>
+          <CardDescription>
+            {roadmap ? 'AI-generated learning path' : 'Generating your personalized roadmap...'}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {roadmap ? (
+            <RoadmapView roadmap={roadmap} />
+          ) : (
+            <div className="text-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+              <p className="text-gray-500">Generating your roadmap...</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Roadmap */}
-        <div className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Roadmap</CardTitle>
-              <CardDescription>
-                {roadmap ? 'AI-generated learning path' : 'Generating your personalized roadmap...'}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {roadmap ? (
-                <RoadmapView roadmap={roadmap} />
-              ) : (
-                <div className="text-center py-8">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-                  <p className="text-gray-500">Generating your roadmap...</p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-          
-          <ProgressChart tasks={tasks} />
-        </div>
+        {/* Progress Chart */}
+        <ProgressChart tasks={tasks} />
 
         {/* Tasks */}
-        <div>
-          <Card>
-            <CardHeader>
-              <CardTitle>Tasks</CardTitle>
-              <CardDescription>Your daily action items</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <TaskList tasks={tasks} goalId={goal.id} />
-            </CardContent>
-          </Card>
-        </div>
+        <Card>
+          <CardHeader>
+            <CardTitle>Tasks</CardTitle>
+            <CardDescription>Your daily action items</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <TaskList tasks={tasks} goalId={goal.id} />
+          </CardContent>
+        </Card>
       </div>
     </div>
   )
 }
-
-import { cn } from '@/lib/utils'

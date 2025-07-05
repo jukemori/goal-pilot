@@ -7,12 +7,15 @@ export const generateRoadmapPrompt = (
   currentLevel: string,
   timeCommitment: number,
   targetDate: string | null,
-  weeklySchedule: Record<string, boolean>
+  weeklySchedule: Record<string, boolean>,
+  startDate: string
 ) => {
   const availableDays = Object.entries(weeklySchedule)
     .filter(([_, available]) => available)
     .map(([day]) => day)
     .join(', ')
+
+  const currentYear = new Date().getFullYear()
 
   return `Create a comprehensive learning roadmap for the following goal:
 
@@ -20,7 +23,10 @@ Goal: ${goal}
 Current Level: ${currentLevel}
 Daily Time Commitment: ${timeCommitment} minutes
 Available Days: ${availableDays}
+Start Date: ${startDate}
 ${targetDate ? `Target Completion Date: ${targetDate}` : 'No specific deadline'}
+
+IMPORTANT: All dates must be in ${currentYear} or later. Use the start date (${startDate}) as your reference point.
 
 Please generate a structured roadmap with the following JSON format:
 {
