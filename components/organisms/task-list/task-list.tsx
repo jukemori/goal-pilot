@@ -7,6 +7,7 @@ import { CheckCircle, Clock, Calendar, MoreHorizontal } from 'lucide-react'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { completeTask, uncompleteTask, rescheduleTask } from '@/app/actions/tasks'
 import { toast } from 'sonner'
+import { cn } from '@/lib/utils'
 
 interface Task {
   id: string
@@ -100,18 +101,12 @@ export function TaskList({ tasks, goalId }: TaskListProps) {
     <div className="space-y-6">
       {sortedDates.map((date) => {
         const dateTasks = groupedTasks[date]
-        const isToday = date === new Date().toISOString().split('T')[0]
-        const isPast = new Date(date) < new Date(new Date().toISOString().split('T')[0])
         
         return (
           <div key={date}>
             <div className="flex items-center gap-2 mb-3">
-              <h3 className={cn(
-                "font-medium",
-                isToday && "text-blue-600",
-                isPast && "text-gray-500"
-              )}>
-                {isToday ? 'Today' : isPast ? 'Past' : new Date(date).toLocaleDateString('en-US', {
+              <h3 className="font-medium">
+                {new Date(date).toLocaleDateString('en-US', {
                   weekday: 'long',
                   month: 'short',
                   day: 'numeric'
@@ -128,8 +123,7 @@ export function TaskList({ tasks, goalId }: TaskListProps) {
                   key={task.id}
                   className={cn(
                     "flex items-center gap-3 p-3 border rounded-lg transition-colors",
-                    task.completed && "opacity-60 bg-gray-50",
-                    isToday && !task.completed && "border-blue-200 bg-blue-50"
+                    task.completed && "opacity-60 bg-gray-50"
                   )}
                 >
                   <Button
@@ -224,5 +218,3 @@ export function TaskList({ tasks, goalId }: TaskListProps) {
     </div>
   )
 }
-
-import { cn } from '@/lib/utils'

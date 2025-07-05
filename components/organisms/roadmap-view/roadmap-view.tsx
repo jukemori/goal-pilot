@@ -3,6 +3,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { CheckCircle, Clock, Target } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 interface RoadmapViewProps {
   roadmap: {
@@ -158,5 +159,3 @@ export function RoadmapView({ roadmap }: RoadmapViewProps) {
     </div>
   )
 }
-
-import { cn } from '@/lib/utils'

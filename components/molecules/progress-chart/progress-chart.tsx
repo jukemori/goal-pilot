@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { TrendingUp, Calendar } from 'lucide-react'
 
@@ -16,6 +17,13 @@ interface ProgressChartProps {
 }
 
 export function ProgressChart({ tasks }: ProgressChartProps) {
+  const [currentStreak, setCurrentStreak] = useState(0)
+  const [isClient, setIsClient] = useState(false)
+
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
+
   // Group tasks by week and calculate completion rate
   const getWeeklyProgress = () => {
     const weeklyData: Record<string, { total: number; completed: number }> = {}
@@ -85,7 +93,11 @@ export function ProgressChart({ tasks }: ProgressChartProps) {
     return streak
   }
 
-  const currentStreak = getStreak()
+  useEffect(() => {
+    if (isClient) {
+      setCurrentStreak(getStreak())
+    }
+  }, [isClient, tasks])
 
   return (
     <Card>

@@ -53,6 +53,9 @@ export default async function GoalPage({ params }: GoalPageProps) {
   const completedTasks = tasks.filter((task: any) => task.completed)
   const totalTasks = tasks.length
   const progressPercentage = totalTasks > 0 ? Math.round((completedTasks.length / totalTasks) * 100) : 0
+  
+  // Calculate days active on server side to avoid hydration mismatch
+  const daysActive = Math.ceil((new Date().getTime() - new Date(goal.start_date).getTime()) / (1000 * 60 * 60 * 24))
 
   const levelColors = {
     beginner: 'bg-green-100 text-green-800',
@@ -147,7 +150,7 @@ export default async function GoalPage({ params }: GoalPageProps) {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {Math.ceil((new Date().getTime() - new Date(goal.start_date).getTime()) / (1000 * 60 * 60 * 24))}
+              {daysActive}
             </div>
             <p className="text-xs text-muted-foreground">Since start date</p>
           </CardContent>

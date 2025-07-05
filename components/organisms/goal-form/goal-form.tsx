@@ -32,13 +32,16 @@ const weekDays = [
 export function GoalForm({ onSubmit, defaultValues, isEdit = false }: GoalFormProps) {
   const [isLoading, setIsLoading] = useState(false)
   
+  // Use a stable default date to avoid hydration mismatches
+  const today = typeof window !== 'undefined' ? new Date().toISOString().split('T')[0] : ''
+  
   const form = useForm<GoalFormData>({
     resolver: zodResolver(goalFormSchema),
     defaultValues: {
       title: '',
       description: '',
       current_level: 'beginner',
-      start_date: new Date().toISOString().split('T')[0],
+      start_date: today,
       target_date: '',
       daily_time_commitment: 30,
       weekly_schedule: {
