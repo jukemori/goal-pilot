@@ -15,10 +15,12 @@ export default function NotFound() {
         </div>
         
         <div className="flex items-center justify-center gap-4">
-          <Button variant="outline" onClick={() => window.history.back()}>
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Go back
-          </Button>
+          <Link href="/">
+            <Button variant="outline">
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Go back
+            </Button>
+          </Link>
           <Link href="/dashboard">
             <Button>
               <Home className="h-4 w-4 mr-2" />
