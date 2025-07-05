@@ -5,16 +5,13 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { goalFormSchema } from '@/lib/validations/goal'
 import { generateRoadmap } from './ai'
+import { ensureUserProfile } from './auth'
 
 export async function createGoal(formData: FormData) {
   const supabase = await createClient()
   
-  // Get the current user
-  const { data: { user }, error: userError } = await supabase.auth.getUser()
-  
-  if (userError || !user) {
-    throw new Error('Unauthorized')
-  }
+  // Ensure user profile exists and get user
+  const user = await ensureUserProfile()
 
   // Parse and validate form data
   const rawData = {
@@ -28,6 +25,8 @@ export async function createGoal(formData: FormData) {
   }
 
   const validatedData = goalFormSchema.parse(rawData)
+  
+  console.log('Creating goal with data:', { user_id: user.id, ...validatedData })
 
   // Create the goal
   const { data: goal, error } = await supabase
@@ -40,7 +39,8 @@ export async function createGoal(formData: FormData) {
     .single()
     
   if (error) {
-    throw new Error('Failed to create goal')
+    console.error('Supabase error creating goal:', error)
+    throw new Error(`Failed to create goal: ${error.message}`)
   }
   
   // Generate AI roadmap
