@@ -32,7 +32,7 @@ Please generate a structured roadmap with a COMPLETE daily task schedule from st
 
 For ${timeCommitment} minutes per day on ${availableDays}, create daily tasks that are realistic and achievable.
 
-IMPORTANT: Generate AT LEAST 30-60 daily tasks per phase to ensure continuous progress. Each task should be specific and actionable.
+IMPORTANT: Generate 20-30 daily tasks per phase to ensure continuous progress. Each task should be specific and actionable. Focus on quality over quantity.
 
 JSON format:
 {

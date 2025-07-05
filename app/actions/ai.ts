@@ -38,10 +38,38 @@ export async function generateRoadmap(goalId: string) {
       ],
       response_format: { type: 'json_object' },
       temperature: 0.7,
-      max_tokens: 2000,
+      max_tokens: 3000,
     })
 
-    const roadmapData = JSON.parse(completion.choices[0].message.content!) as RoadmapPlan & { milestones: any[] }
+    let roadmapData: RoadmapPlan & { milestones: any[] }
+    
+    try {
+      let content = completion.choices[0].message.content!
+      console.log('Raw AI response length:', content.length)
+      console.log('Raw AI response preview:', content.substring(0, 200) + '...')
+      
+      // Clean up common JSON issues
+      content = content.trim()
+      
+      // Remove any text before the JSON starts
+      const jsonStart = content.indexOf('{')
+      if (jsonStart > 0) {
+        content = content.substring(jsonStart)
+      }
+      
+      // Remove any text after the JSON ends
+      const jsonEnd = content.lastIndexOf('}')
+      if (jsonEnd > 0 && jsonEnd < content.length - 1) {
+        content = content.substring(0, jsonEnd + 1)
+      }
+      
+      console.log('Cleaned content preview:', content.substring(0, 200) + '...')
+      roadmapData = JSON.parse(content)
+    } catch (parseError) {
+      console.error('JSON parsing error:', parseError)
+      console.error('Raw content:', completion.choices[0].message.content)
+      throw new Error('Failed to parse AI response as JSON. The response may be incomplete or malformed.')
+    }
     
     // Save the roadmap to database
     const { data: roadmap, error: roadmapError } = await supabase
