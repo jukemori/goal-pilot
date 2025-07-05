@@ -289,8 +289,8 @@ backend = "postgres"
 
 [functions]
 # A mapping of function names to their corresponding Docker image.
-[functions._cmd]
-import_map = "deno.json"
+# [functions.example]
+# import_map = "deno.json"
 
 [experimental]
 # Configures Postgres storage-engine with S3 as backend.
