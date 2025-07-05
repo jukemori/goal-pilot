@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, CheckCircle, Clock } from 'lucide-react'
 import { TaskList } from '@/components/organisms/task-list/task-list'
+import { useQuery } from '@tanstack/react-query'
+import { createClient } from '@/lib/supabase/client'
 
 interface Task {
   id: string
@@ -25,14 +27,67 @@ interface Task {
   }
 }
 
-interface CalendarViewProps {
-  tasks: Task[]
-  todayTasks: Task[]
-}
+interface CalendarViewProps {}
 
-export function CalendarView({ tasks, todayTasks }: CalendarViewProps) {
+export function CalendarView({}: CalendarViewProps) {
   const [currentDate, setCurrentDate] = useState(new Date())
   const [selectedDate, setSelectedDate] = useState<string | null>(null)
+  const supabase = createClient()
+
+  // Fetch tasks for current month
+  const { data: tasks = [], isLoading, isFetching } = useQuery({
+    queryKey: ['calendar-tasks', currentDate.getFullYear(), currentDate.getMonth()],
+    queryFn: async () => {
+      const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1)
+      const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0)
+      
+      const { data, error } = await supabase
+        .from('tasks')
+        .select(`
+          *,
+          roadmaps!inner(
+            goal_id,
+            goals!inner(
+              title,
+              status
+            )
+          )
+        `)
+        .gte('scheduled_date', startOfMonth.toISOString().split('T')[0])
+        .lte('scheduled_date', endOfMonth.toISOString().split('T')[0])
+        .order('scheduled_date')
+
+      if (error) throw error
+      return data || []
+    },
+    staleTime: 60000, // Cache for 1 minute
+    keepPreviousData: true // Keep previous data while fetching new data
+  })
+
+  // Fetch today's tasks
+  const today = new Date().toISOString().split('T')[0]
+  const { data: todayTasks = [] } = useQuery({
+    queryKey: ['today-tasks', today],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('tasks')
+        .select(`
+          *,
+          roadmaps!inner(
+            goal_id,
+            goals!inner(
+              title,
+              status
+            )
+          )
+        `)
+        .eq('scheduled_date', today)
+        .order('priority', { ascending: false })
+
+      if (error) throw error
+      return data || []
+    }
+  })
 
   // Group tasks by date
   const tasksByDate = tasks.reduce((acc, task) => {
@@ -107,19 +162,22 @@ export function CalendarView({ tasks, todayTasks }: CalendarViewProps) {
               <CardTitle className="flex items-center gap-2">
                 <CalendarIcon className="h-5 w-5" />
                 {currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                {isFetching && (
+                  <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+                )}
               </CardTitle>
               <div className="flex items-center gap-2">
-                <Button variant="outline" size="sm" onClick={goToPreviousMonth}>
+                <Button variant="outline" size="sm" onClick={goToPreviousMonth} disabled={isFetching}>
                   <ChevronLeft className="h-4 w-4" />
                 </Button>
-                <Button variant="outline" size="sm" onClick={goToNextMonth}>
+                <Button variant="outline" size="sm" onClick={goToNextMonth} disabled={isFetching}>
                   <ChevronRight className="h-4 w-4" />
                 </Button>
               </div>
             </div>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
+            <div className={`space-y-4 transition-opacity duration-200 ${isFetching ? 'opacity-60' : 'opacity-100'}`}>
               {/* Day headers */}
               <div className="grid grid-cols-7 gap-1">
                 {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
@@ -144,19 +202,19 @@ export function CalendarView({ tasks, todayTasks }: CalendarViewProps) {
                           key={dateString}
                           onClick={() => setSelectedDate(isSelected ? null : dateString)}
                           className={cn(
-                            "p-2 min-h-[60px] text-left border rounded-lg transition-colors relative",
+                            "p-3 h-[95px] text-left border rounded-lg transition-colors relative",
                             isToday(date) && "border-blue-500 bg-blue-50",
                             !isCurrentMonth(date) && "text-gray-400 bg-gray-50",
                             isSelected && "border-blue-500 bg-blue-100",
                             dateTasks.length > 0 && "hover:bg-gray-50"
                           )}
                         >
-                          <div className="text-sm font-medium">
+                          <div className="text-sm font-medium mb-2">
                             {date.getDate()}
                           </div>
                           
                           {dateTasks.length > 0 && (
-                            <div className="mt-1 space-y-1">
+                            <div className="space-y-1 pb-8">
                               {dateTasks.slice(0, 2).map((task) => (
                                 <div
                                   key={task.id}
@@ -179,8 +237,8 @@ export function CalendarView({ tasks, todayTasks }: CalendarViewProps) {
                           )}
 
                           {dateTasks.length > 0 && (
-                            <div className="absolute bottom-1 right-1">
-                              <Badge variant="outline" className="text-xs">
+                            <div className="absolute bottom-1 right-2">
+                              <Badge variant="outline" className="text-xs bg-white">
                                 {completedCount}/{dateTasks.length}
                               </Badge>
                             </div>
