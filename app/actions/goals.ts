@@ -1,0 +1,114 @@
+'use server'
+
+import { createClient } from '@/lib/supabase/server'
+import { revalidatePath } from 'next/cache'
+import { redirect } from 'next/navigation'
+import { goalFormSchema } from '@/lib/validations/goal'
+import { generateRoadmap } from './ai'
+
+export async function createGoal(formData: FormData) {
+  const supabase = await createClient()
+  
+  // Get the current user
+  const { data: { user }, error: userError } = await supabase.auth.getUser()
+  
+  if (userError || !user) {
+    throw new Error('Unauthorized')
+  }
+
+  // Parse and validate form data
+  const rawData = {
+    title: formData.get('title') as string,
+    description: formData.get('description') as string,
+    current_level: formData.get('current_level') as string,
+    start_date: formData.get('start_date') as string,
+    target_date: formData.get('target_date') as string,
+    daily_time_commitment: parseInt(formData.get('daily_time_commitment') as string),
+    weekly_schedule: JSON.parse(formData.get('weekly_schedule') as string),
+  }
+
+  const validatedData = goalFormSchema.parse(rawData)
+
+  // Create the goal
+  const { data: goal, error } = await supabase
+    .from('goals')
+    .insert({
+      user_id: user.id,
+      ...validatedData,
+    })
+    .select()
+    .single()
+    
+  if (error) {
+    throw new Error('Failed to create goal')
+  }
+  
+  // Generate AI roadmap
+  try {
+    await generateRoadmap(goal.id)
+  } catch (error) {
+    console.error('Failed to generate roadmap:', error)
+    // Don't throw here - let the user see their goal even if AI fails
+  }
+  
+  revalidatePath('/dashboard')
+  redirect(`/goals/${goal.id}`)
+}
+
+export async function updateGoal(goalId: string, formData: FormData) {
+  const supabase = await createClient()
+  
+  const { data: { user }, error: userError } = await supabase.auth.getUser()
+  
+  if (userError || !user) {
+    throw new Error('Unauthorized')
+  }
+
+  const rawData = {
+    title: formData.get('title') as string,
+    description: formData.get('description') as string,
+    current_level: formData.get('current_level') as string,
+    start_date: formData.get('start_date') as string,
+    target_date: formData.get('target_date') as string,
+    daily_time_commitment: parseInt(formData.get('daily_time_commitment') as string),
+    weekly_schedule: JSON.parse(formData.get('weekly_schedule') as string),
+  }
+
+  const validatedData = goalFormSchema.parse(rawData)
+
+  const { error } = await supabase
+    .from('goals')
+    .update(validatedData)
+    .eq('id', goalId)
+    .eq('user_id', user.id)
+    
+  if (error) {
+    throw new Error('Failed to update goal')
+  }
+  
+  revalidatePath('/dashboard')
+  revalidatePath(`/goals/${goalId}`)
+}
+
+export async function deleteGoal(goalId: string) {
+  const supabase = await createClient()
+  
+  const { data: { user }, error: userError } = await supabase.auth.getUser()
+  
+  if (userError || !user) {
+    throw new Error('Unauthorized')
+  }
+
+  const { error } = await supabase
+    .from('goals')
+    .delete()
+    .eq('id', goalId)
+    .eq('user_id', user.id)
+    
+  if (error) {
+    throw new Error('Failed to delete goal')
+  }
+  
+  revalidatePath('/dashboard')
+  redirect('/dashboard')
+}
