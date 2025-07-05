@@ -126,10 +126,17 @@ export async function POST(request: NextRequest) {
     const availableDays = Object.entries(weeklySchedule)
       .filter(([_, available]) => available)
       .map(([day]) => getDayNumber(day))
+    
+    console.log('Available days (0=Sun, 1=Mon, etc):', availableDays)
+    console.log('Weekly schedule:', weeklySchedule)
 
     const tasks = []
-    let currentDate = new Date(phase.start_date)
-    const endDate = new Date(phase.end_date)
+    // Create dates consistently to ensure correct weekday calculation
+    let currentDate = createConsistentDate(phase.start_date)
+    const endDate = createConsistentDate(phase.end_date)
+    
+    console.log('Phase start date:', phase.start_date, '-> Current date:', currentDate, 'Day of week:', currentDate.getDay())
+    console.log('Phase end date:', phase.end_date, '-> End date:', endDate)
     
     // Use new pattern-based approach or fallback to old format
     const taskPatterns = taskData.task_patterns || []
@@ -156,7 +163,7 @@ export async function POST(request: NextRequest) {
       
       if (currentDate > endDate) break
       
-      const weekNumber = Math.floor((currentDate.getTime() - new Date(phase.start_date).getTime()) / (7 * 24 * 60 * 60 * 1000)) + 1
+      const weekNumber = Math.floor((currentDate.getTime() - createConsistentDate(phase.start_date).getTime()) / (7 * 24 * 60 * 60 * 1000)) + 1
       const baseTask = basicTasks[taskIndex % basicTasks.length]
       
       tasks.push({
@@ -214,6 +221,14 @@ function getDayNumber(dayName: string): number {
     saturday: 6
   }
   return dayMap[dayName.toLowerCase()] ?? 1
+}
+
+// Helper function to create consistent local dates from date strings
+function createConsistentDate(dateString: string): Date {
+  // Parse the date string as YYYY-MM-DD and create a date without timezone issues
+  // This ensures the date represents the intended calendar date regardless of server timezone
+  const [year, month, day] = dateString.split('-').map(Number)
+  return new Date(year, month - 1, day)
 }
 
 function getPriorityFromType(type: string): number {
