@@ -28,7 +28,13 @@ ${targetDate ? `Target Completion Date: ${targetDate}` : 'No specific deadline'}
 
 IMPORTANT: All dates must be in ${currentYear} or later. Use the start date (${startDate}) as your reference point.
 
-Please generate a structured roadmap with the following JSON format:
+Please generate a structured roadmap with a COMPLETE daily task schedule from start to completion. Each phase should contain enough specific, actionable tasks to fill the entire duration.
+
+For ${timeCommitment} minutes per day on ${availableDays}, create daily tasks that are realistic and achievable.
+
+IMPORTANT: Generate AT LEAST 30-60 daily tasks per phase to ensure continuous progress. Each task should be specific and actionable.
+
+JSON format:
 {
   "overview": "Brief overview of the learning journey",
   "phases": [
@@ -38,7 +44,15 @@ Please generate a structured roadmap with the following JSON format:
       "description": "What this phase covers",
       "duration_weeks": 4,
       "skills_to_learn": ["skill1", "skill2"],
-      "tasks": ["specific task 1", "specific task 2"]
+      "daily_tasks": [
+        {
+          "day": 1,
+          "title": "Specific daily task",
+          "description": "Detailed task description",
+          "estimated_minutes": ${timeCommitment},
+          "type": "practice|study|exercise|review"
+        }
+      ]
     }
   ],
   "estimated_completion_date": "YYYY-MM-DD",

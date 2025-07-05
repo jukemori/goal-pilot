@@ -60,9 +60,9 @@ export async function generateRoadmap(goalId: string) {
       throw new Error('Failed to save roadmap')
     }
 
-    // Generate initial tasks for the first phase
+    // Generate tasks for all phases
     if (roadmapData.phases && roadmapData.phases.length > 0) {
-      await generateTasksForPhase(roadmap.id, roadmapData.phases[0], goal.start_date)
+      await generateAllTasks(roadmap.id, roadmapData.phases, goal.start_date, goal.weekly_schedule as Record<string, boolean>)
     }
 
     return roadmap
@@ -72,33 +72,96 @@ export async function generateRoadmap(goalId: string) {
   }
 }
 
-async function generateTasksForPhase(
+async function generateAllTasks(
   roadmapId: string,
-  phase: any,
-  startDate: string
+  phases: any[],
+  startDate: string,
+  weeklySchedule: Record<string, boolean>
 ) {
   const supabase = await createClient()
   
-  // Generate tasks based on the phase
-  const tasks = phase.tasks.map((taskTitle: string, index: number) => {
-    const taskDate = new Date(startDate)
-    taskDate.setDate(taskDate.getDate() + index)
+  // Get available days of the week
+  const availableDays = Object.entries(weeklySchedule)
+    .filter(([_, available]) => available)
+    .map(([day]) => getDayNumber(day))
+  
+  const allTasks: any[] = []
+  let currentDate = new Date(startDate)
+  let taskCounter = 0
+  
+  // Generate tasks for all phases
+  for (const phase of phases) {
+    const dailyTasks = phase.daily_tasks || phase.tasks || []
     
-    return {
-      roadmap_id: roadmapId,
-      title: taskTitle,
-      description: `Part of ${phase.title}`,
-      scheduled_date: taskDate.toISOString().split('T')[0],
-      estimated_duration: 30, // Default 30 minutes
-      priority: 1,
+    // If using old format (tasks array), convert to daily_tasks format
+    const normalizedTasks = Array.isArray(dailyTasks) && typeof dailyTasks[0] === 'string'
+      ? dailyTasks.map((title: string, index: number) => ({
+          day: index + 1,
+          title,
+          description: `Part of ${phase.title}`,
+          estimated_minutes: 30,
+          type: 'practice'
+        }))
+      : dailyTasks
+    
+    // Generate tasks for this phase
+    for (const dailyTask of normalizedTasks) {
+      // Find next available day
+      while (!availableDays.includes(currentDate.getDay())) {
+        currentDate.setDate(currentDate.getDate() + 1)
+      }
+      
+      allTasks.push({
+        roadmap_id: roadmapId,
+        title: dailyTask.title,
+        description: dailyTask.description || `Part of ${phase.title}`,
+        scheduled_date: currentDate.toISOString().split('T')[0],
+        estimated_duration: dailyTask.estimated_minutes || 30,
+        priority: getPriorityFromType(dailyTask.type),
+      })
+      
+      // Move to next available day
+      do {
+        currentDate.setDate(currentDate.getDate() + 1)
+      } while (!availableDays.includes(currentDate.getDay()))
+      
+      taskCounter++
     }
-  })
-
-  const { error } = await supabase
-    .from('tasks')
-    .insert(tasks)
-
-  if (error) {
-    console.error('Failed to create tasks:', error)
   }
+
+  // Insert all tasks
+  if (allTasks.length > 0) {
+    const { error } = await supabase
+      .from('tasks')
+      .insert(allTasks)
+
+    if (error) {
+      console.error('Failed to create tasks:', error)
+    } else {
+      console.log(`Generated ${allTasks.length} tasks for roadmap`)
+    }
+  }
+}
+
+function getDayNumber(dayName: string): number {
+  const dayMap: Record<string, number> = {
+    sunday: 0,
+    monday: 1,
+    tuesday: 2,
+    wednesday: 3,
+    thursday: 4,
+    friday: 5,
+    saturday: 6
+  }
+  return dayMap[dayName.toLowerCase()] ?? 1
+}
+
+function getPriorityFromType(type: string): number {
+  const priorityMap: Record<string, number> = {
+    study: 5,
+    practice: 4,
+    exercise: 3,
+    review: 2
+  }
+  return priorityMap[type] || 3
 }
