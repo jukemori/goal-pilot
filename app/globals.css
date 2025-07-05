@@ -66,4 +66,26 @@
     color: hsl(var(--foreground));
     font-feature-settings: "rlig" 1, "calt" 1;
   }
+  
+  /* Ensure text is always visible with good contrast */
+  h1, h2, h3, h4, h5, h6 {
+    color: hsl(var(--foreground));
+  }
+  
+  p, span, div {
+    color: hsl(var(--foreground));
+  }
+  
+  /* Override any potential low-contrast colors */
+  .text-gray-500 {
+    color: rgb(107 114 128) !important;
+  }
+  
+  .text-gray-600 {
+    color: rgb(75 85 99) !important;
+  }
+  
+  .text-muted-foreground {
+    color: hsl(var(--muted-foreground)) !important;
+  }
 }
