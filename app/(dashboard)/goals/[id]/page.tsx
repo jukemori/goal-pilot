@@ -9,6 +9,8 @@ import { Edit3, Calendar, Clock, Target, CheckCircle, Play, Pause } from 'lucide
 import { RoadmapView } from '@/components/organisms/roadmap-view/roadmap-view'
 import { TaskList } from '@/components/organisms/task-list/task-list'
 import { ProgressChart } from '@/components/molecules/progress-chart/progress-chart'
+import { LearningPhases } from '@/components/organisms/learning-phases/learning-phases'
+import { RegenerateRoadmapButton } from '@/components/molecules/regenerate-roadmap-button'
 import { cn } from '@/lib/utils'
 
 interface GoalPageProps {
@@ -174,10 +176,14 @@ export default async function GoalPage({ params }: GoalPageProps) {
       {/* Roadmap Section */}
       <Card>
         <CardHeader>
-          <CardTitle>Roadmap</CardTitle>
-          <CardDescription>
-            {roadmap ? 'AI-generated learning path' : 'Generating your personalized roadmap...'}
-          </CardDescription>
+          <div className="flex justify-between items-start">
+            <div>
+              <CardTitle>Roadmap</CardTitle>
+              <CardDescription>
+                {roadmap ? 'AI-generated learning path' : 'Generating your personalized roadmap...'}
+              </CardDescription>
+            </div>
+          </div>
         </CardHeader>
         <CardContent>
           {roadmap ? (
@@ -190,6 +196,19 @@ export default async function GoalPage({ params }: GoalPageProps) {
           )}
         </CardContent>
       </Card>
+
+      {/* Learning Phases */}
+      {roadmap && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Learning Phases</CardTitle>
+            <CardDescription>Track your progress through each phase</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <LearningPhases roadmapId={roadmap.id} goalId={goal.id} />
+          </CardContent>
+        </Card>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Progress Chart */}
