@@ -26,14 +26,22 @@ export async function createGoal(formData: FormData) {
 
   const validatedData = goalFormSchema.parse(rawData)
   
-  console.log('Creating goal with data:', { user_id: user.id, ...validatedData })
+  // Handle empty target_date - convert empty string to null
+  const goalData = {
+    ...validatedData,
+    target_date: validatedData.target_date && validatedData.target_date.trim() !== '' 
+      ? validatedData.target_date 
+      : null,
+  }
+  
+  console.log('Creating goal with data:', { user_id: user.id, ...goalData })
 
   // Create the goal
   const { data: goal, error } = await supabase
     .from('goals')
     .insert({
       user_id: user.id,
-      ...validatedData,
+      ...goalData,
     })
     .select()
     .single()
@@ -76,9 +84,17 @@ export async function updateGoal(goalId: string, formData: FormData) {
 
   const validatedData = goalFormSchema.parse(rawData)
 
+  // Handle empty target_date - convert empty string to null
+  const goalData = {
+    ...validatedData,
+    target_date: validatedData.target_date && validatedData.target_date.trim() !== '' 
+      ? validatedData.target_date 
+      : null,
+  }
+
   const { error } = await supabase
     .from('goals')
-    .update(validatedData)
+    .update(goalData)
     .eq('id', goalId)
     .eq('user_id', user.id)
     
