@@ -1,7 +1,6 @@
 'use client'
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
 import { CheckCircle, Clock, Target } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -35,67 +34,6 @@ export function RoadmapView({ roadmap }: RoadmapViewProps) {
         </div>
       )}
 
-      {/* Phases */}
-      {plan.phases && plan.phases.length > 0 && (
-        <div>
-          <h3 className="font-medium mb-4">Learning Phases</h3>
-          <div className="space-y-4">
-            {plan.phases.map((phase: any, index: number) => (
-              <Card key={phase.id || index} className="border-l-4 border-l-blue-500">
-                <CardHeader className="pb-3">
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="text-base">{phase.title}</CardTitle>
-                    <Badge variant="outline">
-                      Phase {index + 1}
-                    </Badge>
-                  </div>
-                  <CardDescription>{phase.description}</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  {phase.duration_weeks && (
-                    <div className="flex items-center gap-2 text-sm text-gray-600">
-                      <Clock className="h-4 w-4" />
-                      <span>{phase.duration_weeks} weeks duration</span>
-                    </div>
-                  )}
-                  
-                  {phase.skills_to_learn && phase.skills_to_learn.length > 0 && (
-                    <div>
-                      <p className="text-sm font-medium mb-2">Skills to Learn:</p>
-                      <div className="flex flex-wrap gap-1">
-                        {phase.skills_to_learn.map((skill: string, skillIndex: number) => (
-                          <Badge key={skillIndex} variant="secondary" className="text-xs">
-                            {skill}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {phase.tasks && phase.tasks.length > 0 && (
-                    <div>
-                      <p className="text-sm font-medium mb-2">Key Tasks:</p>
-                      <ul className="text-sm text-gray-600 space-y-1">
-                        {phase.tasks.slice(0, 3).map((task: string, taskIndex: number) => (
-                          <li key={taskIndex} className="flex items-start gap-2">
-                            <div className="h-1.5 w-1.5 rounded-full bg-gray-400 mt-2 flex-shrink-0" />
-                            {task}
-                          </li>
-                        ))}
-                        {phase.tasks.length > 3 && (
-                          <li className="text-xs text-gray-500">
-                            +{phase.tasks.length - 3} more tasks
-                          </li>
-                        )}
-                      </ul>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      )}
 
       {/* Milestones */}
       {roadmap.milestones && roadmap.milestones.length > 0 && (
