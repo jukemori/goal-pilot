@@ -93,15 +93,19 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Failed to save roadmap' }, { status: 500 })
     }
 
-    // Generate tasks for all phases
+    // Create learning phase records only (no tasks initially)
     if (roadmapData.phases && roadmapData.phases.length > 0) {
-      await generateAllTasksForAPI(
-        supabase, 
-        roadmap.id, 
-        roadmapData.phases, 
-        goal.start_date, 
-        goal.weekly_schedule as Record<string, boolean>
-      )
+      console.log(`Creating ${roadmapData.phases.length} learning phases for roadmap ${roadmap.id}`)
+      try {
+        await createLearningPhases(supabase, roadmap.id, roadmapData.phases, goal.start_date)
+        console.log('Learning phases created successfully')
+      } catch (phaseError) {
+        console.error('Failed to create learning phases:', phaseError)
+        // Continue anyway - phases can be created later
+      }
+      // Tasks will be generated on-demand per phase when user clicks "Generate Tasks"
+    } else {
+      console.log('No phases found in roadmap data')
     }
 
     return NextResponse.json(roadmap)
@@ -111,10 +115,77 @@ export async function POST(request: NextRequest) {
   }
 }
 
+interface Phase {
+  id?: string
+  title: string
+  description: string
+  duration_weeks?: number
+  skills_to_learn?: string[]
+  learning_objectives?: string[]
+  key_concepts?: string[]
+  prerequisites?: string[]
+  outcomes?: string[]
+  daily_tasks?: any[]
+  tasks?: any[]
+}
+
+async function createLearningPhases(
+  supabase: any,
+  roadmapId: string,
+  phases: Phase[],
+  startDate: string
+) {
+  let weekOffset = 0
+  const learningPhases = []
+  
+  for (let i = 0; i < phases.length; i++) {
+    const phase = phases[i]
+    const phaseStartDate = new Date(startDate)
+    phaseStartDate.setDate(phaseStartDate.getDate() + (weekOffset * 7))
+    
+    const durationWeeks = phase.duration_weeks || 4
+    const phaseEndDate = new Date(phaseStartDate)
+    phaseEndDate.setDate(phaseEndDate.getDate() + (durationWeeks * 7) - 1)
+    
+    learningPhases.push({
+      roadmap_id: roadmapId,
+      phase_id: phase.id || `phase-${i + 1}`,
+      phase_number: i + 1,
+      title: phase.title,
+      description: phase.description,
+      duration_weeks: durationWeeks,
+      skills_to_learn: phase.skills_to_learn || [],
+      learning_objectives: phase.learning_objectives || [],
+      key_concepts: phase.key_concepts || [],
+      prerequisites: phase.prerequisites || [],
+      outcomes: phase.outcomes || [],
+      start_date: phaseStartDate.toISOString().split('T')[0],
+      end_date: phaseEndDate.toISOString().split('T')[0],
+      status: i === 0 ? 'active' : 'pending'
+    })
+    
+    weekOffset += durationWeeks
+  }
+  
+  console.log('Inserting learning phases:', learningPhases.length, 'phases')
+  
+  const { data, error } = await supabase
+    .from('learning_phases')
+    .insert(learningPhases)
+    .select()
+  
+  if (error) {
+    console.error('Failed to create learning phases:', error)
+    throw error
+  } else {
+    console.log('Successfully created learning phases:', data?.length)
+  }
+}
+
 async function generateAllTasksForAPI(
   supabase: any,
   roadmapId: string,
-  phases: any[],
+  phases: Phase[],
   startDate: string,
   weeklySchedule: Record<string, boolean>
 ) {
@@ -127,7 +198,9 @@ async function generateAllTasksForAPI(
   let currentDate = new Date(startDate)
   
   // Generate tasks for all phases
-  for (const phase of phases) {
+  for (let phaseIndex = 0; phaseIndex < phases.length; phaseIndex++) {
+    const phase = phases[phaseIndex]
+    const phaseId = phase.id || `phase-${phaseIndex + 1}`
     const dailyTasks = phase.daily_tasks || phase.tasks || []
     
     // If using old format (tasks array), convert to daily_tasks format
@@ -155,6 +228,8 @@ async function generateAllTasksForAPI(
         scheduled_date: currentDate.toISOString().split('T')[0],
         estimated_duration: dailyTask.estimated_minutes || 30,
         priority: getPriorityFromType(dailyTask.type),
+        phase_id: phaseId,
+        phase_number: phaseIndex + 1
       })
       
       // Move to next available day
