@@ -179,7 +179,11 @@ export function GoalForm({ onSubmit, defaultValues, isEdit = false }: GoalFormPr
                   <FormItem>
                     <FormLabel>Target Date (Optional)</FormLabel>
                     <FormControl>
-                      <Input type="date" {...field} />
+                      <Input 
+                        type="date" 
+                        {...field} 
+                        value={field.value || ''} 
+                      />
                     </FormControl>
                     <FormDescription>
                       When do you want to achieve this goal?
