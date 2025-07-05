@@ -120,20 +120,28 @@ export function ProgressChart({ tasks }: ProgressChartProps) {
               <Calendar className="h-4 w-4" />
               Weekly Progress
             </h4>
-            <div className="flex items-end justify-between gap-2 h-20">
-              {weeklyProgress.map((week, index) => (
-                <div key={week.week} className="flex flex-col items-center flex-1">
-                  <div className="w-full relative">
-                    <div
-                      className="bg-blue-100 rounded-t w-full transition-all duration-300"
-                      style={{ height: `${(week.total / Math.max(...weeklyProgress.map(w => w.total))) * maxHeight}px` }}
-                    />
-                    <div
-                      className="bg-blue-500 rounded-t w-full absolute bottom-0 transition-all duration-300"
-                      style={{ height: `${(week.completed / Math.max(...weeklyProgress.map(w => w.total))) * maxHeight}px` }}
-                    />
+            <div className="space-y-4">
+              <div className="flex items-end justify-between gap-2 h-20">
+                {weeklyProgress.map((week, index) => (
+                  <div key={week.week} className="flex flex-col items-center flex-1">
+                    <div className="w-full relative">
+                      <div
+                        className="bg-blue-100 rounded-t w-full transition-all duration-300"
+                        style={{ height: `${(week.total / Math.max(...weeklyProgress.map(w => w.total))) * maxHeight}px` }}
+                      />
+                      <div
+                        className="bg-blue-500 rounded-t w-full absolute bottom-0 transition-all duration-300"
+                        style={{ height: `${(week.completed / Math.max(...weeklyProgress.map(w => w.total))) * maxHeight}px` }}
+                      />
+                    </div>
                   </div>
-                  <div className="text-xs text-center mt-2 space-y-1">
+                ))}
+              </div>
+              
+              {/* Week labels below the chart */}
+              <div className="flex justify-between gap-2">
+                {weeklyProgress.map((week) => (
+                  <div key={`label-${week.week}`} className="text-xs text-center flex-1 space-y-1">
                     <div className="text-gray-500">
                       {new Date(week.week).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                     </div>
@@ -141,8 +149,8 @@ export function ProgressChart({ tasks }: ProgressChartProps) {
                       {week.percentage}%
                     </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
             <div className="flex justify-between text-xs text-gray-500 mt-2">
               <span>0%</span>
