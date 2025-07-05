@@ -1,17 +1,18 @@
 import { Sidebar } from '@/components/organisms/sidebar/sidebar'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import { ensureUserProfile } from '@/app/actions/auth'
 
 export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  const supabase = await createClient()
-  
-  const { data: { user } } = await supabase.auth.getUser()
-  
-  if (!user) {
+  try {
+    // This will check auth and ensure user profile exists
+    await ensureUserProfile()
+  } catch (error) {
+    console.error('Auth error:', error)
     redirect('/login')
   }
 
