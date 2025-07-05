@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { Plus, Calendar, Clock, Target } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 export default async function GoalsPage() {
   const supabase = await createClient()
@@ -124,5 +125,3 @@ function GoalCard({ goal }: { goal: any }) {
     </Link>
   )
 }
-
-import { cn } from '@/lib/utils'
