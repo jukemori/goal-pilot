@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, CheckCircle, Clock } from 'lucide-react'
-import { TaskList } from '@/components/organisms/task-list/task-list'
+import { SimpleTaskList } from '@/components/organisms/calendar/simple-task-list'
 import { useQuery } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabase/client'
 
@@ -361,7 +361,7 @@ export function CalendarView({}: CalendarViewProps) {
               <CardDescription>Your tasks for today</CardDescription>
             </CardHeader>
             <CardContent className="max-h-96 overflow-y-auto">
-              <TaskList tasks={todayTasks} goalId="" />
+              <SimpleTaskList tasks={todayTasks} goalId="" />
             </CardContent>
           </Card>
         )}
