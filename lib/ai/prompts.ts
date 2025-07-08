@@ -20,19 +20,113 @@ export const generateRoadmapPrompt = (
   const availableDaysCount = Object.values(weeklySchedule).filter(Boolean).length
   const hoursPerWeek = Math.round(timeCommitment * availableDaysCount / 60 * 10) / 10
   
-  // Intelligent time estimation based on goal description
+  // Intelligent time estimation based on goal description and category
   const goalLowerCase = goal.toLowerCase()
-  let totalHoursNeeded = 300 // Default for basic conversational
+  const currentLevelLowerCase = currentLevel.toLowerCase()
   
-  if (goalLowerCase.includes('business') || goalLowerCase.includes('professional') || goalLowerCase.includes('work')) {
-    totalHoursNeeded = 600 // Professional level
-  } else if (goalLowerCase.includes('fluent') || goalLowerCase.includes('native') || goalLowerCase.includes('advanced')) {
-    totalHoursNeeded = 800 // Advanced/fluent level
-  } else if (goalLowerCase.includes('conversational') || goalLowerCase.includes('conversation') || goalLowerCase.includes('speak')) {
-    totalHoursNeeded = 250 // Conversational level
-  } else if (goalLowerCase.includes('basic') || goalLowerCase.includes('beginner') || goalLowerCase.includes('travel')) {
-    totalHoursNeeded = 150 // Basic travel level
+  // Determine skill level from goal description and current level
+  let skillLevel = 'basic' // default
+  
+  if (goalLowerCase.includes('master') || goalLowerCase.includes('expert') || goalLowerCase.includes('advanced') || 
+      goalLowerCase.includes('professional') || goalLowerCase.includes('fluent') || goalLowerCase.includes('native')) {
+    skillLevel = 'expert'
+  } else if (goalLowerCase.includes('professional') || goalLowerCase.includes('business') || goalLowerCase.includes('work') ||
+             goalLowerCase.includes('intermediate') || goalLowerCase.includes('proficient') || goalLowerCase.includes('conversational')) {
+    skillLevel = 'professional'
+  } else if (goalLowerCase.includes('basic') || goalLowerCase.includes('beginner') || goalLowerCase.includes('intro') ||
+             goalLowerCase.includes('fundamentals') || goalLowerCase.includes('foundation') || goalLowerCase.includes('travel')) {
+    skillLevel = 'basic'
   }
+  
+  // Adjust based on current level description
+  if (currentLevelLowerCase.includes('complete beginner') || currentLevelLowerCase.includes('no experience') || 
+      currentLevelLowerCase.includes('never') || currentLevelLowerCase.includes('zero')) {
+    // Stay at determined level
+  } else if (currentLevelLowerCase.includes('some experience') || currentLevelLowerCase.includes('beginner') ||
+             currentLevelLowerCase.includes('basic')) {
+    // Reduce hours by 20% since they have some foundation
+    skillLevel = skillLevel === 'expert' ? 'professional' : skillLevel === 'professional' ? 'basic' : 'basic'
+  }
+  
+  // Determine goal category and base hours
+  let baseHours = 300 // default
+  
+  // Technical Skills (Programming, IT, Data Science, Engineering)
+  if (goalLowerCase.includes('programming') || goalLowerCase.includes('coding') || goalLowerCase.includes('software') ||
+      goalLowerCase.includes('web development') || goalLowerCase.includes('javascript') || goalLowerCase.includes('python') ||
+      goalLowerCase.includes('data science') || goalLowerCase.includes('machine learning') || goalLowerCase.includes('ai') ||
+      goalLowerCase.includes('cybersecurity') || goalLowerCase.includes('database') || goalLowerCase.includes('cloud') ||
+      goalLowerCase.includes('devops') || goalLowerCase.includes('engineering')) {
+    baseHours = skillLevel === 'basic' ? 200 : skillLevel === 'professional' ? 750 : 2500
+  }
+  
+  // Creative Skills (Music, Art, Writing, Design)
+  else if (goalLowerCase.includes('music') || goalLowerCase.includes('instrument') || goalLowerCase.includes('piano') ||
+           goalLowerCase.includes('guitar') || goalLowerCase.includes('singing') || goalLowerCase.includes('art') ||
+           goalLowerCase.includes('drawing') || goalLowerCase.includes('painting') || goalLowerCase.includes('design') ||
+           goalLowerCase.includes('graphic') || goalLowerCase.includes('writing') || goalLowerCase.includes('photography') ||
+           goalLowerCase.includes('video editing') || goalLowerCase.includes('animation')) {
+    baseHours = skillLevel === 'basic' ? 150 : skillLevel === 'professional' ? 1000 : 3000
+  }
+  
+  // Physical Skills (Sports, Fitness, Martial Arts)
+  else if (goalLowerCase.includes('fitness') || goalLowerCase.includes('workout') || goalLowerCase.includes('gym') ||
+           goalLowerCase.includes('running') || goalLowerCase.includes('marathon') || goalLowerCase.includes('sport') ||
+           goalLowerCase.includes('martial arts') || goalLowerCase.includes('yoga') || goalLowerCase.includes('dance') ||
+           goalLowerCase.includes('swimming') || goalLowerCase.includes('cycling') || goalLowerCase.includes('tennis') ||
+           goalLowerCase.includes('golf') || goalLowerCase.includes('basketball') || goalLowerCase.includes('soccer') ||
+           goalLowerCase.includes('fit') || goalLowerCase.includes('train') || goalLowerCase.includes('muscle') ||
+           goalLowerCase.includes('strength') || goalLowerCase.includes('cardio') || goalLowerCase.includes('athletic')) {
+    baseHours = skillLevel === 'basic' ? 100 : skillLevel === 'professional' ? 750 : 2000
+  }
+  
+  // Business/Professional Skills
+  else if (goalLowerCase.includes('business') || goalLowerCase.includes('management') || goalLowerCase.includes('leadership') ||
+           goalLowerCase.includes('sales') || goalLowerCase.includes('marketing') || goalLowerCase.includes('finance') ||
+           goalLowerCase.includes('accounting') || goalLowerCase.includes('project management') || goalLowerCase.includes('consulting') ||
+           goalLowerCase.includes('entrepreneurship') || goalLowerCase.includes('public speaking') || goalLowerCase.includes('negotiation') ||
+           goalLowerCase.includes('time management') || goalLowerCase.includes('productivity') || goalLowerCase.includes('organization')) {
+    baseHours = skillLevel === 'basic' ? 150 : skillLevel === 'professional' ? 600 : 1500
+  }
+  
+  // Academic/Language/Certification Skills
+  else if (goalLowerCase.includes('language') || goalLowerCase.includes('spanish') || goalLowerCase.includes('french') ||
+           goalLowerCase.includes('german') || goalLowerCase.includes('chinese') || goalLowerCase.includes('japanese') ||
+           goalLowerCase.includes('certification') || goalLowerCase.includes('degree') || goalLowerCase.includes('course') ||
+           goalLowerCase.includes('science') || goalLowerCase.includes('math') || goalLowerCase.includes('history') ||
+           goalLowerCase.includes('literature') || goalLowerCase.includes('philosophy') || goalLowerCase.includes('psychology')) {
+    // Language learning specific adjustments
+    if (goalLowerCase.includes('language') || goalLowerCase.includes('spanish') || goalLowerCase.includes('french') ||
+        goalLowerCase.includes('german') || goalLowerCase.includes('chinese') || goalLowerCase.includes('japanese')) {
+      if (goalLowerCase.includes('basic') || goalLowerCase.includes('travel')) {
+        baseHours = 150
+      } else if (goalLowerCase.includes('conversational') || goalLowerCase.includes('conversation')) {
+        baseHours = 250
+      } else if (goalLowerCase.includes('business') || goalLowerCase.includes('professional')) {
+        baseHours = 600
+      } else if (goalLowerCase.includes('fluent') || goalLowerCase.includes('native') || goalLowerCase.includes('advanced')) {
+        baseHours = 800
+      } else {
+        baseHours = 300 // default conversational
+      }
+    } else {
+      baseHours = skillLevel === 'basic' ? 200 : skillLevel === 'professional' ? 900 : 2000
+    }
+  }
+  
+  // Crafts and Hobbies
+  else if (goalLowerCase.includes('cooking') || goalLowerCase.includes('baking') || goalLowerCase.includes('gardening') ||
+           goalLowerCase.includes('woodworking') || goalLowerCase.includes('knitting') || goalLowerCase.includes('sewing') ||
+           goalLowerCase.includes('pottery') || goalLowerCase.includes('jewelry') || goalLowerCase.includes('crafts')) {
+    baseHours = skillLevel === 'basic' ? 80 : skillLevel === 'professional' ? 400 : 1200
+  }
+  
+  // Default for unclassified goals
+  else {
+    baseHours = skillLevel === 'basic' ? 200 : skillLevel === 'professional' ? 500 : 1500
+  }
+  
+  const totalHoursNeeded = baseHours
   
   const totalWeeksNeeded = Math.round(totalHoursNeeded / hoursPerWeek)
   const totalYearsNeeded = Math.round(totalWeeksNeeded / 52 * 10) / 10
