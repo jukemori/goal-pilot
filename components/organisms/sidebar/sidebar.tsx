@@ -60,7 +60,7 @@ export function Sidebar() {
       )}>
         <div className="flex flex-col h-full">
           <div className="flex items-center justify-center h-16 border-b">
-            <h2 className="text-xl font-bold text-blue-600">Goal Pilot</h2>
+            <h2 className="text-xl font-bold text-green-600">Goal Pilot</h2>
           </div>
           
           <nav className="flex-1 px-4 py-4 space-y-1">
@@ -73,7 +73,7 @@ export function Sidebar() {
                   className={cn(
                     "flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md transition-colors",
                     isActive
-                      ? "bg-blue-50 text-blue-600"
+                      ? "bg-green-50 text-green-600"
                       : "text-gray-700 hover:bg-gray-50"
                   )}
                   onClick={() => setIsMobileMenuOpen(false)}

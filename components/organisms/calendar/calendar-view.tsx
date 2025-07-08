@@ -166,7 +166,7 @@ export function CalendarView(_props: CalendarViewProps) {
                 <CalendarIcon className="h-5 w-5" />
                 {currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
                 {isFetching && (
-                  <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+                  <div className="w-4 h-4 border-2 border-green-600 border-t-transparent rounded-full animate-spin" />
                 )}
               </CardTitle>
               <div className="flex items-center gap-2">
@@ -206,9 +206,9 @@ export function CalendarView(_props: CalendarViewProps) {
                           onClick={() => setSelectedDate(isSelected ? null : dateString)}
                           className={cn(
                             "p-3 h-[95px] text-left border rounded-lg transition-colors relative",
-                            isToday(date) && "border-blue-500 bg-blue-50",
+                            isToday(date) && "border-green-500 bg-green-50",
                             !isCurrentMonth(date) && "text-gray-400 bg-gray-50",
-                            isSelected && "border-blue-500 bg-blue-100",
+                            isSelected && "border-green-500 bg-green-100",
                             dateTasks.length > 0 && "hover:bg-gray-50"
                           )}
                         >
@@ -225,7 +225,7 @@ export function CalendarView(_props: CalendarViewProps) {
                                     "text-xs p-1 rounded truncate",
                                     task.completed 
                                       ? "bg-green-100 text-green-800 line-through" 
-                                      : "bg-blue-100 text-blue-800"
+                                      : "bg-green-100 text-green-800"
                                   )}
                                 >
                                   {task.title}
@@ -275,12 +275,12 @@ export function CalendarView(_props: CalendarViewProps) {
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <span className="text-sm text-gray-600">Completion Rate</span>
-                <span className="text-lg font-bold text-blue-600">{todayProgress}%</span>
+                <span className="text-lg font-bold text-green-600">{todayProgress}%</span>
               </div>
               
               <div className="w-full bg-gray-200 rounded-full h-2">
                 <div 
-                  className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                  className="bg-green-600 h-2 rounded-full transition-all duration-300"
                   style={{ width: `${todayProgress}%` }}
                 />
               </div>

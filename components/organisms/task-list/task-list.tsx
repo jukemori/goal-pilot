@@ -131,7 +131,7 @@ export function TaskList({ tasks, goalId: _goalId, pageSize = 20 }: TaskListProp
       case 5: return 'bg-red-100 text-red-800'
       case 4: return 'bg-orange-100 text-orange-800'
       case 3: return 'bg-yellow-100 text-yellow-800'
-      case 2: return 'bg-blue-100 text-blue-800'
+      case 2: return 'bg-green-100 text-green-800'
       default: return 'bg-gray-100 text-gray-800'
     }
   }
@@ -161,7 +161,7 @@ export function TaskList({ tasks, goalId: _goalId, pageSize = 20 }: TaskListProp
       {/* Task Statistics */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-gray-50 rounded-lg">
         <div className="text-center">
-          <div className="text-lg font-semibold text-blue-600">{tasks.length}</div>
+          <div className="text-lg font-semibold text-green-600">{tasks.length}</div>
           <div className="text-xs text-gray-600">Total Tasks</div>
         </div>
         <div className="text-center">

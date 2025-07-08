@@ -98,7 +98,7 @@ export function ProgressChart({ tasks }: ProgressChartProps) {
         {/* Key Stats */}
         <div className="grid grid-cols-3 gap-4 text-center">
           <div>
-            <div className="text-2xl font-bold text-blue-600">{overallProgress}%</div>
+            <div className="text-2xl font-bold text-green-600">{overallProgress}%</div>
             <div className="text-xs text-gray-500">Overall Progress</div>
           </div>
           <div>
@@ -124,11 +124,11 @@ export function ProgressChart({ tasks }: ProgressChartProps) {
                   <div key={week.week} className="flex flex-col items-center flex-1">
                     <div className="w-full relative">
                       <div
-                        className="bg-blue-100 rounded-t w-full transition-all duration-300"
+                        className="bg-green-100 rounded-t w-full transition-all duration-300"
                         style={{ height: `${(week.total / Math.max(...weeklyProgress.map(w => w.total))) * maxHeight}px` }}
                       />
                       <div
-                        className="bg-blue-500 rounded-t w-full absolute bottom-0 transition-all duration-300"
+                        className="bg-green-500 rounded-t w-full absolute bottom-0 transition-all duration-300"
                         style={{ height: `${(week.completed / Math.max(...weeklyProgress.map(w => w.total))) * maxHeight}px` }}
                       />
                     </div>

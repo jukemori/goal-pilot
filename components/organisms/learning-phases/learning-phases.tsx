@@ -170,7 +170,7 @@ export function LearningPhases({ roadmapId, goalId: _goalId }: LearningPhasesPro
             key={phase.id}
             className={cn(
               "transition-all",
-              isActive && "border-blue-500 shadow-md",
+              isActive && "border-green-500 shadow-md",
               isCompleted && "opacity-75",
               hasGeneratedTasks && "border-green-500"
             )}
@@ -237,7 +237,7 @@ export function LearningPhases({ roadmapId, goalId: _goalId }: LearningPhasesPro
                   <ul className="text-sm text-gray-600 space-y-1">
                     {phase.learning_objectives?.map((objective: string, index: number) => (
                       <li key={index} className="flex items-start gap-2">
-                        <div className="h-1.5 w-1.5 rounded-full bg-blue-400 mt-2 flex-shrink-0" />
+                        <div className="h-1.5 w-1.5 rounded-full bg-green-400 mt-2 flex-shrink-0" />
                         {objective}
                       </li>
                     ))}
