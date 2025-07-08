@@ -6,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { DeleteGoalButton } from '@/components/molecules/delete-goal-button'
-import { Edit3, Calendar, Clock, Target, CheckCircle, Play, Pause, BarChart3, BookOpen, TrendingUp, Activity, Users, MessageSquare } from 'lucide-react'
+import { Edit3, Calendar, Clock, Target, CheckCircle, Play, Pause, BarChart3, BookOpen, TrendingUp, Activity } from 'lucide-react'
 import { RoadmapView } from '@/components/organisms/roadmap-view/roadmap-view'
 import { TaskList } from '@/components/organisms/task-list/task-list'
 import { ProgressChart } from '@/components/molecules/progress-chart/progress-chart'
@@ -220,7 +220,7 @@ export default async function GoalPage({ params }: GoalPageProps) {
                   {roadmap ? 'Your AI-generated learning path' : 'Generating your roadmap...'}
                 </CardDescription>
               </div>
-              {roadmap && <RegenerateRoadmapButton roadmapId={roadmap.id} />}
+              {roadmap && <RegenerateRoadmapButton goalId={id} />}
             </CardHeader>
             <CardContent>
               {roadmap ? (

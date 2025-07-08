@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
@@ -28,7 +28,7 @@ interface TaskListProps {
   pageSize?: number
 }
 
-export function TaskList({ tasks, goalId, pageSize = 20 }: TaskListProps) {
+export function TaskList({ tasks, goalId: _goalId, pageSize = 20 }: TaskListProps) {
   const [loadingTaskId, setLoadingTaskId] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState<'all' | 'completed' | 'pending'>('all')
@@ -104,7 +104,7 @@ export function TaskList({ tasks, goalId, pageSize = 20 }: TaskListProps) {
   const paginatedDates = sortedDates.slice(startIndex, endIndex)
 
   // Reset page when filters change
-  useMemo(() => {
+  useEffect(() => {
     setCurrentPage(1)
   }, [searchQuery, statusFilter, priorityFilter, dateFilter])
 
@@ -118,7 +118,7 @@ export function TaskList({ tasks, goalId, pageSize = 20 }: TaskListProps) {
         await completeTask(task.id)
         toast.success('Task completed!')
       }
-    } catch (error) {
+    } catch {
       toast.error('Failed to update task')
     } finally {
       setLoadingTaskId(null)
@@ -129,7 +129,7 @@ export function TaskList({ tasks, goalId, pageSize = 20 }: TaskListProps) {
     try {
       await rescheduleTask(taskId, newDate)
       toast.success('Task rescheduled')
-    } catch (error) {
+    } catch {
       toast.error('Failed to reschedule task')
     }
   }
@@ -199,7 +199,7 @@ export function TaskList({ tasks, goalId, pageSize = 20 }: TaskListProps) {
         </div>
         
         <div className="flex flex-wrap gap-2">
-          <Select value={statusFilter} onValueChange={(value: any) => setStatusFilter(value)}>
+          <Select value={statusFilter} onValueChange={(value: typeof statusFilter) => setStatusFilter(value)}>
             <SelectTrigger className="w-[140px]">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
@@ -210,7 +210,7 @@ export function TaskList({ tasks, goalId, pageSize = 20 }: TaskListProps) {
             </SelectContent>
           </Select>
 
-          <Select value={priorityFilter} onValueChange={(value: any) => setPriorityFilter(value)}>
+          <Select value={priorityFilter} onValueChange={(value: typeof priorityFilter) => setPriorityFilter(value)}>
             <SelectTrigger className="w-[140px]">
               <SelectValue placeholder="Priority" />
             </SelectTrigger>
@@ -224,7 +224,7 @@ export function TaskList({ tasks, goalId, pageSize = 20 }: TaskListProps) {
             </SelectContent>
           </Select>
 
-          <Select value={dateFilter} onValueChange={(value: any) => setDateFilter(value)}>
+          <Select value={dateFilter} onValueChange={(value: typeof dateFilter) => setDateFilter(value)}>
             <SelectTrigger className="w-[140px]">
               <SelectValue placeholder="Date" />
             </SelectTrigger>

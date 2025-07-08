@@ -1,8 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { TrendingUp, Calendar } from 'lucide-react'
+import { useState, useEffect, useCallback } from 'react'
+import { Calendar } from 'lucide-react'
 
 interface Task {
   id: string
@@ -64,7 +63,7 @@ export function ProgressChart({ tasks }: ProgressChartProps) {
   const overallProgress = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0
 
   // Calculate streak
-  const getStreak = () => {
+  const getStreak = useCallback(() => {
     if (tasks.length === 0) return 0
     
     const sortedTasks = tasks
@@ -72,7 +71,7 @@ export function ProgressChart({ tasks }: ProgressChartProps) {
       .sort((a, b) => new Date(b.completed_at!).getTime() - new Date(a.completed_at!).getTime())
     
     let streak = 0
-    let currentDate = new Date()
+    const currentDate = new Date()
     currentDate.setHours(0, 0, 0, 0)
     
     for (const task of sortedTasks) {
@@ -91,13 +90,13 @@ export function ProgressChart({ tasks }: ProgressChartProps) {
     }
     
     return streak
-  }
+  }, [tasks])
 
   useEffect(() => {
     if (isClient) {
       setCurrentStreak(getStreak())
     }
-  }, [isClient, tasks])
+  }, [isClient, tasks, getStreak])
 
   return (
     <div className="space-y-6">
@@ -126,7 +125,7 @@ export function ProgressChart({ tasks }: ProgressChartProps) {
             </h4>
             <div className="space-y-4">
               <div className="flex items-end justify-between gap-2 h-20">
-                {weeklyProgress.map((week, index) => (
+                {weeklyProgress.map((week, _index) => (
                   <div key={week.week} className="flex flex-col items-center flex-1">
                     <div className="w-full relative">
                       <div

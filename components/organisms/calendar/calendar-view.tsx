@@ -27,15 +27,18 @@ interface Task {
   }
 }
 
-interface CalendarViewProps {}
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+interface CalendarViewProps {
+  // Empty interface for future props
+}
 
-export function CalendarView({}: CalendarViewProps) {
+export function CalendarView(_props: CalendarViewProps) {
   const [currentDate, setCurrentDate] = useState(new Date())
   const [selectedDate, setSelectedDate] = useState<string | null>(null)
   const supabase = createClient()
 
   // Fetch tasks for current month
-  const { data: tasks = [], isLoading, isFetching } = useQuery({
+  const { data: tasks = [], isFetching } = useQuery<Task[]>({
     queryKey: ['calendar-tasks', currentDate.getFullYear(), currentDate.getMonth()],
     queryFn: async () => {
       const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1)
@@ -58,15 +61,15 @@ export function CalendarView({}: CalendarViewProps) {
         .order('scheduled_date')
 
       if (error) throw error
-      return data || []
+      return (data as Task[]) || []
     },
     staleTime: 60000, // Cache for 1 minute
-    keepPreviousData: true // Keep previous data while fetching new data
+    placeholderData: [] // Use placeholderData instead of keepPreviousData
   })
 
   // Fetch today's tasks
   const today = new Date().toISOString().split('T')[0]
-  const { data: todayTasks = [] } = useQuery({
+  const { data: todayTasks = [] } = useQuery<Task[]>({
     queryKey: ['today-tasks', today],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -85,7 +88,7 @@ export function CalendarView({}: CalendarViewProps) {
         .order('priority', { ascending: false })
 
       if (error) throw error
-      return data || []
+      return (data as Task[]) || []
     }
   })
 

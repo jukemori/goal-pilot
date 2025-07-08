@@ -1,6 +1,5 @@
 'use client'
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { CheckCircle, Clock, Target } from 'lucide-react'
 import { cn } from '@/lib/utils'
 

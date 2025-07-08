@@ -31,7 +31,7 @@ export function RegenerateRoadmapButton({ goalId }: RegenerateRoadmapButtonProps
         toast.success('Roadmap regenerated successfully!')
         router.refresh()
       }
-    } catch (error) {
+    } catch {
       toast.error('Failed to regenerate roadmap')
     } finally {
       setIsRegenerating(false)

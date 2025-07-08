@@ -4,25 +4,43 @@ import { useState, useEffect } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Clock, Calendar, CheckCircle2, Play, Download } from 'lucide-react'
+import { Clock, Calendar, CheckCircle2, Play } from 'lucide-react'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabase/client'
+
+interface LearningPhase {
+  id: string
+  phase_id: string
+  roadmap_id: string
+  phase_number: number
+  title: string
+  description: string
+  learning_objectives?: string[]
+  key_concepts?: string[]
+  skills_to_learn?: string[]
+  status?: string
+  duration_weeks?: number
+  start_date?: string
+  end_date?: string
+  taskCount: number
+  hasGeneratedTasks: boolean
+}
 
 interface LearningPhasesProps {
   roadmapId: string
   goalId: string
 }
 
-export function LearningPhases({ roadmapId, goalId }: LearningPhasesProps) {
+export function LearningPhases({ roadmapId, goalId: _goalId }: LearningPhasesProps) {
   const [generatingPhase, setGeneratingPhase] = useState<string | null>(null)
   const [hasTriggeredAutoCreate, setHasTriggeredAutoCreate] = useState(false)
   const queryClient = useQueryClient()
   const supabase = createClient()
 
   // Fetch learning phases with task counts
-  const { data: phases, isLoading, error } = useQuery({
+  const { data: phases, isLoading, error } = useQuery<LearningPhase[]>({
     queryKey: ['learning-phases', roadmapId],
     queryFn: async () => {
       console.log('Fetching learning phases for roadmap:', roadmapId)
@@ -85,7 +103,7 @@ export function LearningPhases({ roadmapId, goalId }: LearningPhasesProps) {
 
   // Generate tasks for a phase
   const generateTasksMutation = useMutation({
-    mutationFn: async (phase: any) => {
+    mutationFn: async (phase: LearningPhase) => {
       console.log('Generating tasks for phase:', phase)
       const response = await fetch('/api/tasks/generate-phase', {
         method: 'POST',
@@ -117,22 +135,18 @@ export function LearningPhases({ roadmapId, goalId }: LearningPhasesProps) {
     }
   })
 
-  // Export calendar
-  const handleExportCalendar = () => {
-    window.open(`/api/calendar/export?goalId=${goalId}&format=ics`, '_blank')
-  }
 
   // Auto-trigger phase creation if needed
   useEffect(() => {
     if (!phases || phases.length === 0) {
-      if (!isLoading && !error && !autoCreateMutation.isLoading && !autoCreateMutation.isSuccess && !hasTriggeredAutoCreate) {
+      if (!isLoading && !error && !autoCreateMutation.isPending && !autoCreateMutation.isSuccess && !hasTriggeredAutoCreate) {
         setHasTriggeredAutoCreate(true)
         autoCreateMutation.mutate()
       }
     }
   }, [phases, isLoading, error, autoCreateMutation, hasTriggeredAutoCreate])
 
-  if (isLoading || autoCreateMutation.isLoading) {
+  if (isLoading || autoCreateMutation.isPending) {
     return <div className="animate-pulse space-y-4">
       {[1, 2, 3].map(i => (
         <div key={i} className="h-32 bg-gray-200 rounded-lg" />
@@ -161,7 +175,6 @@ export function LearningPhases({ roadmapId, goalId }: LearningPhasesProps) {
       {phases.map((phase) => {
         const isActive = phase.status === 'active'
         const isCompleted = phase.status === 'completed'
-        const isPending = phase.status === 'pending'
         const hasGeneratedTasks = phase.hasGeneratedTasks
         
         return (
@@ -230,11 +243,11 @@ export function LearningPhases({ roadmapId, goalId }: LearningPhasesProps) {
               )}
 
               {/* Show learning objectives if available */}
-              {(phase as any).learning_objectives && (phase as any).learning_objectives.length > 0 && (
+              {phase.learning_objectives && phase.learning_objectives.length > 0 && (
                 <div>
                   <p className="text-sm font-medium mb-2">Learning Objectives:</p>
                   <ul className="text-sm text-gray-600 space-y-1">
-                    {(phase as any).learning_objectives.map((objective: string, index: number) => (
+                    {phase.learning_objectives?.map((objective: string, index: number) => (
                       <li key={index} className="flex items-start gap-2">
                         <div className="h-1.5 w-1.5 rounded-full bg-blue-400 mt-2 flex-shrink-0" />
                         {objective}
@@ -245,11 +258,11 @@ export function LearningPhases({ roadmapId, goalId }: LearningPhasesProps) {
               )}
 
               {/* Show key concepts if available */}
-              {(phase as any).key_concepts && (phase as any).key_concepts.length > 0 && (
+              {phase.key_concepts && phase.key_concepts.length > 0 && (
                 <div>
                   <p className="text-sm font-medium mb-2">Key Concepts:</p>
                   <div className="flex flex-wrap gap-1">
-                    {(phase as any).key_concepts.map((concept: string, index: number) => (
+                    {phase.key_concepts.map((concept: string, index: number) => (
                       <Badge key={index} variant="outline" className="text-xs">
                         {concept}
                       </Badge>

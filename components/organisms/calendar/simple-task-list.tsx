@@ -38,7 +38,7 @@ export function SimpleTaskList({ tasks, goalId: _goalId }: SimpleTaskListProps) 
         await completeTask(task.id)
         toast.success('Task completed!')
       }
-    } catch (_error) {
+    } catch {
       toast.error('Failed to update task')
     } finally {
       setLoadingTaskId(null)

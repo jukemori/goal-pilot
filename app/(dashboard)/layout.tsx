@@ -1,5 +1,4 @@
 import { Sidebar } from '@/components/organisms/sidebar/sidebar'
-import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { ensureUserProfile } from '@/app/actions/auth'
 

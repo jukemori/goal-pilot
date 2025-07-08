@@ -13,7 +13,7 @@ export async function ensureUserProfile() {
   }
 
   // Check if user profile exists in our users table
-  const { data: existingProfile, error: profileError } = await supabase
+  const { data: existingProfile } = await supabase
     .from('users')
     .select('id')
     .eq('id', user.id)
