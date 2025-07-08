@@ -89,32 +89,3 @@
     color: hsl(var(--muted-foreground)) !important;
   }
 }
-
-/* Toast/Sonner styles */
-[data-sonner-toaster] {
-  --normal-bg: hsl(var(--popover)) !important;
-  --normal-text: hsl(var(--popover-foreground)) !important;
-  --normal-border: hsl(var(--border)) !important;
-  --success-bg: hsl(var(--popover)) !important;
-  --success-text: hsl(var(--popover-foreground)) !important;
-  --success-border: hsl(var(--border)) !important;
-  --error-bg: hsl(var(--popover)) !important;
-  --error-text: hsl(var(--popover-foreground)) !important;
-  --error-border: hsl(var(--border)) !important;
-}
-
-[data-sonner-toast] {
-  background-color: hsl(var(--popover)) !important;
-  color: hsl(var(--popover-foreground)) !important;
-  border-color: hsl(var(--border)) !important;
-}
-
-[data-sonner-toast][data-type="success"] {
-  background-color: hsl(var(--popover)) !important;
-  color: hsl(var(--popover-foreground)) !important;
-}
-
-[data-sonner-toast][data-type="error"] {
-  background-color: hsl(var(--popover)) !important;
-  color: hsl(var(--popover-foreground)) !important;
-}
