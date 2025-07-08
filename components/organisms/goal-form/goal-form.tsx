@@ -6,7 +6,6 @@ import { goalFormSchema, type GoalFormData } from '@/lib/validations/goal'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -40,7 +39,7 @@ export function GoalForm({ onSubmit, defaultValues, isEdit = false }: GoalFormPr
     defaultValues: {
       title: '',
       description: '',
-      current_level: 'beginner',
+      current_level: '',
       start_date: today,
       target_date: '',
       daily_time_commitment: 30,
@@ -129,21 +128,15 @@ export function GoalForm({ onSubmit, defaultValues, isEdit = false }: GoalFormPr
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Current Level</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select your current level" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="beginner">Beginner</SelectItem>
-                      <SelectItem value="intermediate">Intermediate</SelectItem>
-                      <SelectItem value="advanced">Advanced</SelectItem>
-                      <SelectItem value="expert">Expert</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <FormControl>
+                    <Textarea 
+                      placeholder="e.g., I only know HTML and CSS basics, learning JavaScript... or I can say 'hola' and have simple conversations in Spanish..."
+                      {...field}
+                      rows={3}
+                    />
+                  </FormControl>
                   <FormDescription>
-                    Your current skill level in this area
+                    Describe your current skill level and what you already know in this area
                   </FormDescription>
                   <FormMessage />
                 </FormItem>

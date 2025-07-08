@@ -23,7 +23,7 @@ export async function generateRoadmap(goalId: string) {
   // Generate the roadmap using OpenAI
   const prompt = generateRoadmapPrompt(
     goal.title,
-    goal.current_level || 'beginner',
+    goal.current_level || 'I am a complete beginner with no prior experience',
     goal.daily_time_commitment || 30,
     goal.target_date,
     goal.weekly_schedule as Record<string, boolean>,

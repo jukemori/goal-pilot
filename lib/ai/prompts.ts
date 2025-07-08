@@ -35,16 +35,21 @@ CRITICAL TIMELINE CALCULATION (MUST FOLLOW):
 YOUR PHASES MUST TOTAL EXACTLY ${totalWeeksNeeded} WEEKS!
 
 Goal: ${goal}
-Current Level: ${currentLevel}
+Current Level Description: ${currentLevel}
 Daily Time Commitment: ${timeCommitment} minutes
 Available Days: ${availableDays}
 Start Date: ${startDate}
 ${targetDate ? `Target Completion Date: ${targetDate}` : 'No specific deadline'}
 
-IMPORTANT: All dates must be in ${currentYear} or later. Use the start date (${startDate}) as your reference point.
+IMPORTANT: 
+- All dates must be in ${currentYear} or later. Use the start date (${startDate}) as your reference point.
+- Carefully analyze the current level description to understand the user's starting point
+- Design phases that build appropriately from their specific current knowledge/skills
+- If they mention specific skills, technologies, or knowledge areas, incorporate these into early phases
+- Avoid repeating content they already know based on their description
 
 PHASE REQUIREMENTS:
-- Create 8-15 comprehensive learning phases that cover the COMPLETE journey from ${currentLevel} to mastery
+- Create 8-15 comprehensive learning phases that cover the COMPLETE journey from the user's current level to mastery
 - Phase durations must be realistic for ${totalWeeksNeeded} total weeks:
   * Early foundation phases: 20-40 weeks each
   * Intermediate phases: 30-50 weeks each  
@@ -78,7 +83,7 @@ PHASE DETAIL REQUIREMENTS:
 
 JSON format:
 {
-  "overview": "Comprehensive overview of the complete learning journey from ${currentLevel} to mastery",
+  "overview": "Comprehensive overview of the complete learning journey from the user's current level to mastery",
   "phases": [
     {
       "id": "phase-1",
