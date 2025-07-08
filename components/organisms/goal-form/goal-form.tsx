@@ -12,6 +12,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { toast } from 'sonner'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { motion, AnimatePresence } from 'framer-motion'
+import { LoadingSpinner, PulsingDots } from '@/components/ui/loading-spinner'
 
 interface GoalFormProps {
   onSubmit: (data: FormData) => Promise<{ success: boolean; goalId?: string }>
@@ -263,10 +265,31 @@ export function GoalForm({ onSubmit, defaultValues, isEdit = false }: GoalFormPr
           </CardContent>
         </Card>
 
-        <Button type="submit" disabled={isLoading} className="w-full">
-          {isLoading 
-            ? (isEdit ? 'Updating...' : 'Creating...') 
-            : (isEdit ? 'Update Goal' : 'Create Goal')}
+        <Button type="submit" disabled={isLoading} className="w-full relative overflow-hidden">
+          <AnimatePresence mode="wait">
+            {isLoading ? (
+              <motion.div
+                key="loading"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="flex items-center justify-center"
+              >
+                <LoadingSpinner size="sm" className="mr-2" />
+                <span>{isEdit ? 'Updating Goal...' : 'Creating Goal & Roadmap'}</span>
+                <PulsingDots className="ml-2" />
+              </motion.div>
+            ) : (
+              <motion.span
+                key="normal"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+              >
+                {isEdit ? 'Update Goal' : 'Create Goal'}
+              </motion.span>
+            )}
+          </AnimatePresence>
         </Button>
       </form>
     </Form>

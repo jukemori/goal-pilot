@@ -4,6 +4,8 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Trash2 } from 'lucide-react'
 import { deleteGoal } from '@/app/actions/goals'
+import { motion, AnimatePresence } from 'framer-motion'
+import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -58,9 +60,34 @@ export function DeleteGoalButton({ goalId, goalTitle }: DeleteGoalButtonProps) {
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction
             onClick={handleDelete}
-            className="bg-red-600 hover:bg-red-700 text-white"
+            className="bg-red-600 hover:bg-red-700 text-white relative overflow-hidden"
+            disabled={isDeleting}
           >
-            {isDeleting ? 'Deleting...' : 'Delete Goal'}
+            <AnimatePresence mode="wait">
+              {isDeleting ? (
+                <motion.div
+                  key="deleting"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  className="flex items-center gap-2"
+                >
+                  <LoadingSpinner size="sm" />
+                  <span>Deleting Goal...</span>
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="normal"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  Delete Goal
+                </motion.div>
+              )}
+            </AnimatePresence>
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

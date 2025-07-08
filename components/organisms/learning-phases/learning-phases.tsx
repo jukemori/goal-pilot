@@ -4,9 +4,10 @@ import { useState, useEffect } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Clock, Calendar, CheckCircle2, Play } from 'lucide-react'
+import { Clock, Calendar, CheckCircle2, Play, Sparkles } from 'lucide-react'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabase/client'
 import { LearningPhase } from '@/types'
@@ -174,21 +175,27 @@ export function LearningPhases({ roadmapId, goalId: _goalId }: LearningPhasesPro
 
   return (
     <div className="space-y-4">
-      {phases.map((phase) => {
+      {phases.map((phase, index) => {
         const isActive = phase.status === 'active'
         const isCompleted = phase.status === 'completed'
         const hasGeneratedTasks = phase.hasGeneratedTasks
         
         return (
-          <Card 
+          <motion.div
             key={phase.id}
-            className={cn(
-              "transition-all",
-              isActive && "border-green-500 shadow-md",
-              isCompleted && "opacity-75",
-              hasGeneratedTasks && "border-green-500"
-            )}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.1, duration: 0.5 }}
+            whileHover={{ y: -5 }}
           >
+            <Card 
+              className={cn(
+                "transition-all cursor-pointer",
+                isActive && "border-green-500 shadow-md",
+                isCompleted && "opacity-75",
+                hasGeneratedTasks && "border-green-500"
+              )}
+            >
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
@@ -282,21 +289,55 @@ export function LearningPhases({ roadmapId, goalId: _goalId }: LearningPhasesPro
                     generateTasksMutation.mutate(phase)
                   }}
                   disabled={generatingPhase === phase.id || isCompleted || hasGeneratedTasks}
-                  className="gap-2"
+                  className="gap-2 relative overflow-hidden"
                 >
-                  {generatingPhase === phase.id ? (
-                    <>Generating...</>
-                  ) : hasGeneratedTasks ? (
-                    <>
-                      <CheckCircle2 className="h-3 w-3" />
-                      Tasks Generated ({phase.taskCount})
-                    </>
-                  ) : (
-                    <>
-                      <Play className="h-3 w-3" />
-                      Generate Tasks
-                    </>
-                  )}
+                  <AnimatePresence mode="wait">
+                    {generatingPhase === phase.id ? (
+                      <motion.div
+                        key="generating"
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.8 }}
+                        className="flex items-center gap-2"
+                      >
+                        <motion.div
+                          animate={{ rotate: 360 }}
+                          transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                        >
+                          <Sparkles className="h-3 w-3" />
+                        </motion.div>
+                        <span>Generating...</span>
+                      </motion.div>
+                    ) : hasGeneratedTasks ? (
+                      <motion.div
+                        key="completed"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        className="flex items-center gap-2"
+                      >
+                        <motion.div
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                        >
+                          <CheckCircle2 className="h-3 w-3" />
+                        </motion.div>
+                        <span>Tasks Generated ({phase.taskCount})</span>
+                      </motion.div>
+                    ) : (
+                      <motion.div
+                        key="normal"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        className="flex items-center gap-2"
+                      >
+                        <Play className="h-3 w-3" />
+                        <span>Generate Tasks</span>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </Button>
 
                 {isCompleted && (
@@ -308,6 +349,7 @@ export function LearningPhases({ roadmapId, goalId: _goalId }: LearningPhasesPro
               </div>
             </CardContent>
           </Card>
+          </motion.div>
         )
       })}
     </div>
