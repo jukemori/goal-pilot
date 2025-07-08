@@ -35,6 +35,7 @@ export function DeleteGoalButton({ goalId, goalTitle }: DeleteGoalButtonProps) {
       size="sm" 
       disabled={isDeleting}
       onClick={handleDelete}
+      className="bg-red-600 hover:bg-red-700 text-white"
     >
       <Trash2 className="h-4 w-4 mr-2" />
       {isDeleting ? 'Deleting...' : 'Delete'}
