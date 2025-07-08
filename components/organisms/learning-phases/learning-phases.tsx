@@ -175,27 +175,21 @@ export function LearningPhases({ roadmapId, goalId: _goalId }: LearningPhasesPro
 
   return (
     <div className="space-y-4">
-      {phases.map((phase, index) => {
+      {phases.map((phase) => {
         const isActive = phase.status === 'active'
         const isCompleted = phase.status === 'completed'
         const hasGeneratedTasks = phase.hasGeneratedTasks
         
         return (
-          <motion.div
+          <Card 
             key={phase.id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.1, duration: 0.5 }}
-            whileHover={{ y: -5 }}
+            className={cn(
+              "transition-all",
+              isActive && "border-green-500 shadow-md",
+              isCompleted && "opacity-75",
+              hasGeneratedTasks && "border-green-500"
+            )}
           >
-            <Card 
-              className={cn(
-                "transition-all cursor-pointer",
-                isActive && "border-green-500 shadow-md",
-                isCompleted && "opacity-75",
-                hasGeneratedTasks && "border-green-500"
-              )}
-            >
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
@@ -349,7 +343,6 @@ export function LearningPhases({ roadmapId, goalId: _goalId }: LearningPhasesPro
               </div>
             </CardContent>
           </Card>
-          </motion.div>
         )
       })}
     </div>
