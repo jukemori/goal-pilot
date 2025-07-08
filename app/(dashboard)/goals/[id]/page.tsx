@@ -6,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { DeleteGoalButton } from '@/components/molecules/delete-goal-button'
-import { Edit3, Calendar, Clock, Target, CheckCircle, Play, Pause, BarChart3, BookOpen, TrendingUp, Activity } from 'lucide-react'
+import { Edit3, Calendar, Clock, Target, CheckCircle, BarChart3, BookOpen, TrendingUp, Activity } from 'lucide-react'
 import { RoadmapView } from '@/components/organisms/roadmap-view/roadmap-view'
 import { TaskList } from '@/components/organisms/task-list/task-list'
 import { ProgressChart } from '@/components/molecules/progress-chart/progress-chart'
@@ -69,7 +69,6 @@ export default async function GoalPage({ params }: GoalPageProps) {
   const statusColors = {
     active: 'bg-primary/10 text-primary border-primary/20',
     completed: 'bg-blue-50 text-blue-700 border-blue-200',
-    paused: 'bg-gray-50 text-gray-700 border-gray-200',
   }
 
   return (
@@ -115,19 +114,6 @@ export default async function GoalPage({ params }: GoalPageProps) {
                   Edit
                 </Button>
               </Link>
-              <Button variant="outline" size="sm">
-                {goal.status === 'active' ? (
-                  <>
-                    <Pause className="h-4 w-4 mr-2" />
-                    Pause
-                  </>
-                ) : (
-                  <>
-                    <Play className="h-4 w-4 mr-2" />
-                    Resume
-                  </>
-                )}
-              </Button>
               <DeleteGoalButton goalId={goal.id} goalTitle={goal.title} />
             </div>
           </div>
