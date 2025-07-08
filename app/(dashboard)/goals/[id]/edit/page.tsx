@@ -28,7 +28,7 @@ export default async function EditGoalPage({ params }: EditGoalPageProps) {
     start_date: goal.start_date,
     target_date: goal.target_date || '',
     daily_time_commitment: goal.daily_time_commitment,
-    weekly_schedule: goal.weekly_schedule as any,
+    weekly_schedule: goal.weekly_schedule as Record<string, boolean>,
   }
 
   async function handleUpdate(formData: FormData) {

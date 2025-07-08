@@ -33,7 +33,7 @@ export async function GET(
     }
 
     return NextResponse.json(tasks)
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
   }
 }

@@ -6,8 +6,33 @@ import { cn } from '@/lib/utils'
 interface RoadmapViewProps {
   roadmap: {
     id: string
-    ai_generated_plan: any
-    milestones: any[]
+    ai_generated_plan: {
+      overview?: string
+      phases: Array<{
+        title: string
+        description: string
+        duration_weeks: number
+        learning_objectives?: string[]
+        key_concepts?: string[]
+        deliverables?: string[]
+      }>
+      timeline: {
+        total_weeks: number
+        daily_commitment: string
+      }
+      estimated_completion_date?: string
+      total_hours_required?: number
+    }
+    milestones: Array<{
+      id?: string
+      week: number
+      title: string
+      description: string
+      deliverables: string[]
+      completed?: boolean
+      completed_date?: string
+      target_date?: string
+    }>
     created_at: string
   }
 }
@@ -39,7 +64,7 @@ export function RoadmapView({ roadmap }: RoadmapViewProps) {
         <div>
           <h3 className="font-medium mb-4">Milestones</h3>
           <div className="space-y-3">
-            {roadmap.milestones.map((milestone: any, index: number) => (
+            {roadmap.milestones.map((milestone, index: number) => (
               <div key={milestone.id || index} className="flex items-start gap-3 p-3 border rounded-lg">
                 <div className={cn(
                   "mt-1 rounded-full h-2 w-2 flex-shrink-0",

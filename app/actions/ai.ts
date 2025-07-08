@@ -41,7 +41,14 @@ export async function generateRoadmap(goalId: string) {
       max_tokens: 3000,
     })
 
-    let roadmapData: RoadmapPlan & { milestones: any[] }
+    let roadmapData: RoadmapPlan & { 
+      milestones: Array<{
+        week: number
+        title: string
+        description: string
+        deliverables: string[]
+      }>
+    }
     
     try {
       let content = completion.choices[0].message.content!
@@ -102,7 +109,16 @@ export async function generateRoadmap(goalId: string) {
 
 async function generateAllTasks(
   roadmapId: string,
-  phases: any[],
+  phases: Array<{
+    title: string
+    daily_tasks?: Array<{
+      title: string
+      description?: string
+      estimated_minutes?: number
+      type?: string
+    }>
+    tasks?: string[]
+  }>,
   startDate: string,
   weeklySchedule: Record<string, boolean>
 ) {
@@ -113,9 +129,15 @@ async function generateAllTasks(
     .filter(([_, available]) => available)
     .map(([day]) => getDayNumber(day))
   
-  const allTasks: any[] = []
-  let currentDate = new Date(startDate)
-  let taskCounter = 0
+  const allTasks: Array<{
+    roadmap_id: string
+    title: string
+    description: string
+    scheduled_date: string
+    estimated_duration: number
+    priority: number
+  }> = []
+  const currentDate = new Date(startDate)
   
   // Generate tasks for all phases
   for (const phase of phases) {
@@ -123,14 +145,19 @@ async function generateAllTasks(
     
     // If using old format (tasks array), convert to daily_tasks format
     const normalizedTasks = Array.isArray(dailyTasks) && typeof dailyTasks[0] === 'string'
-      ? dailyTasks.map((title: string, index: number) => ({
+      ? (dailyTasks as string[]).map((title: string, index: number) => ({
           day: index + 1,
           title,
           description: `Part of ${phase.title}`,
           estimated_minutes: 30,
           type: 'practice'
         }))
-      : dailyTasks
+      : (dailyTasks as Array<{
+          title: string
+          description?: string
+          estimated_minutes?: number
+          type?: string
+        }>)
     
     // Generate tasks for this phase
     for (const dailyTask of normalizedTasks) {
@@ -145,15 +172,13 @@ async function generateAllTasks(
         description: dailyTask.description || `Part of ${phase.title}`,
         scheduled_date: currentDate.toISOString().split('T')[0],
         estimated_duration: dailyTask.estimated_minutes || 30,
-        priority: getPriorityFromType(dailyTask.type),
+        priority: getPriorityFromType(dailyTask.type || 'practice'),
       })
       
       // Move to next available day
       do {
         currentDate.setDate(currentDate.getDate() + 1)
       } while (!availableDays.includes(currentDate.getDay()))
-      
-      taskCounter++
     }
   }
 

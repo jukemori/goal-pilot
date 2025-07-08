@@ -53,8 +53,27 @@ export async function POST(request: NextRequest) {
     }
 
     // Extract phase data from the roadmap
-    const phases = phase.roadmaps.ai_generated_plan.phases as any[]
-    const phaseData = phases.find((p: any) => p.id === phase.phase_id) || phases[phase.phase_number - 1]
+    const phases = phase.roadmaps.ai_generated_plan.phases as Array<{
+      id?: string
+      title: string
+      description?: string
+      skills_to_learn?: string[]
+      learning_objectives?: string[]
+      key_concepts?: string[]
+      daily_tasks?: Array<{
+        title: string
+        description?: string
+        estimated_minutes?: number
+        type?: string
+      }>
+      task_patterns?: Array<{
+        type: string
+        title: string
+        description: string
+        frequency: string
+      }>
+    }>
+    const phaseData = phases.find((p) => p.id === phase.phase_id) || phases[phase.phase_number - 1]
     
     if (!phaseData) {
       return NextResponse.json({ error: 'Phase data not found in roadmap' }, { status: 404 })
@@ -76,7 +95,7 @@ export async function POST(request: NextRequest) {
     
     const prompt = generateTasksForPhasePrompt(
       phaseData.title,
-      phaseData.description,
+      phaseData.description || 'Learning phase',
       phaseData.skills_to_learn || [],
       phaseData.learning_objectives || [],
       phaseData.key_concepts || [],
@@ -100,7 +119,7 @@ export async function POST(request: NextRequest) {
       max_tokens: 4000, // Maximum supported by the model
     })
 
-    let taskData
+    // let _taskData
     try {
       let content = completion.choices[0].message.content!
       console.log('AI task generation response length:', content.length)
@@ -116,7 +135,7 @@ export async function POST(request: NextRequest) {
         content = content.substring(0, jsonEnd + 1)
       }
       
-      taskData = JSON.parse(content)
+      // _taskData = JSON.parse(content) // AI generated data not currently used
     } catch (parseError) {
       console.error('Failed to parse AI task generation response:', parseError)
       return NextResponse.json({ error: 'Failed to generate tasks' }, { status: 500 })
@@ -132,15 +151,11 @@ export async function POST(request: NextRequest) {
 
     const tasks = []
     // Create dates consistently to ensure correct weekday calculation
-    let currentDate = createConsistentDate(phase.start_date)
+    const currentDate = createConsistentDate(phase.start_date)
     const endDate = createConsistentDate(phase.end_date)
     
     console.log('Phase start date:', phase.start_date, '-> Current date:', currentDate, 'Day of week:', currentDate.getDay())
     console.log('Phase end date:', phase.end_date, '-> End date:', endDate)
-    
-    // Use new pattern-based approach or fallback to old format
-    const taskPatterns = taskData.task_patterns || []
-    const dailyTasks = taskData.daily_tasks || []
 
     // For now, use a simple approach to ensure full coverage
     // Generate tasks for the entire phase duration
@@ -241,9 +256,3 @@ function getPriorityFromType(type: string): number {
   return priorityMap[type] || 3
 }
 
-function getDifficultyLevel(weekInPattern: number): string {
-  if (weekInPattern <= 1) return 'basic'
-  if (weekInPattern <= 2) return 'intermediate'
-  if (weekInPattern <= 3) return 'advanced'
-  return 'mastery'
-}

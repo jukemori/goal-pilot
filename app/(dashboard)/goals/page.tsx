@@ -69,7 +69,25 @@ export default async function GoalsPage() {
   )
 }
 
-function GoalCard({ goal }: { goal: any }) {
+interface Goal {
+  id: string
+  title: string
+  description: string
+  target_level: string
+  current_level: string
+  status: string
+  created_at: string
+  start_date: string
+  target_date: string
+  daily_time_commitment: number
+  progress?: number
+  roadmaps?: Array<{
+    id: string
+    tasks: Array<{ completed: boolean }>
+  }>
+}
+
+function GoalCard({ goal }: { goal: Goal }) {
   const levelColors = {
     beginner: 'bg-green-100 text-green-800',
     intermediate: 'bg-blue-100 text-blue-800',
@@ -109,7 +127,7 @@ function GoalCard({ goal }: { goal: any }) {
             <div className="flex items-center gap-2">
               <Target className="h-4 w-4" />
               <span>
-                {goal.roadmaps.length > 0 
+                {goal.roadmaps && goal.roadmaps.length > 0 
                   ? 'Roadmap ready' 
                   : 'Generating roadmap...'}
               </span>

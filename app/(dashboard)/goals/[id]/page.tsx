@@ -14,6 +14,17 @@ import { LearningPhases } from '@/components/organisms/learning-phases/learning-
 import { RegenerateRoadmapButton } from '@/components/molecules/regenerate-roadmap-button'
 import { cn } from '@/lib/utils'
 
+interface Task {
+  id: string
+  title: string
+  description: string | null
+  scheduled_date: string
+  estimated_duration: number
+  completed: boolean
+  completed_at: string | null
+  priority: number
+}
+
 interface GoalPageProps {
   params: Promise<{ id: string }>
 }
@@ -53,7 +64,7 @@ export default async function GoalPage({ params }: GoalPageProps) {
 
   const roadmap = goal.roadmaps[0]
   const tasks = roadmap?.tasks || []
-  const completedTasks = tasks.filter((task: any) => task.completed)
+  const completedTasks = tasks.filter((task: Task) => task.completed)
   const totalTasks = tasks.length
   const progressPercentage = totalTasks > 0 ? Math.round((completedTasks.length / totalTasks) * 100) : 0
   
@@ -187,8 +198,8 @@ export default async function GoalPage({ params }: GoalPageProps) {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">
-                  {Math.round((completedTasks.reduce((acc: number, task: any) => 
-                    acc + (task.actual_duration || task.estimated_duration || 0), 0)) / 60)}h
+                  {Math.round((completedTasks.reduce((acc: number, task: Task) => 
+                    acc + (task.estimated_duration || 0), 0)) / 60)}h
                 </div>
                 <p className="text-xs text-muted-foreground">Total hours</p>
               </CardContent>
@@ -201,7 +212,7 @@ export default async function GoalPage({ params }: GoalPageProps) {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">
-                  {tasks.filter((task: any) => {
+                  {tasks.filter((task: Task) => {
                     const today = new Date().toISOString().split('T')[0]
                     return task.scheduled_date === today
                   }).length}

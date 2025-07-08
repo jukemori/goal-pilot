@@ -125,12 +125,17 @@ interface Phase {
   key_concepts?: string[]
   prerequisites?: string[]
   outcomes?: string[]
-  daily_tasks?: any[]
-  tasks?: any[]
+  daily_tasks?: Array<{
+    title: string
+    description?: string
+    estimated_minutes?: number
+    type?: string
+  }>
+  tasks?: string[]
 }
 
 async function createLearningPhases(
-  supabase: any,
+  supabase: any, // Supabase client type from external library
   roadmapId: string,
   phases: Phase[],
   startDate: string
@@ -182,96 +187,4 @@ async function createLearningPhases(
   }
 }
 
-async function generateAllTasksForAPI(
-  supabase: any,
-  roadmapId: string,
-  phases: Phase[],
-  startDate: string,
-  weeklySchedule: Record<string, boolean>
-) {
-  // Get available days of the week
-  const availableDays = Object.entries(weeklySchedule)
-    .filter(([_, available]) => available)
-    .map(([day]) => getDayNumber(day))
-  
-  const allTasks: any[] = []
-  let currentDate = new Date(startDate)
-  
-  // Generate tasks for all phases
-  for (let phaseIndex = 0; phaseIndex < phases.length; phaseIndex++) {
-    const phase = phases[phaseIndex]
-    const phaseId = phase.id || `phase-${phaseIndex + 1}`
-    const dailyTasks = phase.daily_tasks || phase.tasks || []
-    
-    // If using old format (tasks array), convert to daily_tasks format
-    const normalizedTasks = Array.isArray(dailyTasks) && typeof dailyTasks[0] === 'string'
-      ? dailyTasks.map((title: string, index: number) => ({
-          day: index + 1,
-          title,
-          description: `Part of ${phase.title}`,
-          estimated_minutes: 30,
-          type: 'practice'
-        }))
-      : dailyTasks
-    
-    // Generate tasks for this phase
-    for (const dailyTask of normalizedTasks) {
-      // Find next available day
-      while (!availableDays.includes(currentDate.getDay())) {
-        currentDate.setDate(currentDate.getDate() + 1)
-      }
-      
-      allTasks.push({
-        roadmap_id: roadmapId,
-        title: dailyTask.title,
-        description: dailyTask.description || `Part of ${phase.title}`,
-        scheduled_date: currentDate.toISOString().split('T')[0],
-        estimated_duration: dailyTask.estimated_minutes || 30,
-        priority: getPriorityFromType(dailyTask.type),
-        phase_id: phaseId,
-        phase_number: phaseIndex + 1
-      })
-      
-      // Move to next available day
-      do {
-        currentDate.setDate(currentDate.getDate() + 1)
-      } while (!availableDays.includes(currentDate.getDay()))
-    }
-  }
 
-  // Insert all tasks
-  if (allTasks.length > 0) {
-    const { error } = await supabase
-      .from('tasks')
-      .insert(allTasks)
-
-    if (error) {
-      console.error('Failed to create tasks:', error)
-    } else {
-      console.log(`Generated ${allTasks.length} tasks for roadmap`)
-    }
-  }
-}
-
-function getDayNumber(dayName: string): number {
-  const dayMap: Record<string, number> = {
-    sunday: 0,
-    monday: 1,
-    tuesday: 2,
-    wednesday: 3,
-    thursday: 4,
-    friday: 5,
-    saturday: 6
-  }
-  return dayMap[dayName.toLowerCase()] ?? 1
-}
-
-function getPriorityFromType(type: string): number {
-  const priorityMap: Record<string, number> = {
-    study: 5,
-    practice: 4,
-    exercise: 3,
-    review: 2
-  }
-  return priorityMap[type] || 3
-}

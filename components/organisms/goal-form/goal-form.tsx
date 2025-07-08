@@ -71,7 +71,7 @@ export function GoalForm({ onSubmit, defaultValues, isEdit = false }: GoalFormPr
       formData.append('weekly_schedule', JSON.stringify(values.weekly_schedule))
       
       await onSubmit(formData)
-    } catch (error) {
+    } catch {
       toast.error(isEdit ? 'Failed to update goal' : 'Failed to create goal')
     } finally {
       setIsLoading(false)
@@ -236,7 +236,7 @@ export function GoalForm({ onSubmit, defaultValues, isEdit = false }: GoalFormPr
                       <FormField
                         key={day.id}
                         control={form.control}
-                        name={`weekly_schedule.${day.id}` as any}
+                        name={`weekly_schedule.${day.id}` as const}
                         render={({ field }) => (
                           <FormItem className="flex items-center space-x-2">
                             <FormControl>
