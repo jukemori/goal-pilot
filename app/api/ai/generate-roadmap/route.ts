@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { openai, AI_MODELS } from '@/lib/ai/openai'
 import { generateRoadmapPrompt, ROADMAP_SYSTEM_PROMPT } from '@/lib/ai/prompts'
+import { Json } from '@/types/database'
 
 export async function POST(request: NextRequest) {
   try {
@@ -81,8 +82,8 @@ export async function POST(request: NextRequest) {
       .from('roadmaps')
       .insert({
         goal_id: goalId,
-        ai_generated_plan: roadmapData as any,
-        milestones: (roadmapData.milestones || []) as any,
+        ai_generated_plan: roadmapData as unknown as Json,
+        milestones: (roadmapData.milestones || []) as unknown as Json,
         ai_model: AI_MODELS.roadmap,
         prompt_version: 'v1',
       })

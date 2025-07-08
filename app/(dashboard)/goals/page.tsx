@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { Plus, Calendar, Clock, Target } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { Goal as BaseGoal } from '@/types'
+import { Tables } from '@/types/database'
 
 export default async function GoalsPage() {
   const supabase = await createClient()
@@ -39,7 +39,7 @@ export default async function GoalsPage() {
         {activeGoals.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {activeGoals.map((goal) => (
-              <GoalCard key={goal.id} goal={goal as any} />
+              <GoalCard key={goal.id} goal={goal as unknown as Parameters<typeof GoalCard>[0]['goal']} />
             ))}
           </div>
         ) : (
@@ -61,7 +61,7 @@ export default async function GoalsPage() {
           <h2 className="text-xl font-semibold mb-4">Completed Goals</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {completedGoals.map((goal) => (
-              <GoalCard key={goal.id} goal={goal as any} />
+              <GoalCard key={goal.id} goal={goal as unknown as Parameters<typeof GoalCard>[0]['goal']} />
             ))}
           </div>
         </div>
@@ -70,15 +70,13 @@ export default async function GoalsPage() {
   )
 }
 
-interface GoalWithRoadmaps extends BaseGoal {
-  progress?: number
+function GoalCard({ goal }: { goal: Tables<'goals'> & { 
+  progress?: number;
   roadmaps?: Array<{
-    id: string
-    tasks: Array<{ completed: boolean }>
-  }>
-}
-
-function GoalCard({ goal }: { goal: GoalWithRoadmaps }) {
+    id: string;
+    tasks: Array<{ completed: boolean }>;
+  }>;
+} }) {
   const levelColors = {
     beginner: 'bg-green-100 text-green-800',
     intermediate: 'bg-blue-100 text-blue-800',

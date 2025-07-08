@@ -10,17 +10,9 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { completeTask, uncompleteTask, rescheduleTask } from '@/app/actions/tasks'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
+import { Tables } from '@/types/database'
 
-interface Task {
-  id: string
-  title: string
-  description: string | null
-  scheduled_date: string
-  estimated_duration: number
-  completed: boolean
-  completed_at: string | null
-  priority: number
-}
+type Task = Tables<'tasks'>
 
 interface TaskListProps {
   tasks: Task[]
@@ -305,9 +297,9 @@ export function TaskList({ tasks, goalId: _goalId, pageSize = 20 }: TaskListProp
                       </h4>
                       <Badge 
                         variant="outline" 
-                        className={cn("text-xs", getPriorityColor(task.priority))}
+                        className={cn("text-xs", getPriorityColor(task.priority || 3))}
                       >
-                        {getPriorityLabel(task.priority)}
+                        {getPriorityLabel(task.priority || 3)}
                       </Badge>
                     </div>
                     

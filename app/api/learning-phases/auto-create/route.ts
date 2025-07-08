@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { Json } from '@/types/database'
 
 export async function POST(request: NextRequest) {
   try {
@@ -43,7 +44,19 @@ export async function POST(request: NextRequest) {
     }
 
     // Extract phases from roadmap
-    const phases = (roadmap.ai_generated_plan as any)?.phases || []
+    const aiPlan = roadmap.ai_generated_plan as Json
+    const planData = aiPlan as { phases?: Array<{ 
+      id?: string; 
+      title: string; 
+      description?: string; 
+      skills_to_learn?: string[];
+      learning_objectives?: string[];
+      key_concepts?: string[];
+      prerequisites?: string[];
+      outcomes?: string[];
+      duration_weeks?: number;
+    }> }
+    const phases = planData?.phases || []
     if (phases.length === 0) {
       return NextResponse.json({ error: 'No phases found in roadmap' }, { status: 400 })
     }

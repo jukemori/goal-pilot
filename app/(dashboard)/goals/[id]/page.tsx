@@ -14,17 +14,6 @@ import { LearningPhases } from '@/components/organisms/learning-phases/learning-
 import { RegenerateRoadmapButton } from '@/components/molecules/regenerate-roadmap-button'
 import { cn } from '@/lib/utils'
 
-interface Task {
-  id: string
-  title: string
-  description: string | null
-  scheduled_date: string
-  estimated_duration: number
-  completed: boolean
-  completed_at: string | null
-  priority: number
-}
-
 interface GoalPageProps {
   params: Promise<{ id: string }>
 }
@@ -235,7 +224,7 @@ export default async function GoalPage({ params }: GoalPageProps) {
             </CardHeader>
             <CardContent>
               {roadmap ? (
-                <RoadmapView roadmap={roadmap as any} />
+                <RoadmapView roadmap={roadmap as unknown as Parameters<typeof RoadmapView>[0]['roadmap']} />
               ) : (
                 <div className="text-center py-8">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
@@ -281,7 +270,7 @@ export default async function GoalPage({ params }: GoalPageProps) {
               <p className="text-sm text-muted-foreground">Track your completion rate and milestones</p>
             </div>
             <div className="bg-card rounded-lg border p-6">
-              <ProgressChart tasks={tasks as any} />
+              <ProgressChart tasks={tasks as unknown as Parameters<typeof ProgressChart>[0]['tasks']} />
             </div>
           </div>
 
@@ -292,7 +281,7 @@ export default async function GoalPage({ params }: GoalPageProps) {
               <p className="text-sm text-muted-foreground">Your daily action items</p>
             </div>
             <div className="bg-card rounded-lg border p-6">
-              <TaskList tasks={tasks as any} goalId={goal.id} />
+              <TaskList tasks={tasks as unknown as Parameters<typeof TaskList>[0]['tasks']} goalId={goal.id} />
             </div>
           </div>
         </TabsContent>

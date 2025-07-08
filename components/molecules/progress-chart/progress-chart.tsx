@@ -2,14 +2,9 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { Calendar } from 'lucide-react'
+import { Tables } from '@/types/database'
 
-interface Task {
-  id: string
-  title: string
-  scheduled_date: string
-  completed: boolean
-  completed_at: string | null
-}
+type Task = Tables<'tasks'>
 
 interface ProgressChartProps {
   tasks: Task[]

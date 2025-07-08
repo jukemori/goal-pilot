@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { openai, AI_MODELS } from '@/lib/ai/openai'
 import { generateTasksForPhasePrompt, TASK_GENERATION_SYSTEM_PROMPT } from '@/lib/ai/prompts'
+import { Json } from '@/types/database'
 
 export async function POST(request: NextRequest) {
   try {
@@ -52,27 +53,17 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    // Extract phase data from the roadmap
-    const phases = (phase.roadmaps.ai_generated_plan as any)?.phases as Array<{
-      id?: string
-      title: string
-      description?: string
-      skills_to_learn?: string[]
-      learning_objectives?: string[]
-      key_concepts?: string[]
-      daily_tasks?: Array<{
-        title: string
-        description?: string
-        estimated_minutes?: number
-        type?: string
-      }>
-      task_patterns?: Array<{
-        type: string
-        title: string
-        description: string
-        frequency: string
-      }>
-    }>
+    // Extract phase data from the roadmap - cast to Json then parse
+    const aiPlan = phase.roadmaps.ai_generated_plan as Json
+    const planData = aiPlan as { phases?: Array<{ 
+      id?: string; 
+      title: string; 
+      description?: string; 
+      skills_to_learn?: string[];
+      learning_objectives?: string[];
+      key_concepts?: string[];
+    }> }
+    const phases = planData?.phases || []
     const phaseData = phases.find((p) => p.id === phase.phase_id) || phases[phase.phase_number - 1]
     
     if (!phaseData) {
