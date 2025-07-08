@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Extract phase data from the roadmap
-    const phases = phase.roadmaps.ai_generated_plan.phases as Array<{
+    const phases = (phase.roadmaps.ai_generated_plan as any)?.phases as Array<{
       id?: string
       title: string
       description?: string
@@ -83,7 +83,7 @@ export async function POST(request: NextRequest) {
     const { data: goal, error: goalError } = await supabase
       .from('goals')
       .select('title, daily_time_commitment')
-      .eq('id', phase.roadmaps.goal_id)
+      .eq('id', phase.roadmaps.goal_id || '')
       .single()
 
     if (goalError || !goal) {
@@ -99,8 +99,8 @@ export async function POST(request: NextRequest) {
       phaseData.skills_to_learn || [],
       phaseData.learning_objectives || [],
       phaseData.key_concepts || [],
-      phase.duration_weeks,
-      goal.daily_time_commitment,
+      phase.duration_weeks || 1,
+      goal.daily_time_commitment || 30,
       weeklySchedule,
       phase.phase_number,
       goal.title
@@ -151,8 +151,8 @@ export async function POST(request: NextRequest) {
 
     const tasks = []
     // Create dates consistently to ensure correct weekday calculation
-    const currentDate = createConsistentDate(phase.start_date)
-    const endDate = createConsistentDate(phase.end_date)
+    const currentDate = createConsistentDate(phase.start_date || new Date().toISOString())
+    const endDate = createConsistentDate(phase.end_date || new Date().toISOString())
     
     console.log('Phase start date:', phase.start_date, '-> Current date:', currentDate, 'Day of week:', currentDate.getDay())
     console.log('Phase end date:', phase.end_date, '-> End date:', endDate)
@@ -178,7 +178,7 @@ export async function POST(request: NextRequest) {
       
       if (currentDate > endDate) break
       
-      const weekNumber = Math.floor((currentDate.getTime() - createConsistentDate(phase.start_date).getTime()) / (7 * 24 * 60 * 60 * 1000)) + 1
+      const weekNumber = Math.floor((currentDate.getTime() - createConsistentDate(phase.start_date || new Date().toISOString()).getTime()) / (7 * 24 * 60 * 60 * 1000)) + 1
       const baseTask = basicTasks[taskIndex % basicTasks.length]
       
       tasks.push({
@@ -186,7 +186,7 @@ export async function POST(request: NextRequest) {
         title: `${baseTask.title} (Week ${weekNumber})`,
         description: `${baseTask.description} - Part of ${phaseData.title}`,
         scheduled_date: currentDate.toISOString().split('T')[0],
-        estimated_duration: goal.daily_time_commitment,
+        estimated_duration: goal.daily_time_commitment || 30,
         priority: getPriorityFromType(baseTask.type),
         phase_id: phase.phase_id,
         phase_number: phase.phase_number

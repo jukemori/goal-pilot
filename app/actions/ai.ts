@@ -22,8 +22,8 @@ export async function generateRoadmap(goalId: string) {
   // Generate the roadmap using OpenAI
   const prompt = generateRoadmapPrompt(
     goal.title,
-    goal.current_level,
-    goal.daily_time_commitment,
+    goal.current_level || 'beginner',
+    goal.daily_time_commitment || 30,
     goal.target_date,
     goal.weekly_schedule as Record<string, boolean>,
     goal.start_date
@@ -83,8 +83,8 @@ export async function generateRoadmap(goalId: string) {
       .from('roadmaps')
       .insert({
         goal_id: goalId,
-        ai_generated_plan: roadmapData,
-        milestones: roadmapData.milestones || [],
+        ai_generated_plan: roadmapData as any,
+        milestones: (roadmapData.milestones || []) as any,
         ai_model: AI_MODELS.roadmap,
         prompt_version: 'v1',
       })

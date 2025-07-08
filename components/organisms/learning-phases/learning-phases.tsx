@@ -9,21 +9,9 @@ import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabase/client'
+import { LearningPhase } from '@/types'
 
-interface LearningPhase {
-  id: string
-  phase_id: string
-  roadmap_id: string
-  phase_number: number
-  title: string
-  description: string
-  learning_objectives?: string[]
-  key_concepts?: string[]
-  skills_to_learn?: string[]
-  status?: string
-  duration_weeks?: number
-  start_date?: string
-  end_date?: string
+interface LearningPhaseWithTasks extends LearningPhase {
   taskCount: number
   hasGeneratedTasks: boolean
 }
@@ -40,7 +28,7 @@ export function LearningPhases({ roadmapId, goalId: _goalId }: LearningPhasesPro
   const supabase = createClient()
 
   // Fetch learning phases with task counts
-  const { data: phases, isLoading, error } = useQuery<LearningPhase[]>({
+  const { data: phases, isLoading, error } = useQuery<LearningPhaseWithTasks[]>({
     queryKey: ['learning-phases', roadmapId],
     queryFn: async () => {
       console.log('Fetching learning phases for roadmap:', roadmapId)

@@ -64,7 +64,7 @@ export default async function GoalPage({ params }: GoalPageProps) {
 
   const roadmap = goal.roadmaps[0]
   const tasks = roadmap?.tasks || []
-  const completedTasks = tasks.filter((task: Task) => task.completed)
+  const completedTasks = tasks.filter((task) => task.completed)
   const totalTasks = tasks.length
   const progressPercentage = totalTasks > 0 ? Math.round((completedTasks.length / totalTasks) * 100) : 0
   
@@ -198,7 +198,7 @@ export default async function GoalPage({ params }: GoalPageProps) {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">
-                  {Math.round((completedTasks.reduce((acc: number, task: Task) => 
+                  {Math.round((completedTasks.reduce((acc: number, task) => 
                     acc + (task.estimated_duration || 0), 0)) / 60)}h
                 </div>
                 <p className="text-xs text-muted-foreground">Total hours</p>
@@ -212,7 +212,7 @@ export default async function GoalPage({ params }: GoalPageProps) {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">
-                  {tasks.filter((task: Task) => {
+                  {tasks.filter((task) => {
                     const today = new Date().toISOString().split('T')[0]
                     return task.scheduled_date === today
                   }).length}
@@ -235,7 +235,7 @@ export default async function GoalPage({ params }: GoalPageProps) {
             </CardHeader>
             <CardContent>
               {roadmap ? (
-                <RoadmapView roadmap={roadmap} />
+                <RoadmapView roadmap={roadmap as any} />
               ) : (
                 <div className="text-center py-8">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
@@ -281,7 +281,7 @@ export default async function GoalPage({ params }: GoalPageProps) {
               <p className="text-sm text-muted-foreground">Track your completion rate and milestones</p>
             </div>
             <div className="bg-card rounded-lg border p-6">
-              <ProgressChart tasks={tasks} />
+              <ProgressChart tasks={tasks as any} />
             </div>
           </div>
 
@@ -292,7 +292,7 @@ export default async function GoalPage({ params }: GoalPageProps) {
               <p className="text-sm text-muted-foreground">Your daily action items</p>
             </div>
             <div className="bg-card rounded-lg border p-6">
-              <TaskList tasks={tasks} goalId={goal.id} />
+              <TaskList tasks={tasks as any} goalId={goal.id} />
             </div>
           </div>
         </TabsContent>

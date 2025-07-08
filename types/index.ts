@@ -1,40 +1,16 @@
-export interface Goal {
-  id: string
-  user_id: string
-  title: string
-  description: string | null
-  current_level: 'beginner' | 'intermediate' | 'advanced' | 'expert'
-  start_date: string
-  target_date: string | null
-  daily_time_commitment: number
-  weekly_schedule: WeeklySchedule
-  status: 'active' | 'completed' | 'paused'
-  tags: string[] | null
-  created_at: string
-  updated_at: string
-}
+import { Database, Tables } from './database'
 
-export interface WeeklySchedule {
-  monday: boolean
-  tuesday: boolean
-  wednesday: boolean
-  thursday: boolean
-  friday: boolean
-  saturday: boolean
-  sunday: boolean
-}
+// Re-export generated database types
+export type Goal = Tables<'goals'>
+export type User = Tables<'users'>
+export type Task = Tables<'tasks'>
+export type Roadmap = Tables<'roadmaps'>
+export type LearningPhase = Tables<'learning_phases'>
 
-export interface Roadmap {
-  id: string
-  goal_id: string
-  ai_generated_plan: RoadmapPlan
-  milestones: Milestone[]
-  ai_model: string
-  prompt_version: string
-  created_at: string
-  updated_at: string
-}
+// Weekly schedule type extracted from Goal type
+export type WeeklySchedule = NonNullable<Goal['weekly_schedule']>
 
+// AI-related types that don't directly map to database tables
 export interface RoadmapPlan {
   overview: string
   phases: Phase[]
@@ -60,28 +36,6 @@ export interface Milestone {
   completed_date: string | null
 }
 
-export interface Task {
-  id: string
-  roadmap_id: string
-  title: string
-  description: string | null
-  scheduled_date: string
-  estimated_duration: number
-  actual_duration: number | null
-  priority: number
-  completed: boolean
-  completed_at: string | null
-  rescheduled_count: number
-  tags: string[] | null
-  created_at: string
-  updated_at: string
-}
-
-export interface User {
-  id: string
-  email: string
-  name: string | null
-  avatar: string | null
-  created_at: string
-  updated_at: string
-}
+// Export database types for direct usage
+export type { Database, Tables } from './database'
+export type { TablesInsert, TablesUpdate, Enums, CompositeTypes } from './database'

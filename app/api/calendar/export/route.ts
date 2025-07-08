@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { Task } from '@/types'
 
 export async function GET(request: NextRequest) {
   try {
@@ -68,15 +69,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-interface TaskWithRelations {
-  id: string
-  title: string
-  description: string | null
-  scheduled_date: string
-  completed: boolean
-  priority: number
-  created_at: string
-  updated_at: string
+interface TaskWithRelations extends Task {
   roadmaps: {
     goals: {
       title: string
@@ -106,8 +99,8 @@ function generateICS(tasks: TaskWithRelations[]): string {
     endDate.setMinutes(endDate.getMinutes() + 30) // Default duration
     const dtend = endDate.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '')
     
-    const created = new Date(task.created_at).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '')
-    const modified = new Date(task.updated_at).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '')
+    const created = new Date(task.created_at || new Date()).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '')
+    const modified = new Date(task.updated_at || new Date()).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '')
     
     lines.push(
       'BEGIN:VEVENT',
@@ -119,7 +112,7 @@ function generateICS(tasks: TaskWithRelations[]): string {
       `SUMMARY:${escapeICS(task.title)}`,
       `DESCRIPTION:${escapeICS(task.description || '')} - Goal: ${escapeICS(task.roadmaps.goals.title)}`,
       `STATUS:${task.completed ? 'COMPLETED' : 'CONFIRMED'}`,
-      `PRIORITY:${6 - task.priority}`, // ICS priority is inverted (1=highest, 9=lowest)
+      `PRIORITY:${6 - (task.priority || 3)}`, // ICS priority is inverted (1=highest, 9=lowest)
       'END:VEVENT'
     )
   })

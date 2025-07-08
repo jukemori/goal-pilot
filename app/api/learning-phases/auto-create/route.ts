@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Extract phases from roadmap
-    const phases = roadmap.ai_generated_plan?.phases || []
+    const phases = (roadmap.ai_generated_plan as any)?.phases || []
     if (phases.length === 0) {
       return NextResponse.json({ error: 'No phases found in roadmap' }, { status: 400 })
     }
