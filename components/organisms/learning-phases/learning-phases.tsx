@@ -33,13 +33,10 @@ export function LearningPhases({ roadmapId, goalId: _goalId }: LearningPhasesPro
     queryFn: async () => {
       console.log('Fetching learning phases for roadmap:', roadmapId)
       
-      // Get phases with task counts in a single optimized query
+      // Get phases first
       const { data: phasesData, error: phasesError } = await supabase
         .from('learning_phases')
-        .select(`
-          *,
-          tasks!left(count)
-        `)
+        .select('*')
         .eq('roadmap_id', roadmapId)
         .order('phase_number')
 
@@ -48,14 +45,34 @@ export function LearningPhases({ roadmapId, goalId: _goalId }: LearningPhasesPro
         throw phasesError
       }
 
+      if (!phasesData || phasesData.length === 0) {
+        return []
+      }
+
+      // Get task counts for all phases in a single query using OR conditions
+      const phaseIds = phasesData.map(p => p.phase_id)
+      const { data: taskCounts } = await supabase
+        .from('tasks')
+        .select('phase_id')
+        .eq('roadmap_id', roadmapId)
+        .in('phase_id', phaseIds)
+
+      // Count tasks per phase
+      const taskCountMap = new Map<string, number>()
+      taskCounts?.forEach(task => {
+        if (task.phase_id) {
+          const count = taskCountMap.get(task.phase_id) || 0
+          taskCountMap.set(task.phase_id, count + 1)
+        }
+      })
+
       // Transform the data to include task counts
-      const phasesWithTaskCounts = (phasesData || []).map((phase: LearningPhase & { tasks?: { count: number }[] }) => {
-        const taskCount = phase.tasks?.[0]?.count || 0
+      const phasesWithTaskCounts = phasesData.map((phase: LearningPhase) => {
+        const taskCount = taskCountMap.get(phase.phase_id || '') || 0
         return {
           ...phase,
           taskCount,
-          hasGeneratedTasks: taskCount > 0,
-          tasks: undefined // Remove the tasks array to clean up the data
+          hasGeneratedTasks: taskCount > 0
         }
       })
 
