@@ -11,6 +11,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabase/client'
 import { LearningPhase } from '@/types'
+import { TaskGenerationDialog } from '@/components/molecules/task-generation-dialog'
 
 interface LearningPhaseWithTasks extends LearningPhase {
   taskCount: number
@@ -25,6 +26,8 @@ interface LearningPhasesProps {
 export function LearningPhases({ roadmapId, goalId: _goalId }: LearningPhasesProps) {
   const [generatingPhase, setGeneratingPhase] = useState<string | null>(null)
   const [hasTriggeredAutoCreate, setHasTriggeredAutoCreate] = useState(false)
+  const [taskDialogOpen, setTaskDialogOpen] = useState(false)
+  const [lastGeneratedTask, setLastGeneratedTask] = useState<{ count: number; phaseTitle: string } | null>(null)
   const queryClient = useQueryClient()
   const supabase = createClient()
 
@@ -124,11 +127,20 @@ export function LearningPhases({ roadmapId, goalId: _goalId }: LearningPhasesPro
       
       return response.json()
     },
-    onSuccess: (data) => {
-      toast.success(`Generated ${data.tasksCount} tasks`)
+    onSuccess: (data, variables) => {
+      // Store the generated task info for the dialog
+      setLastGeneratedTask({
+        count: data.tasksCount,
+        phaseTitle: variables.title
+      })
+      
       // Invalidate relevant queries to refresh the UI
       queryClient.invalidateQueries({ queryKey: ['learning-phases', roadmapId] })
       queryClient.invalidateQueries({ queryKey: ['tasks', roadmapId] })
+      queryClient.invalidateQueries({ queryKey: ['goals'] })
+      
+      // Show the success dialog
+      setTaskDialogOpen(true)
     },
     onError: (error: Error) => {
       toast.error(error.message)
@@ -345,6 +357,26 @@ export function LearningPhases({ roadmapId, goalId: _goalId }: LearningPhasesPro
           </Card>
         )
       })}
+      
+      {/* Task Generation Success Dialog */}
+      <TaskGenerationDialog
+        open={taskDialogOpen}
+        onOpenChange={setTaskDialogOpen}
+        taskCount={lastGeneratedTask?.count || 0}
+        phaseTitle={lastGeneratedTask?.phaseTitle || ''}
+        onViewTasks={() => {
+          setTaskDialogOpen(false)
+          // Navigate to progress tab using URL hash or simple page reload
+          window.location.href = window.location.pathname + '#progress'
+          // Force a small delay then scroll to ensure the tab is visible
+          setTimeout(() => {
+            const progressTabButton = document.querySelector('[value="progress"]') as HTMLElement
+            if (progressTabButton) {
+              progressTabButton.click()
+            }
+          }, 100)
+        }}
+      />
     </div>
   )
 }
