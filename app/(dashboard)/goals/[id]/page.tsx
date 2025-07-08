@@ -11,7 +11,6 @@ import { RoadmapView } from '@/components/organisms/roadmap-view/roadmap-view'
 import { TaskList } from '@/components/organisms/task-list/task-list'
 import { ProgressChart } from '@/components/molecules/progress-chart/progress-chart'
 import { LearningPhases } from '@/components/organisms/learning-phases/learning-phases'
-import { RegenerateRoadmapButton } from '@/components/molecules/regenerate-roadmap-button'
 import { cn } from '@/lib/utils'
 
 interface GoalPageProps {
@@ -220,7 +219,6 @@ export default async function GoalPage({ params }: GoalPageProps) {
                   {roadmap ? 'Your AI-generated learning path' : 'Generating your roadmap...'}
                 </CardDescription>
               </div>
-              {roadmap && <RegenerateRoadmapButton goalId={id} />}
             </CardHeader>
             <CardContent>
               {roadmap ? (
