@@ -198,9 +198,9 @@ export function TaskList({ tasks, goalId, pageSize = 20 }: TaskListProps) {
           />
         </div>
         
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+        <div className="flex flex-wrap gap-2">
           <Select value={statusFilter} onValueChange={(value: any) => setStatusFilter(value)}>
-            <SelectTrigger>
+            <SelectTrigger className="w-[140px]">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
@@ -211,7 +211,7 @@ export function TaskList({ tasks, goalId, pageSize = 20 }: TaskListProps) {
           </Select>
 
           <Select value={priorityFilter} onValueChange={(value: any) => setPriorityFilter(value)}>
-            <SelectTrigger>
+            <SelectTrigger className="w-[140px]">
               <SelectValue placeholder="Priority" />
             </SelectTrigger>
             <SelectContent>
@@ -225,7 +225,7 @@ export function TaskList({ tasks, goalId, pageSize = 20 }: TaskListProps) {
           </Select>
 
           <Select value={dateFilter} onValueChange={(value: any) => setDateFilter(value)}>
-            <SelectTrigger>
+            <SelectTrigger className="w-[140px]">
               <SelectValue placeholder="Date" />
             </SelectTrigger>
             <SelectContent>
