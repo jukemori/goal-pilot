@@ -236,12 +236,12 @@ export function GoalForm({ onSubmit, defaultValues, isEdit = false }: GoalFormPr
                       <FormField
                         key={day.id}
                         control={form.control}
-                        name={`weekly_schedule.${day.id}` as const}
+                        name={`weekly_schedule.${day.id}` as `weekly_schedule.${keyof GoalFormData['weekly_schedule']}`}
                         render={({ field }) => (
                           <FormItem className="flex items-center space-x-2">
                             <FormControl>
                               <Checkbox
-                                checked={field.value}
+                                checked={!!field.value}
                                 onCheckedChange={field.onChange}
                               />
                             </FormControl>

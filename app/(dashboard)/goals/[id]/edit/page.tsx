@@ -24,11 +24,19 @@ export default async function EditGoalPage({ params }: EditGoalPageProps) {
   const defaultValues = {
     title: goal.title,
     description: goal.description || '',
-    current_level: goal.current_level,
+    current_level: goal.current_level as 'beginner' | 'intermediate' | 'advanced' | 'expert',
     start_date: goal.start_date,
     target_date: goal.target_date || '',
-    daily_time_commitment: goal.daily_time_commitment,
-    weekly_schedule: goal.weekly_schedule as Record<string, boolean>,
+    daily_time_commitment: goal.daily_time_commitment || 30,
+    weekly_schedule: goal.weekly_schedule as {
+      monday: boolean;
+      tuesday: boolean;
+      wednesday: boolean;
+      thursday: boolean;
+      friday: boolean;
+      saturday: boolean;
+      sunday: boolean;
+    },
   }
 
   async function handleUpdate(formData: FormData) {

@@ -135,7 +135,7 @@ interface Phase {
 }
 
 async function createLearningPhases(
-  supabase: any, // Supabase client type from external library
+  supabase: Awaited<ReturnType<typeof createClient>>, // Supabase client type from external library
   roadmapId: string,
   phases: Phase[],
   startDate: string
