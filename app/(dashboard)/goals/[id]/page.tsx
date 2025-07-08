@@ -76,9 +76,9 @@ export default async function GoalPage({ params }: GoalPageProps) {
       {/* Goal Header */}
       <Card>
         <CardContent className="p-6">
-          <div className="flex items-start justify-between">
-            <div className="space-y-4">
-              <div className="flex items-center gap-3">
+          <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
+            <div className="space-y-4 flex-1">
+              <div className="flex flex-wrap items-center gap-3">
                 <h1 className="text-3xl font-bold">{goal.title}</h1>
                 <Badge variant="outline" className={cn("text-xs px-3 py-1 rounded-full border", levelColors[goal.current_level as keyof typeof levelColors])}>
                   {goal.current_level}
@@ -107,7 +107,7 @@ export default async function GoalPage({ params }: GoalPageProps) {
                 )}
               </div>
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 lg:flex-shrink-0">
               <Link href={`/goals/${goal.id}/edit`}>
                 <Button variant="outline" size="sm">
                   <Edit3 className="h-4 w-4 mr-2" />
