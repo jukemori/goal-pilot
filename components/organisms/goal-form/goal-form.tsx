@@ -214,7 +214,18 @@ export function GoalForm({ onSubmit, defaultValues, isEdit = false }: GoalFormPr
                       min={15} 
                       max={480} 
                       {...field}
-                      onChange={(e) => field.onChange(parseInt(e.target.value))}
+                      onChange={(e) => {
+                        const value = e.target.value
+                        // If empty, set to 0 temporarily to avoid NaN
+                        field.onChange(value === '' ? 0 : parseInt(value) || 0)
+                      }}
+                      onBlur={(e) => {
+                        // On blur, if value is 0 or invalid, set to minimum (15)
+                        const value = parseInt(e.target.value) || 0
+                        if (value < 15) {
+                          field.onChange(15)
+                        }
+                      }}
                     />
                   </FormControl>
                   <FormDescription>

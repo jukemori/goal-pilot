@@ -6,7 +6,7 @@ export const goalFormSchema = z.object({
   current_level: z.string().min(5, 'Please describe your current level (at least 5 characters)').max(500, 'Description too long (max 500 characters)'),
   start_date: z.string(),
   target_date: z.string().optional().nullable(),
-  daily_time_commitment: z.number().min(15).max(480), // 15 minutes to 8 hours
+  daily_time_commitment: z.number().min(15, 'Minimum 15 minutes').max(480, 'Maximum 8 hours (480 minutes)'), // 15 minutes to 8 hours
   weekly_schedule: z.object({
     monday: z.boolean(),
     tuesday: z.boolean(),
