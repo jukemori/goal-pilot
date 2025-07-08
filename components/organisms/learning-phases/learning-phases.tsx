@@ -134,13 +134,15 @@ export function LearningPhases({ roadmapId, goalId: _goalId }: LearningPhasesPro
         phaseTitle: variables.title
       })
       
-      // Invalidate relevant queries to refresh the UI
-      queryClient.invalidateQueries({ queryKey: ['learning-phases', roadmapId] })
-      queryClient.invalidateQueries({ queryKey: ['tasks', roadmapId] })
-      queryClient.invalidateQueries({ queryKey: ['goals'] })
-      
-      // Show the success dialog
+      // Show the success dialog first
       setTaskDialogOpen(true)
+      
+      // Delay query invalidations to avoid re-render conflicts
+      setTimeout(() => {
+        queryClient.invalidateQueries({ queryKey: ['learning-phases', roadmapId] })
+        queryClient.invalidateQueries({ queryKey: ['tasks', roadmapId] })
+        queryClient.invalidateQueries({ queryKey: ['goals'] })
+      }, 100)
     },
     onError: (error: Error) => {
       toast.error(error.message)

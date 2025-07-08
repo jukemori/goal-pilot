@@ -26,8 +26,11 @@ export function TaskGenerationDialog({
   onViewTasks
 }: TaskGenerationDialogProps) {
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md bg-white dark:bg-gray-900 border shadow-xl">
+    <Dialog open={open} onOpenChange={onOpenChange} modal={true}>
+      <DialogContent 
+        className="sm:max-w-md bg-white dark:bg-gray-900 border shadow-xl"
+        onInteractOutside={(e) => e.preventDefault()}
+      >
         <DialogHeader className="text-center">
           <motion.div
             initial={{ scale: 0 }}
