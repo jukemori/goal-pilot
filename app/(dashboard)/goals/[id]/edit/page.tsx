@@ -41,7 +41,7 @@ export default async function EditGoalPage({ params }: EditGoalPageProps) {
 
   async function handleUpdate(formData: FormData) {
     'use server'
-    await updateGoal(id, formData)
+    return await updateGoal(id, formData)
   }
 
   return (

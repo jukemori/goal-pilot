@@ -11,9 +11,10 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { toast } from 'sonner'
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 
 interface GoalFormProps {
-  onSubmit: (data: FormData) => Promise<void>
+  onSubmit: (data: FormData) => Promise<{ success: boolean; goalId?: string }>
   defaultValues?: Partial<GoalFormData>
   isEdit?: boolean
 }
@@ -30,6 +31,7 @@ const weekDays = [
 
 export function GoalForm({ onSubmit, defaultValues, isEdit = false }: GoalFormProps) {
   const [isLoading, setIsLoading] = useState(false)
+  const router = useRouter()
   
   // Use a stable default date to avoid hydration mismatches
   const today = typeof window !== 'undefined' ? new Date().toISOString().split('T')[0] : ''
@@ -69,7 +71,15 @@ export function GoalForm({ onSubmit, defaultValues, isEdit = false }: GoalFormPr
       formData.append('daily_time_commitment', values.daily_time_commitment.toString())
       formData.append('weekly_schedule', JSON.stringify(values.weekly_schedule))
       
-      await onSubmit(formData)
+      const result = await onSubmit(formData)
+      
+      if (result.success) {
+        if (result.goalId) {
+          router.push(`/goals/${result.goalId}`)
+        }
+      } else {
+        toast.error(isEdit ? 'Failed to update goal' : 'Failed to create goal')
+      }
     } catch {
       toast.error(isEdit ? 'Failed to update goal' : 'Failed to create goal')
     } finally {

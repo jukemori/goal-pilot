@@ -60,7 +60,7 @@ export async function createGoal(formData: FormData) {
   }
   
   revalidatePath('/dashboard')
-  redirect(`/goals/${goal.id}`)
+  return { success: true, goalId: goal.id }
 }
 
 export async function updateGoal(goalId: string, formData: FormData) {
@@ -104,7 +104,7 @@ export async function updateGoal(goalId: string, formData: FormData) {
   
   revalidatePath('/dashboard')
   revalidatePath(`/goals/${goalId}`)
-  redirect(`/goals/${goalId}`)
+  return { success: true, goalId }
 }
 
 export async function deleteGoal(goalId: string) {
