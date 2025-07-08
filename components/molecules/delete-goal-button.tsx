@@ -4,6 +4,17 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Trash2 } from 'lucide-react'
 import { deleteGoal } from '@/app/actions/goals'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog'
 
 interface DeleteGoalButtonProps {
   goalId: string
@@ -14,12 +25,6 @@ export function DeleteGoalButton({ goalId, goalTitle }: DeleteGoalButtonProps) {
   const [isDeleting, setIsDeleting] = useState(false)
 
   async function handleDelete() {
-    const confirmed = window.confirm(
-      `Are you sure you want to delete "${goalTitle}"?\n\nThis will permanently delete the goal, its roadmap, and all associated tasks. This action cannot be undone.`
-    )
-    
-    if (!confirmed) return
-    
     setIsDeleting(true)
     try {
       await deleteGoal(goalId)
@@ -30,15 +35,35 @@ export function DeleteGoalButton({ goalId, goalTitle }: DeleteGoalButtonProps) {
   }
 
   return (
-    <Button 
-      variant="outline" 
-      size="sm" 
-      disabled={isDeleting}
-      onClick={handleDelete}
-      className="border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300"
-    >
-      <Trash2 className="h-4 w-4 mr-2" />
-      {isDeleting ? 'Deleting...' : 'Delete'}
-    </Button>
+    <AlertDialog>
+      <AlertDialogTrigger asChild>
+        <Button 
+          variant="outline" 
+          size="sm" 
+          disabled={isDeleting}
+          className="border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300"
+        >
+          <Trash2 className="h-4 w-4 mr-2" />
+          {isDeleting ? 'Deleting...' : 'Delete'}
+        </Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Delete Goal</AlertDialogTitle>
+          <AlertDialogDescription>
+            Are you sure you want to delete "{goalTitle}"? This will permanently delete the goal, its roadmap, and all associated tasks. This action cannot be undone.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction
+            onClick={handleDelete}
+            className="bg-red-600 hover:bg-red-700 text-white"
+          >
+            {isDeleting ? 'Deleting...' : 'Delete Goal'}
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   )
 }
