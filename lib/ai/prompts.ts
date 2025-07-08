@@ -19,7 +19,21 @@ export const generateRoadmapPrompt = (
 
   const availableDaysCount = Object.values(weeklySchedule).filter(Boolean).length
   const hoursPerWeek = Math.round(timeCommitment * availableDaysCount / 60 * 10) / 10
-  const totalHoursNeeded = 1200 // For Spanish business level
+  
+  // Intelligent time estimation based on goal description
+  const goalLowerCase = goal.toLowerCase()
+  let totalHoursNeeded = 300 // Default for basic conversational
+  
+  if (goalLowerCase.includes('business') || goalLowerCase.includes('professional') || goalLowerCase.includes('work')) {
+    totalHoursNeeded = 600 // Professional level
+  } else if (goalLowerCase.includes('fluent') || goalLowerCase.includes('native') || goalLowerCase.includes('advanced')) {
+    totalHoursNeeded = 800 // Advanced/fluent level
+  } else if (goalLowerCase.includes('conversational') || goalLowerCase.includes('conversation') || goalLowerCase.includes('speak')) {
+    totalHoursNeeded = 250 // Conversational level
+  } else if (goalLowerCase.includes('basic') || goalLowerCase.includes('beginner') || goalLowerCase.includes('travel')) {
+    totalHoursNeeded = 150 // Basic travel level
+  }
+  
   const totalWeeksNeeded = Math.round(totalHoursNeeded / hoursPerWeek)
   const totalYearsNeeded = Math.round(totalWeeksNeeded / 52 * 10) / 10
 
@@ -27,7 +41,7 @@ export const generateRoadmapPrompt = (
 
 CRITICAL TIMELINE CALCULATION (MUST FOLLOW):
 - Time commitment: ${timeCommitment} minutes/day × ${availableDaysCount} days = ${hoursPerWeek} hours/week
-- Total hours needed for business level: ${totalHoursNeeded} hours
+- Total hours needed for this goal: ${totalHoursNeeded} hours
 - Total weeks required: ${totalHoursNeeded} ÷ ${hoursPerWeek} = ${totalWeeksNeeded} weeks
 - Total years required: ${totalWeeksNeeded} ÷ 52 = ${totalYearsNeeded} years
 - Completion date should be approximately: ${new Date(new Date(startDate).getTime() + totalWeeksNeeded * 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]}
@@ -51,10 +65,9 @@ IMPORTANT:
 PHASE REQUIREMENTS:
 - Create 8-15 comprehensive learning phases that cover the COMPLETE journey from the user's current level to mastery
 - Phase durations must be realistic for ${totalWeeksNeeded} total weeks:
-  * Early foundation phases: 20-40 weeks each
-  * Intermediate phases: 30-50 weeks each  
-  * Advanced phases: 40-60 weeks each
-  * Mastery phases: 30-50 weeks each
+  * For short timelines (< 50 weeks): 4-12 weeks per phase
+  * For medium timelines (50-100 weeks): 8-20 weeks per phase
+  * For long timelines (100+ weeks): 15-40 weeks per phase
 - CRITICAL: All phase durations MUST sum to exactly ${totalWeeksNeeded} weeks
 - Ensure phases build upon each other progressively with clear prerequisites
 - Cover ALL essential skills, sub-skills, and competencies needed for mastery
@@ -65,8 +78,8 @@ PHASE REQUIREMENTS:
 REALISTIC TIMELINE CALCULATION:
 - Calculate total hours needed realistically (don't underestimate)
 - Time available per week: ${timeCommitment} minutes/day × ${Object.values(weeklySchedule).filter(Boolean).length} days = ${Math.round(timeCommitment * Object.values(weeklySchedule).filter(Boolean).length / 60 * 10) / 10} hours/week
-- For language learning to business level: expect 1000-1500+ total hours
-- Total weeks needed: Total hours ÷ hours per week (e.g., 1200 hours ÷ ${Math.round(timeCommitment * Object.values(weeklySchedule).filter(Boolean).length / 60 * 10) / 10} hours/week = ${Math.round(1200 / (timeCommitment * Object.values(weeklySchedule).filter(Boolean).length / 60))} weeks)
+- For this specific goal: expect ${totalHoursNeeded} total hours
+- Total weeks needed: Total hours ÷ hours per week (${totalHoursNeeded} hours ÷ ${Math.round(timeCommitment * Object.values(weeklySchedule).filter(Boolean).length / 60 * 10) / 10} hours/week = ${Math.round(totalHoursNeeded / (timeCommitment * Object.values(weeklySchedule).filter(Boolean).length / 60))} weeks)
 - Phase durations must add up to the total realistic timeline
 - IMPORTANT: Each phase duration must be calculated to fit within the realistic total timeline
 - Include time for review, practice, and skill consolidation
@@ -112,9 +125,9 @@ JSON format:
 
 CALCULATION EXAMPLE FOR YOUR SPECIFIC CASE:
 - You have ${timeCommitment} minutes/day × ${Object.values(weeklySchedule).filter(Boolean).length} days/week = ${Math.round(timeCommitment * Object.values(weeklySchedule).filter(Boolean).length / 60 * 10) / 10} hours/week
-- For Spanish business level (1200 hours): 1200 ÷ ${Math.round(timeCommitment * Object.values(weeklySchedule).filter(Boolean).length / 60 * 10) / 10} = ${Math.round(1200 / (timeCommitment * Object.values(weeklySchedule).filter(Boolean).length / 60))} weeks = ${Math.round(1200 / (timeCommitment * Object.values(weeklySchedule).filter(Boolean).length / 60) / 52 * 10) / 10} years
-- Your phases should total approximately ${Math.round(1200 / (timeCommitment * Object.values(weeklySchedule).filter(Boolean).length / 60))} weeks
-- Example phase distribution: Early phases (20-40 weeks each), Advanced phases (30-50 weeks each)
+- For this goal (${totalHoursNeeded} hours): ${totalHoursNeeded} ÷ ${Math.round(timeCommitment * Object.values(weeklySchedule).filter(Boolean).length / 60 * 10) / 10} = ${Math.round(totalHoursNeeded / (timeCommitment * Object.values(weeklySchedule).filter(Boolean).length / 60))} weeks = ${Math.round(totalHoursNeeded / (timeCommitment * Object.values(weeklySchedule).filter(Boolean).length / 60) / 52 * 10) / 10} years
+- Your phases should total approximately ${Math.round(totalHoursNeeded / (timeCommitment * Object.values(weeklySchedule).filter(Boolean).length / 60))} weeks
+- Example phase distribution: Adjust based on total timeline - shorter goals need shorter phases
 
 IMPORTANT: 
 - Do NOT include daily_tasks in the roadmap generation
