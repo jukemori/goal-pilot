@@ -40,6 +40,12 @@ This is a Next.js application that uses:
 - Follow TypeScript strict mode practices
 - Write tests for new features using Vitest
 
+## TypeScript Guidelines
+- **Avoid `any` type** - Use proper TypeScript types and interfaces
+- **No type casting with `any`** - Use type assertions with `as unknown as Type` when necessary
+- Use generated Supabase types directly instead of custom interfaces
+- Prefer proper type definitions over type assertions
+
 ## Architecture Guidelines
 - Use React Server Components where appropriate
 - Implement proper error boundaries
@@ -54,6 +60,8 @@ This is a Next.js application that uses:
 - Ensure all layouts are responsive
 - Use consistent spacing and typography scales
 - Follow mobile-first responsive design principles
+- **Avoid using `!important` in CSS** - Use proper CSS specificity and Tailwind utilities instead
+- Prefer utility classes over custom CSS when possible
 
 ## Database & Backend
 - Use Supabase for database operations
