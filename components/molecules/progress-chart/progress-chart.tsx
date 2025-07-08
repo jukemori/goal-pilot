@@ -100,15 +100,7 @@ export function ProgressChart({ tasks }: ProgressChartProps) {
   }, [isClient, tasks])
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <TrendingUp className="h-5 w-5" />
-          Progress Overview
-        </CardTitle>
-        <CardDescription>Weekly completion trends and statistics</CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-6">
+    <div className="space-y-6">
         {/* Key Stats */}
         <div className="grid grid-cols-3 gap-4 text-center">
           <div>
@@ -195,7 +187,6 @@ export function ProgressChart({ tasks }: ProgressChartProps) {
             </p>
           )}
         </div>
-      </CardContent>
-    </Card>
+    </div>
   )
 }

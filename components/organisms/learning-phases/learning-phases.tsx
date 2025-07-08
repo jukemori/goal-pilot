@@ -158,19 +158,6 @@ export function LearningPhases({ roadmapId, goalId }: LearningPhasesProps) {
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="text-lg font-semibold">Learning Phases</h3>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleExportCalendar}
-          className="gap-2"
-        >
-          <Download className="h-4 w-4" />
-          Export to Calendar
-        </Button>
-      </div>
-
       {phases.map((phase) => {
         const isActive = phase.status === 'active'
         const isCompleted = phase.status === 'completed'
