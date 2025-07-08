@@ -4,7 +4,6 @@ import { motion } from "framer-motion"
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
@@ -28,7 +27,7 @@ export function TaskGenerationDialog({
 }: TaskGenerationDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md bg-white dark:bg-gray-900 border shadow-xl">
         <DialogHeader className="text-center">
           <motion.div
             initial={{ scale: 0 }}
@@ -43,15 +42,15 @@ export function TaskGenerationDialog({
           
           <DialogTitle className="text-xl">Tasks Generated Successfully!</DialogTitle>
           
-          <DialogDescription className="text-center space-y-2">
-            <p>
+          <div className="text-center space-y-2">
+            <p className="text-sm text-muted-foreground">
               Generated <strong>{taskCount} tasks</strong> for the phase:
             </p>
             <p className="font-medium text-foreground">"{phaseTitle}"</p>
             <p className="text-sm text-muted-foreground mt-4">
               You can view and manage your tasks in the <strong>Progress tab</strong> or continue working on your roadmap.
             </p>
-          </DialogDescription>
+          </div>
         </DialogHeader>
         
         <div className="flex flex-col sm:flex-row gap-2 mt-6">
