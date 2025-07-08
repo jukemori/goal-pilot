@@ -33,10 +33,13 @@ export function LearningPhases({ roadmapId, goalId: _goalId }: LearningPhasesPro
     queryFn: async () => {
       console.log('Fetching learning phases for roadmap:', roadmapId)
       
-      // First get the phases
+      // Get phases with task counts in a single optimized query
       const { data: phasesData, error: phasesError } = await supabase
         .from('learning_phases')
-        .select('*')
+        .select(`
+          *,
+          tasks!left(count)
+        `)
         .eq('roadmap_id', roadmapId)
         .order('phase_number')
 
@@ -45,26 +48,23 @@ export function LearningPhases({ roadmapId, goalId: _goalId }: LearningPhasesPro
         throw phasesError
       }
 
-      // Then get task counts for each phase
-      const phasesWithTaskCounts = await Promise.all(
-        (phasesData || []).map(async (phase) => {
-          const { count } = await supabase
-            .from('tasks')
-            .select('*', { count: 'exact', head: true })
-            .eq('roadmap_id', roadmapId)
-            .eq('phase_id', phase.phase_id)
-
-          return {
-            ...phase,
-            taskCount: count || 0,
-            hasGeneratedTasks: (count || 0) > 0
-          }
-        })
-      )
+      // Transform the data to include task counts
+      const phasesWithTaskCounts = (phasesData || []).map((phase: LearningPhase & { tasks?: { count: number }[] }) => {
+        const taskCount = phase.tasks?.[0]?.count || 0
+        return {
+          ...phase,
+          taskCount,
+          hasGeneratedTasks: taskCount > 0,
+          tasks: undefined // Remove the tasks array to clean up the data
+        }
+      })
 
       console.log('Learning phases with task counts:', phasesWithTaskCounts)
       return phasesWithTaskCounts
-    }
+    },
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
+    refetchOnWindowFocus: false,
   })
 
   // Auto-create phases if none exist
@@ -108,12 +108,9 @@ export function LearningPhases({ roadmapId, goalId: _goalId }: LearningPhasesPro
     },
     onSuccess: (data) => {
       toast.success(`Generated ${data.tasksCount} tasks`)
-      // Invalidate all task-related queries to refresh the UI
-      queryClient.invalidateQueries({ queryKey: ['tasks'] })
+      // Invalidate relevant queries to refresh the UI
       queryClient.invalidateQueries({ queryKey: ['learning-phases', roadmapId] })
-      queryClient.invalidateQueries({ queryKey: ['goals'] })
-      // Refresh the page to show new tasks in all components
-      window.location.reload()
+      queryClient.invalidateQueries({ queryKey: ['tasks', roadmapId] })
     },
     onError: (error: Error) => {
       toast.error(error.message)
