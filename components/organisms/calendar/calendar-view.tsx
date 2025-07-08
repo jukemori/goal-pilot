@@ -205,7 +205,7 @@ export function CalendarView(_props: CalendarViewProps) {
                           key={dateString}
                           onClick={() => setSelectedDate(isSelected ? null : dateString)}
                           className={cn(
-                            "p-3 h-[95px] text-left border rounded-lg transition-colors relative",
+                            "p-3 h-[95px] text-left border rounded-lg transition-colors relative cursor-pointer",
                             isToday(date) && "border-green-500 bg-green-50",
                             !isCurrentMonth(date) && "text-gray-400 bg-gray-50",
                             isSelected && "border-green-500 bg-green-100",
