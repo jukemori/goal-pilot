@@ -19,6 +19,8 @@ export default async function DashboardLayout({
     <div className="min-h-screen bg-gray-50">
       <Sidebar />
       <div className="lg:pl-64">
+        {/* Mobile header spacing */}
+        <div className="h-16 lg:hidden" />
         <main className="p-4 lg:p-8">
           {children}
         </main>
