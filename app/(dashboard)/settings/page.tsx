@@ -245,7 +245,6 @@ export default function SettingsPage() {
                   <Button 
                     variant="destructive" 
                     onClick={handleDeleteAccount}
-                    className="bg-red-600 hover:bg-red-700"
                   >
                     Delete Account
                   </Button>

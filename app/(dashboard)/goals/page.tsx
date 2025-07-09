@@ -24,12 +24,12 @@ export default async function GoalsPage() {
           <h1 className="text-3xl font-bold text-gray-900">Goals</h1>
           <p className="text-gray-600 mt-2">Manage and track all your goals</p>
         </div>
-        <Link href="/goals/new">
-          <Button>
+        <Button asChild>
+          <Link href="/goals/new">
             <Plus className="h-4 w-4 mr-2" />
             New Goal
-          </Button>
-        </Link>
+          </Link>
+        </Button>
       </div>
 
       {/* Active Goals */}
@@ -46,9 +46,9 @@ export default async function GoalsPage() {
             <CardContent className="text-center py-12">
               <Target className="h-12 w-12 text-gray-400 mx-auto mb-4" />
               <p className="text-gray-500 mb-4">No active goals yet</p>
-              <Link href="/goals/new">
-                <Button>Create your first goal</Button>
-              </Link>
+              <Button asChild>
+                <Link href="/goals/new">Create your first goal</Link>
+              </Button>
             </CardContent>
           </Card>
         )}
