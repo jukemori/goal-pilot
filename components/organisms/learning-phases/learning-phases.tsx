@@ -265,7 +265,7 @@ export function LearningPhases({ roadmapId, goalId: _goalId }: LearningPhasesPro
               {phase.skills_to_learn && phase.skills_to_learn.length > 0 && (
                 <div>
                   <p className="text-sm font-semibold mb-3 text-gray-900 flex items-center gap-2">
-                    <div className="w-2 h-2 bg-gray-600 rounded-full"></div>
+                    <span className="w-2 h-2 bg-gray-600 rounded-full"></span>
                     Skills to Learn:
                   </p>
                   <div className="flex flex-wrap gap-2">
@@ -282,7 +282,7 @@ export function LearningPhases({ roadmapId, goalId: _goalId }: LearningPhasesPro
               {phase.learning_objectives && phase.learning_objectives.length > 0 && (
                 <div className="bg-green-50 p-4 rounded-lg border border-green-200">
                   <p className="text-sm font-semibold mb-3 text-green-900 flex items-center gap-2">
-                    <div className="w-2 h-2 bg-green-600 rounded-full"></div>
+                    <span className="w-2 h-2 bg-green-600 rounded-full"></span>
                     Learning Objectives:
                   </p>
                   <ul className="text-sm text-green-800 space-y-2">
@@ -300,27 +300,27 @@ export function LearningPhases({ roadmapId, goalId: _goalId }: LearningPhasesPro
               {phase.resources && (
                 <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
                   <p className="text-sm font-semibold mb-3 text-blue-900 flex items-center gap-2">
-                    <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+                    <span className="w-2 h-2 bg-blue-600 rounded-full"></span>
                     Resources & Tools:
                   </p>
                   <div className="space-y-2">
                     {Array.isArray(phase.resources) ? (
                       phase.resources.map((resource, index: number) => (
                         <div key={index} className="flex items-start gap-3 text-sm text-blue-800">
-                          <div className="w-1.5 h-1.5 bg-blue-600 rounded-full mt-2 flex-shrink-0"></div>
+                          <span className="w-1.5 h-1.5 bg-blue-600 rounded-full mt-2 flex-shrink-0"></span>
                           <span>{String(resource)}</span>
                         </div>
                       ))
                     ) : typeof phase.resources === 'object' && phase.resources !== null ? (
                       Object.entries(phase.resources as Record<string, unknown>).map(([key, value], index) => (
                         <div key={index} className="flex items-start gap-3 text-sm text-blue-800">
-                          <div className="w-1.5 h-1.5 bg-blue-600 rounded-full mt-2 flex-shrink-0"></div>
+                          <span className="w-1.5 h-1.5 bg-blue-600 rounded-full mt-2 flex-shrink-0"></span>
                           <span><strong>{key}:</strong> {String(value)}</span>
                         </div>
                       ))
                     ) : (
                       <div className="flex items-start gap-3 text-sm text-blue-800">
-                        <div className="w-1.5 h-1.5 bg-blue-600 rounded-full mt-2 flex-shrink-0"></div>
+                        <span className="w-1.5 h-1.5 bg-blue-600 rounded-full mt-2 flex-shrink-0"></span>
                         <span>{String(phase.resources)}</span>
                       </div>
                     )}
@@ -332,7 +332,7 @@ export function LearningPhases({ roadmapId, goalId: _goalId }: LearningPhasesPro
               {phase.key_concepts && phase.key_concepts.length > 0 && (
                 <div>
                   <p className="text-sm font-semibold mb-3 text-gray-900 flex items-center gap-2">
-                    <div className="w-2 h-2 bg-gray-600 rounded-full"></div>
+                    <span className="w-2 h-2 bg-gray-600 rounded-full"></span>
                     Key Concepts:
                   </p>
                   <div className="flex flex-wrap gap-2">
