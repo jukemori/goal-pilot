@@ -40,7 +40,7 @@ export function DeleteGoalButton({ goalId, goalTitle }: DeleteGoalButtonProps) {
     <AlertDialog>
       <AlertDialogTrigger asChild>
         <Button 
-          variant="destructive" 
+          variant="outline"
           size="sm" 
           disabled={isDeleting}
         >
