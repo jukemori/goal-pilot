@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, CheckCircle, Clock } from 'lucide-react'
 import { SimpleTaskList } from '@/components/organisms/calendar/simple-task-list'
 import { useQuery } from '@tanstack/react-query'
@@ -198,7 +197,6 @@ export function CalendarView(_props: CalendarViewProps) {
                     {week.map((date) => {
                       const dateString = getDateString(date)
                       const dateTasks = getTasksForDate(date)
-                      const completedCount = dateTasks.filter(task => task.completed).length
                       const isSelected = selectedDate === dateString
 
                       return (
@@ -240,13 +238,6 @@ export function CalendarView(_props: CalendarViewProps) {
                             </div>
                           )}
 
-                          {dateTasks.length > 0 && (
-                            <div className="absolute bottom-1 right-2">
-                              <Badge variant="outline" className="text-xs bg-white">
-                                {completedCount}/{dateTasks.length}
-                              </Badge>
-                            </div>
-                          )}
                         </button>
                       )
                     })}
