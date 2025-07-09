@@ -126,6 +126,7 @@ interface Phase {
   key_concepts?: string[]
   prerequisites?: string[]
   outcomes?: string[]
+  resources?: string[] | Record<string, unknown> | unknown
   daily_tasks?: Array<{
     title: string
     description?: string
@@ -165,6 +166,7 @@ async function createLearningPhases(
       key_concepts: phase.key_concepts || [],
       prerequisites: phase.prerequisites || [],
       outcomes: phase.outcomes || [],
+      resources: phase.resources as Json || null,
       start_date: phaseStartDate.toISOString().split('T')[0],
       end_date: phaseEndDate.toISOString().split('T')[0],
       status: i === 0 ? 'active' : 'pending'

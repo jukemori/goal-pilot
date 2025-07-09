@@ -83,6 +83,7 @@ export type Database = {
           phase_id: string
           phase_number: number
           prerequisites: string[] | null
+          resources: Json | null
           roadmap_id: string | null
           skills_to_learn: string[] | null
           start_date: string | null
@@ -102,6 +103,7 @@ export type Database = {
           phase_id: string
           phase_number: number
           prerequisites?: string[] | null
+          resources?: Json | null
           roadmap_id?: string | null
           skills_to_learn?: string[] | null
           start_date?: string | null
@@ -121,6 +123,7 @@ export type Database = {
           phase_id?: string
           phase_number?: number
           prerequisites?: string[] | null
+          resources?: Json | null
           roadmap_id?: string | null
           skills_to_learn?: string[] | null
           start_date?: string | null

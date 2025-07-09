@@ -171,6 +171,44 @@ PHASE REQUIREMENTS:
 - Each phase should have detailed descriptions explaining what will be accomplished
 - Design phases to take someone from their current level to true professional competency
 
+CRITICAL: MAKE PHASES EXTREMELY SPECIFIC AND DETAILED:
+Instead of abstract titles like "Spanish Grammar Foundations", use specific topics:
+- "Basic Spanish Greetings & Present Tense Conjugation (-ar verbs)"
+- "Expressing Likes/Dislikes (me gusta) & Describing People/Places"
+- "Past Tense (Preterite) & Time Expressions (ayer, la semana pasada)"
+
+EXAMPLES OF SPECIFIC PHASE CONTENT BY DOMAIN:
+
+LANGUAGE LEARNING - Each phase should specify exact grammar topics and vocabulary:
+PHASE TITLES: "Present Tense -ar Verbs & Basic Introductions", "Expressing Preferences (me gusta/no me gusta) & Adjectives", "Past Tense Preterite & Time Expressions"
+SKILLS: ["Conjugate regular -ar verbs (hablar, estudiar, caminar)", "Use 'me gusta/no me gusta' with nouns and infinitives", "Form basic yes/no questions with ¿Te gusta...?"]
+OBJECTIVES: ["Master present tense conjugation of 20 common -ar verbs", "Express personal preferences about food, activities, and people", "Ask and answer questions about likes and dislikes"]
+KEY CONCEPTS: ["Subject pronouns (yo, tú, él/ella)", "Verb endings: -o, -as, -a, -amos, -áis, -an", "Agreement with 'gusta' vs 'gustan'"]
+
+PROGRAMMING - Each phase should specify exact technologies, concepts, and projects:
+PHASE TITLES: "HTML Structure & CSS Box Model", "JavaScript Variables, Functions & DOM Manipulation", "React Components & State Management"
+SKILLS: ["Create semantic HTML with proper tags (header, nav, main, footer)", "Style layouts using Flexbox and CSS Grid", "Write JavaScript functions that manipulate DOM elements"]
+OBJECTIVES: ["Build 3 responsive web pages with semantic HTML", "Create interactive forms with JavaScript validation", "Deploy a functional React app with 5+ components"]
+KEY CONCEPTS: ["HTML5 semantic elements", "CSS selectors and specificity", "Event listeners and callbacks"]
+
+FITNESS - Each phase should specify exact exercises, rep ranges, and progressions:
+PHASE TITLES: "Bodyweight Basics & Core Strength", "Push/Pull Movements & Lower Body Foundation", "Cardio Endurance & Movement Patterns"
+SKILLS: ["Perform 10 consecutive push-ups with proper form", "Hold a plank for 60 seconds", "Complete 20 bodyweight squats"]
+OBJECTIVES: ["Establish daily movement routine of 30+ minutes", "Master fundamental movement patterns safely", "Build base cardiovascular fitness"]
+KEY CONCEPTS: ["Proper push-up progression (wall → knee → full)", "Core engagement and breathing", "Progressive overload principles"]
+
+MUSIC - Each phase should specify exact chords, scales, and songs:
+PHASE TITLES: "Basic Open Chords & Strumming Patterns", "Chord Transitions & First Songs", "Barre Chords & Intermediate Techniques"
+SKILLS: ["Play G, C, D, Em chords cleanly", "Transition between chords smoothly", "Strum in 4/4 time with down-up patterns"]
+OBJECTIVES: ["Play 5 beginner songs using basic chords", "Maintain steady rhythm while changing chords", "Perform simple chord progressions"]
+KEY CONCEPTS: ["Finger placement and pressure", "Chord shapes and muscle memory", "Timing and rhythm fundamentals"]
+
+BUSINESS/PROFESSIONAL - Each phase should specify exact skills and deliverables:
+PHASE TITLES: "Market Research & Customer Validation", "Business Model Canvas & Value Propositions", "Financial Planning & Revenue Projections"
+SKILLS: ["Conduct 20 customer interviews", "Create detailed buyer personas", "Build financial models in Excel"]
+OBJECTIVES: ["Validate business idea with market research", "Define clear value proposition", "Create 12-month financial projections"]
+KEY CONCEPTS: ["Customer discovery methodology", "Lean startup principles", "Basic accounting and cash flow"]
+
 REALISTIC TIMELINE CALCULATION:
 - Calculate total hours needed realistically (don't underestimate)
 - Time available per week: ${timeCommitment} minutes/day × ${Object.values(weeklySchedule).filter(Boolean).length} days = ${Math.round(timeCommitment * Object.values(weeklySchedule).filter(Boolean).length / 60 * 10) / 10} hours/week
@@ -185,14 +223,68 @@ CRITICAL: The sum of all phase durations must equal the total realistic weeks ne
 
 PHASE DETAIL REQUIREMENTS:
 - Each phase must have comprehensive descriptions (3-5 sentences minimum)
-- Clearly explain what skills will be developed and why they're important
-- Include specific learning objectives and expected outcomes
-- Mention key concepts, techniques, or knowledge areas to be covered
-- Explain how each phase prepares for the next level
-- IMPORTANT: Include specific resources, tools, apps, websites, or materials in phase descriptions
+- CRITICAL: Phase titles must be EXTREMELY SPECIFIC and detailed, not abstract
+- Example: Instead of "Spanish Grammar Basics" → "Present Tense -ar Verbs & Expressing Likes/Dislikes (me gusta)"
+- Example: Instead of "Web Development Fundamentals" → "HTML5 Semantic Elements & CSS Flexbox Layouts"
+- Include specific learning objectives with exact topics, concepts, and techniques
+- Skills must be granular and measurable (e.g., "Conjugate 15 regular -ar verbs in present tense")
+- Key concepts should list specific grammar rules, formulas, techniques, or methods
+- Learning objectives must specify exact outcomes and measurable skills
+- Explain how each phase prepares for the next level with concrete prerequisites
+- CRITICAL: Include a "resources" array with 3-6 specific tools, apps, websites, books, or materials
+- Resources should be concrete and actionable (e.g., "Duolingo Units 1-5", "YouTube: Python Tutorial Playlist by Corey Schafer")
 - Mention popular, well-known resources relevant to the subject area
 - Focus on practical, hands-on learning rather than abstract theory
 - Include measurable outcomes and specific skills that can be demonstrated
+
+SPECIFICITY REQUIREMENTS FOR ALL DOMAINS:
+LANGUAGE LEARNING: Specify exact grammar topics, verb tenses, vocabulary themes
+- "Present tense conjugation: -ar, -er, -ir verbs"
+- "Expressing likes/dislikes (me gusta, no me gusta)"
+- "Describing people & places (bonito, grande, simpático)"
+- "Using connectors: y, pero, porque, entonces"
+
+PROGRAMMING: Specify exact technologies, frameworks, and project types
+- "HTML5 semantic elements: header, nav, main, section, footer"
+- "CSS Flexbox: justify-content, align-items, flex-direction"
+- "JavaScript ES6: arrow functions, destructuring, template literals"
+- "React Hooks: useState, useEffect, custom hooks"
+
+FITNESS: Specify exact exercises, rep ranges, and progressions
+- "Bodyweight squats: 3 sets of 15 with proper knee tracking"
+- "Push-up progression: wall → incline → knee → full push-ups"
+- "Cardiovascular base: 20-minute walks progressing to 30-minute jogs"
+
+MUSIC: Specify exact chords, scales, techniques, and songs
+- "Open chords: G, C, D, Em with clean finger positioning"
+- "Strumming patterns: down-down-up-up-down-up in 4/4 time"
+- "Chord transitions: G to C to D progressions under 2 seconds"
+- "First songs: 'Wonderwall', 'Horse with No Name', '3 Little Birds'"
+
+RESOURCES EXAMPLES BY DOMAIN:
+LANGUAGE LEARNING:
+- "Duolingo Spanish Course - Complete Basics 1 & 2 units"
+- "SpanishPod101.com - Beginner lesson series (Episodes 1-10)" 
+- "HelloTalk app - Practice with native speakers (15 min daily)"
+- "YouTube: SpanishDict channel - Pronunciation tutorials"
+
+PROGRAMMING:
+- "freeCodeCamp.org - JavaScript Basics course"
+- "Codecademy Python Track - Complete Modules 1-3"
+- "YouTube: The Net Ninja - React Tutorial Playlist"
+- "GitHub - Build and commit 2 practice projects"
+
+FITNESS:
+- "Nike Training Club app - Beginner workouts (3x/week)"
+- "YouTube: Yoga with Adriene - 30 Days of Yoga"
+- "MyFitnessPal app - Track nutrition and calories"
+- "Couch to 5K app - Complete Week 1-4 program"
+
+MUSIC:
+- "Simply Piano app - Learn basic chords and scales"
+- "YouTube: JustinGuitar - Beginner course lessons 1-10"
+- "Yousician app - Daily 20-minute practice sessions"
+- "Ultimate Guitar website - Learn 5 beginner songs"
 
 JSON format:
 {
@@ -200,14 +292,39 @@ JSON format:
   "phases": [
     {
       "id": "phase-1",
-      "title": "Descriptive Phase Title",
-      "description": "Detailed 3-5 sentence description explaining what this phase accomplishes, what skills are developed, key learning objectives, and how it prepares for the next level.",
-      "duration_weeks": 40,
-      "skills_to_learn": ["specific skill 1", "specific skill 2", "specific skill 3"],
-      "learning_objectives": ["objective 1", "objective 2", "objective 3"],
-      "key_concepts": ["concept 1", "concept 2", "concept 3"],
-      "prerequisites": ["what should be completed before this phase"],
-      "outcomes": ["what you'll be able to do after completing this phase"]
+      "title": "Present Tense -ar Verbs & Basic Introductions (Hola, me llamo...)",
+      "description": "Master the fundamentals of Spanish communication by learning present tense conjugation of regular -ar verbs and essential greeting phrases. You'll practice introducing yourself, asking basic questions, and forming simple sentences using the most common verb pattern in Spanish. This phase establishes the foundation for all future grammar learning and provides immediate practical communication skills.",
+      "duration_weeks": 3,
+      "skills_to_learn": [
+        "Conjugate regular -ar verbs in present tense (hablar, estudiar, caminar)",
+        "Use greeting phrases: Hola, me llamo, ¿Cómo te llamas?, Mucho gusto",
+        "Form basic yes/no questions with ¿Hablas español? pattern",
+        "Apply subject pronouns correctly (yo, tú, él/ella, nosotros)"
+      ],
+      "learning_objectives": [
+        "Conjugate 15 common -ar verbs accurately in present tense",
+        "Introduce yourself and ask others' names confidently",
+        "Form 20 different simple sentences using -ar verbs",
+        "Understand and respond to basic greeting conversations"
+      ],
+      "key_concepts": [
+        "Present tense -ar verb endings: -o, -as, -a, -amos, -áis, -an",
+        "Subject pronoun usage and when to omit them",
+        "Question formation with rising intonation",
+        "Basic sentence structure: Subject + Verb + Object"
+      ],
+      "prerequisites": ["None - beginner level"],
+      "outcomes": [
+        "Conduct basic introductions in Spanish",
+        "Use 15+ -ar verbs correctly in conversation",
+        "Ask and answer simple questions about daily activities"
+      ],
+      "resources": [
+        "Duolingo Spanish Course - Complete Basics 1 & 2 units (Present tense verbs)",
+        "SpanishPod101 - Beginner lesson series Episodes 1-5 (Introductions)",
+        "Conjuguemos.com - Practice -ar verb conjugations daily",
+        "YouTube: SpanishDict channel - Present tense pronunciation guide"
+      ]
     }
   ],
   "estimated_completion_date": "${new Date(new Date(startDate).getTime() + totalWeeksNeeded * 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]}",
@@ -292,6 +409,15 @@ TASK GENERATION REQUIREMENTS:
 - Include specific websites, apps, books, or tools when relevant
 - Mention specific quantities, timeframes, or metrics when possible
 
+CRITICAL: TASKS MUST BE EXTREMELY SPECIFIC TO THE PHASE CONTENT:
+If the phase is about "Present Tense -ar Verbs & Basic Introductions", tasks should be:
+- "Practice conjugating 10 -ar verbs (hablar, estudiar, trabajar) using Conjuguemos.com"
+- "Complete Duolingo lessons on present tense -ar verbs (Basics 1, Units 1-3)"
+- "Record yourself introducing yourself using: 'Hola, me llamo... Yo estudio español'"
+- "Practice greeting conversations with HelloTalk app for 15 minutes"
+
+NOT abstract tasks like "Study Spanish grammar" or "Practice vocabulary"
+
 PATTERN APPROACH FOR LONG PHASES:
 - Week 1-4: Foundation pattern (basic level)
 - Week 5-8: Development pattern (intermediate level)  
@@ -307,31 +433,31 @@ TASK TYPES TO INCLUDE:
 - Project: Larger practical applications spanning multiple days
 - Assessment: Self-evaluation, quizzes, skill checks
 
-EXAMPLES OF SPECIFIC, ACTIONABLE TASKS:
+EXAMPLES OF SPECIFIC, ACTIONABLE TASKS THAT MATCH PHASE CONTENT:
 
-LANGUAGE LEARNING:
-- "Complete Duolingo Spanish Basics Units 1-3 with 80% accuracy"
-- "Watch 3 Spanish YouTube videos on SpanishPod101 channel, take notes on 10 new phrases"
-- "Practice 20 Spanish conversations using HelloTalk app with native speakers"
-- "Read 1 chapter of 'Madrigal's Magic Key to Spanish' and complete exercises"
+LANGUAGE LEARNING (for "Present Tense -ar Verbs & Basic Introductions" phase):
+- "Conjugate 10 -ar verbs (hablar, estudiar, trabajar, caminar, cocinar) using Conjuguemos.com with 90% accuracy"
+- "Complete Duolingo Present Tense lessons: Basics 1 Units 1-3, focus on -ar verb endings"
+- "Practice introductions: Record yourself saying 'Hola, me llamo [name]. Yo estudio español. ¿Cómo te llamas?'"
+- "Write 15 sentences using different -ar verbs: 'Yo hablo español', 'Tú estudias mucho', 'Ella camina rápido'"
 
-PROGRAMMING:
-- "Complete JavaScript tutorial lessons 1-5 on freeCodeCamp.org"
-- "Build a simple calculator using HTML, CSS, and JavaScript"
-- "Solve 3 coding challenges on HackerRank in Python"
-- "Follow along with 'Build a React App' tutorial on YouTube"
+PROGRAMMING (for "HTML5 Semantic Elements & CSS Flexbox" phase):
+- "Create a webpage using semantic HTML: header, nav, main, section, footer tags"
+- "Build a 3-column layout using CSS Flexbox with justify-content and align-items"
+- "Complete freeCodeCamp Responsive Web Design: CSS Flexbox lessons 1-8"
+- "Code a navigation bar with flex properties: display: flex, space-between, center alignment"
 
-FITNESS:
-- "Complete 30-minute beginner yoga session using Yoga with Adriene Day 1 video"
-- "Run 2 miles using Couch to 5K app workout schedule"
-- "Perform 3 sets of 10 push-ups, 15 squats, 30-second plank"
-- "Track daily water intake (8 glasses) and log meals in MyFitnessPal"
+FITNESS (for "Bodyweight Basics & Core Strength" phase):
+- "Perform push-up progression: 3 sets of wall push-ups, focus on proper elbow position"
+- "Hold plank position for 30 seconds, 3 times, maintaining straight line from head to heels"
+- "Complete 3 sets of 10 bodyweight squats with proper knee tracking over toes"
+- "Follow Yoga with Adriene 'Core Strength' 20-minute video, focus on breathing technique"
 
-MUSIC:
-- "Practice piano scales C major and G major for 15 minutes using Simply Piano app"
-- "Learn to play 'Twinkle Twinkle Little Star' following JustinGuitar tutorial"
-- "Practice chord transitions G-C-D for 20 minutes with metronome"
-- "Record yourself playing and identify 2 areas for improvement"
+MUSIC (for "Basic Open Chords & Strumming Patterns" phase):
+- "Practice G, C, D chord shapes for 15 minutes: clean finger placement, no buzzing strings"
+- "Master chord transition G-C-G using JustinGuitar One Minute Changes exercise"
+- "Learn down-down-up-up-down-up strumming pattern in 4/4 time using metronome at 60 BPM"
+- "Play simple chord progression G-C-D-G for 'Wonderwall' intro using Simply Guitar app"
 
 JSON format:
 {
