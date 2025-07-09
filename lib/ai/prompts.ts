@@ -157,12 +157,14 @@ IMPORTANT:
 - Avoid repeating content they already know based on their description
 
 PHASE REQUIREMENTS:
-- Create 8-15 comprehensive learning phases that cover the COMPLETE journey from the user's current level to mastery
-- Phase durations must be realistic for ${totalWeeksNeeded} total weeks:
-  * For short timelines (< 50 weeks): 4-12 weeks per phase
-  * For medium timelines (50-100 weeks): 8-20 weeks per phase
-  * For long timelines (100+ weeks): 15-40 weeks per phase
+- Create 6-12 SPECIFIC, ACTIONABLE learning phases that cover the COMPLETE journey from the user's current level to mastery
+- Phase durations must be realistic and shorter for better engagement:
+  * For short timelines (< 12 weeks): 1-3 weeks per phase
+  * For medium timelines (12-50 weeks): 2-8 weeks per phase
+  * For long timelines (50+ weeks): 4-12 weeks per phase (MAX)
 - CRITICAL: All phase durations MUST sum to exactly ${totalWeeksNeeded} weeks
+- Each phase should have CONCRETE, MEASURABLE outcomes
+- Focus on PRACTICAL APPLICATION rather than abstract theory
 - Ensure phases build upon each other progressively with clear prerequisites
 - Cover ALL essential skills, sub-skills, and competencies needed for mastery
 - Include phases for: foundations, intermediate skills, advanced concepts, specialization, and mastery
@@ -187,6 +189,10 @@ PHASE DETAIL REQUIREMENTS:
 - Include specific learning objectives and expected outcomes
 - Mention key concepts, techniques, or knowledge areas to be covered
 - Explain how each phase prepares for the next level
+- IMPORTANT: Include specific resources, tools, apps, websites, or materials in phase descriptions
+- Mention popular, well-known resources relevant to the subject area
+- Focus on practical, hands-on learning rather than abstract theory
+- Include measurable outcomes and specific skills that can be demonstrated
 
 JSON format:
 {
@@ -274,16 +280,17 @@ Available Days: ${availableDays}
 Total Sessions Needed: ${totalSessions}
 
 TASK GENERATION REQUIREMENTS:
-- Create a weekly pattern of tasks that will be repeated across ${durationWeeks} weeks
+- Create SPECIFIC, ACTIONABLE tasks that clearly tell users exactly what to do
 - Generate exactly ${Object.values(weeklySchedule).filter(Boolean).length} task templates per week (one for each available day)
 - Each task should be achievable in ${timeCommitment} minutes
 - Tasks should progress logically through difficulty levels
-- FOCUS ON PATTERNS: Create task templates that can be repeated with variations
-- Include a variety of task types: study, practice, exercise, review, project, assessment
-- Tasks should directly support the learning objectives and skill development
+- IMPORTANT: Include SPECIFIC resources, tools, apps, websites, or materials
+- Make tasks MEASURABLE with clear success criteria
 - Include both theoretical learning and practical application
 - Design tasks that build upon each other week by week
-- Make each task specific enough that someone knows exactly what to do
+- Tasks should be CONCRETE, not abstract (e.g., "Complete Lesson 1-3 on Duolingo" not "Study vocabulary")
+- Include specific websites, apps, books, or tools when relevant
+- Mention specific quantities, timeframes, or metrics when possible
 
 PATTERN APPROACH FOR LONG PHASES:
 - Week 1-4: Foundation pattern (basic level)
@@ -300,16 +307,31 @@ TASK TYPES TO INCLUDE:
 - Project: Larger practical applications spanning multiple days
 - Assessment: Self-evaluation, quizzes, skill checks
 
-EXAMPLES FOR LONG PHASES (20+ weeks):
-- Vocabulary practice: Repeat with different word sets each week
-- Grammar drills: Same concept with increasing complexity
-- Conversation practice: Same topics with deeper exploration
-- Writing exercises: Similar formats with new themes
-- Week 1-4: Introduction and basic practice
-- Week 5-8: Intermediate practice with variations
-- Week 9-12: Advanced applications
-- Week 13-16: Mastery and refinement
-- Continue patterns for longer phases
+EXAMPLES OF SPECIFIC, ACTIONABLE TASKS:
+
+LANGUAGE LEARNING:
+- "Complete Duolingo Spanish Basics Units 1-3 with 80% accuracy"
+- "Watch 3 Spanish YouTube videos on SpanishPod101 channel, take notes on 10 new phrases"
+- "Practice 20 Spanish conversations using HelloTalk app with native speakers"
+- "Read 1 chapter of 'Madrigal's Magic Key to Spanish' and complete exercises"
+
+PROGRAMMING:
+- "Complete JavaScript tutorial lessons 1-5 on freeCodeCamp.org"
+- "Build a simple calculator using HTML, CSS, and JavaScript"
+- "Solve 3 coding challenges on HackerRank in Python"
+- "Follow along with 'Build a React App' tutorial on YouTube"
+
+FITNESS:
+- "Complete 30-minute beginner yoga session using Yoga with Adriene Day 1 video"
+- "Run 2 miles using Couch to 5K app workout schedule"
+- "Perform 3 sets of 10 push-ups, 15 squats, 30-second plank"
+- "Track daily water intake (8 glasses) and log meals in MyFitnessPal"
+
+MUSIC:
+- "Practice piano scales C major and G major for 15 minutes using Simply Piano app"
+- "Learn to play 'Twinkle Twinkle Little Star' following JustinGuitar tutorial"
+- "Practice chord transitions G-C-D for 20 minutes with metronome"
+- "Record yourself playing and identify 2 areas for improvement"
 
 JSON format:
 {
@@ -321,14 +343,16 @@ JSON format:
       "weekly_tasks": [
         {
           "day_of_week": 1,
-          "title": "Specific, actionable task title",
-          "description": "Detailed description with variables like {week_number}, {difficulty_level}",
+          "title": "Complete Duolingo Spanish Lessons 1-3",
+          "description": "Open Duolingo app, complete lessons 1-3 in the Spanish basics course. Focus on pronunciation and repeat each word 3 times.",
           "estimated_minutes": ${timeCommitment},
           "type": "study|practice|exercise|review|project|assessment",
-          "skills_practiced": ["specific skill 1", "specific skill 2"],
-          "materials_needed": ["resource 1", "resource 2"],
-          "success_criteria": "How to know the task was completed successfully",
-          "variations": ["How this task changes each week in this pattern"]
+          "skills_practiced": ["basic vocabulary", "pronunciation"],
+          "materials_needed": ["Duolingo app", "smartphone/computer", "headphones"],
+          "success_criteria": "All 3 lessons completed with 80% accuracy or higher",
+          "specific_instructions": "Download Duolingo from app store, create account, start Spanish course",
+          "resources": ["https://duolingo.com", "Duolingo mobile app"],
+          "variations": ["Week 1: Lessons 1-3", "Week 2: Lessons 4-6", "Week 3: Lessons 7-9"]
         }
       ]
     }
