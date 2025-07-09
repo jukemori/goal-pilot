@@ -200,8 +200,7 @@ export function LearningPhases({ roadmapId, goalId: _goalId }: LearningPhasesPro
             className={cn(
               "transition-all",
               isActive && "border-primary shadow-md",
-              isCompleted && "opacity-75",
-              hasGeneratedTasks && "border-primary"
+              isCompleted && "opacity-75"
             )}
           >
             <CardHeader>
