@@ -368,15 +368,11 @@ export function LearningPhases({ roadmapId, goalId: _goalId }: LearningPhasesPro
         phaseTitle={lastGeneratedTask?.phaseTitle || ''}
         onViewTasks={() => {
           setTaskDialogOpen(false)
-          // Navigate to progress tab using URL hash or simple page reload
-          window.location.href = window.location.pathname + '#progress'
-          // Force a small delay then scroll to ensure the tab is visible
-          setTimeout(() => {
-            const progressTabButton = document.querySelector('[value="progress"]') as HTMLElement
-            if (progressTabButton) {
-              progressTabButton.click()
-            }
-          }, 100)
+          // Navigate to progress tab and tasks section using query parameter and hash
+          const url = new URL(window.location.href)
+          url.searchParams.set('tab', 'progress')
+          url.hash = 'tasks-section'
+          window.location.href = url.toString()
         }}
       />
     </div>

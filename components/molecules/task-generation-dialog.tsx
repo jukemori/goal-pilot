@@ -28,10 +28,10 @@ export function TaskGenerationDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange} modal={true}>
       <DialogContent 
-        className="sm:max-w-md bg-white dark:bg-gray-900 border shadow-xl"
+        className="sm:max-w-md bg-white text-gray-900 border border-gray-200 shadow-xl"
         onInteractOutside={(e) => e.preventDefault()}
       >
-        <DialogHeader className="text-center">
+        <DialogHeader>
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
@@ -43,15 +43,15 @@ export function TaskGenerationDialog({
             </div>
           </motion.div>
           
-          <DialogTitle className="text-xl">Tasks Generated Successfully!</DialogTitle>
+          <DialogTitle className="text-xl text-gray-900 text-center">Tasks Generated Successfully!</DialogTitle>
           
           <div className="text-center space-y-2">
-            <p className="text-sm text-muted-foreground">
-              Generated <strong>{taskCount} tasks</strong> for the phase:
+            <p className="text-sm text-gray-600">
+              Generated <strong className="text-gray-900">{taskCount} tasks</strong> for the phase:
             </p>
-            <p className="font-medium text-foreground">"{phaseTitle}"</p>
-            <p className="text-sm text-muted-foreground mt-4">
-              You can view and manage your tasks in the <strong>Progress tab</strong> or continue working on your roadmap.
+            <p className="font-medium text-gray-900">"{phaseTitle}"</p>
+            <p className="text-sm text-gray-600 mt-4">
+              You can view and manage your tasks in the <strong className="text-gray-900">Progress tab</strong> or continue working on your roadmap.
             </p>
           </div>
         </DialogHeader>

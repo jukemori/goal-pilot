@@ -2,11 +2,11 @@ import { createClient } from '@/lib/supabase/server'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { GoalTabs } from '@/components/organisms/goal-tabs/goal-tabs'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { DeleteGoalButton } from '@/components/molecules/delete-goal-button'
-import { Edit3, Calendar, Clock, Target, CheckCircle, BarChart3, BookOpen, TrendingUp, Activity } from 'lucide-react'
+import { Edit3, Calendar, Clock, Target, CheckCircle, Activity } from 'lucide-react'
 import { RoadmapView } from '@/components/organisms/roadmap-view/roadmap-view'
 import { TaskList } from '@/components/organisms/task-list/task-list'
 import { ProgressChart } from '@/components/molecules/progress-chart/progress-chart'
@@ -121,24 +121,10 @@ export default async function GoalPage({ params }: GoalPageProps) {
       </Card>
 
       {/* Shadcn Style Tabs */}
-      <Tabs defaultValue="overview" className="w-full">
-        <TabsList>
-          <TabsTrigger value="overview">
-            <BarChart3 className="h-4 w-4 mr-2" />
-            Overview
-          </TabsTrigger>
-          <TabsTrigger value="roadmap">
-            <BookOpen className="h-4 w-4 mr-2" />
-            Roadmap
-          </TabsTrigger>
-          <TabsTrigger value="progress">
-            <TrendingUp className="h-4 w-4 mr-2" />
-            Progress
-          </TabsTrigger>
-        </TabsList>
-
-        {/* Overview Tab - Dashboard Style */}
-        <TabsContent value="overview" className="space-y-6">
+      <GoalTabs>
+        {{
+          overview: (
+            <div className="space-y-6">
           {/* Stats Grid */}
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <Card>
@@ -217,10 +203,10 @@ export default async function GoalPage({ params }: GoalPageProps) {
               )}
             </CardContent>
           </Card>
-        </TabsContent>
-
-        {/* Roadmap Tab */}
-        <TabsContent value="roadmap" className="space-y-6">
+            </div>
+          ),
+          roadmap: (
+            <div className="space-y-6">
           {roadmap ? (
             <div className="space-y-6">
               <div className="flex items-center justify-between">
@@ -243,33 +229,35 @@ export default async function GoalPage({ params }: GoalPageProps) {
               </div>
             </div>
           )}
-        </TabsContent>
+            </div>
+          ),
+          progress: (
+            <div className="space-y-6">
+              {/* Progress Overview - Clean Layout */}
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-lg font-semibold">Progress Overview</h3>
+                  <p className="text-sm text-muted-foreground">Track your completion rate and milestones</p>
+                </div>
+                <div className="bg-card rounded-lg border p-6">
+                  <ProgressChart tasks={tasks as unknown as Parameters<typeof ProgressChart>[0]['tasks']} />
+                </div>
+              </div>
 
-        {/* Progress Tab */}
-        <TabsContent value="progress" className="space-y-6">
-          {/* Progress Overview - Clean Layout */}
-          <div className="space-y-4">
-            <div>
-              <h3 className="text-lg font-semibold">Progress Overview</h3>
-              <p className="text-sm text-muted-foreground">Track your completion rate and milestones</p>
+              {/* Tasks List - Clean Layout */}
+              <div className="space-y-4" id="tasks-section">
+                <div>
+                  <h3 className="text-lg font-semibold">Tasks</h3>
+                  <p className="text-sm text-muted-foreground">Your daily action items</p>
+                </div>
+                <div className="bg-card rounded-lg border p-6">
+                  <TaskList tasks={tasks as unknown as Parameters<typeof TaskList>[0]['tasks']} goalId={goal.id} />
+                </div>
+              </div>
             </div>
-            <div className="bg-card rounded-lg border p-6">
-              <ProgressChart tasks={tasks as unknown as Parameters<typeof ProgressChart>[0]['tasks']} />
-            </div>
-          </div>
-
-          {/* Tasks List - Clean Layout */}
-          <div className="space-y-4">
-            <div>
-              <h3 className="text-lg font-semibold">Tasks</h3>
-              <p className="text-sm text-muted-foreground">Your daily action items</p>
-            </div>
-            <div className="bg-card rounded-lg border p-6">
-              <TaskList tasks={tasks as unknown as Parameters<typeof TaskList>[0]['tasks']} goalId={goal.id} />
-            </div>
-          </div>
-        </TabsContent>
-      </Tabs>
+          ),
+        }}
+      </GoalTabs>
     </div>
   )
 }
