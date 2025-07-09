@@ -15,8 +15,7 @@ export async function GET() {
     push_notifications: true,
     email_notifications: false,
     daily_reminders: true,
-    weekly_reports: true,
-    start_of_week: 'sunday'
+    weekly_reports: true
   }
 
   try {

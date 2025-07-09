@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
@@ -39,8 +38,6 @@ export default function SettingsPage() {
   const [dailyReminders, setDailyReminders] = useState(true)
   const [weeklyReports, setWeeklyReports] = useState(true)
   
-  // Calendar preferences state
-  const [startOfWeek, setStartOfWeek] = useState('sunday')
 
   // Fetch user data and preferences on mount
   useEffect(() => {
@@ -62,7 +59,6 @@ export default function SettingsPage() {
           setEmailNotifications(data.email_notifications ?? false)
           setDailyReminders(data.daily_reminders ?? true)
           setWeeklyReports(data.weekly_reports ?? true)
-          setStartOfWeek(data.start_of_week || 'sunday')
         }
       } catch (error) {
         console.error('Error fetching user data:', error)
@@ -124,29 +120,6 @@ export default function SettingsPage() {
     }
   }
 
-  const handleSaveCalendar = async () => {
-    setSaving(true)
-    try {
-      const res = await fetch('/api/user/preferences', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          start_of_week: startOfWeek
-        })
-      })
-
-      if (!res.ok) {
-        const { error } = await res.json()
-        throw new Error(error || 'Failed to update preferences')
-      }
-
-      toast.success('Calendar preferences updated')
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Failed to update preferences')
-    } finally {
-      setSaving(false)
-    }
-  }
 
   const handleDeleteAccount = async () => {
     setDeleting(true)
@@ -309,46 +282,15 @@ export default function SettingsPage() {
             </CardContent>
           </Card>
 
-          {/* Calendar Section */}
-          <Card id="calendar">
-            <CardHeader>
-              <CardTitle>Calendar Preferences</CardTitle>
-              <CardDescription>
-                Customize your calendar view and scheduling preferences
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="start-of-week">Start of Week</Label>
-                <Select value={startOfWeek} onValueChange={setStartOfWeek}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select start of week" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="sunday">Sunday</SelectItem>
-                    <SelectItem value="monday">Monday</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <Button onClick={handleSaveCalendar} disabled={saving}>
-                {saving ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Saving...
-                  </>
-                ) : 'Save Calendar Settings'}
-              </Button>
-            </CardContent>
-          </Card>
-
           {/* Delete Account */}
           <Card className="border-red-200">
-            <CardContent className="p-6">
-              <h4 className="font-medium text-red-600 mb-2">Delete Account</h4>
-              <p className="text-sm text-gray-600 mb-4">
+            <CardHeader>
+              <CardTitle className="text-red-600">Delete Account</CardTitle>
+              <CardDescription>
                 Once you delete your account, there is no going back. Please be certain.
-              </p>
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button 
