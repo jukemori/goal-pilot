@@ -7,8 +7,8 @@ export default function ConfirmPage() {
   return (
     <Card className="w-full max-w-md mx-auto">
       <CardHeader className="text-center">
-        <div className="mx-auto w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-4">
-          <Mail className="h-6 w-6 text-green-600" />
+        <div className="mx-auto w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+          <Mail className="h-6 w-6 text-primary" />
         </div>
         <CardTitle className="text-2xl">Check Your Email</CardTitle>
         <CardDescription>

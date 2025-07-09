@@ -93,7 +93,7 @@ export function ProgressBar({
     <div className={cn("w-full", className)}>
       <div className="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
         <motion.div
-          className="bg-green-600 h-2 rounded-full"
+          className="bg-primary h-2 rounded-full"
           initial={{ width: 0 }}
           animate={{ width: `${progress}%` }}
           transition={{ duration: 0.5, ease: "easeOut" }}

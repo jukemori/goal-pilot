@@ -68,7 +68,7 @@ export function RoadmapView({ roadmap }: RoadmapViewProps) {
               <div key={milestone.id || index} className="flex items-start gap-3 p-3 border rounded-lg">
                 <div className={cn(
                   "mt-1 rounded-full h-2 w-2 flex-shrink-0",
-                  milestone.completed ? "bg-green-500" : "bg-gray-300"
+                  milestone.completed ? "bg-primary" : "bg-gray-300"
                 )} />
                 <div className="flex-1">
                   <div className="flex items-center justify-between">
@@ -87,7 +87,7 @@ export function RoadmapView({ roadmap }: RoadmapViewProps) {
                     <p className="text-sm text-gray-600 mt-1">{milestone.description}</p>
                   )}
                   {milestone.completed && milestone.completed_date && (
-                    <div className="flex items-center gap-1 mt-2 text-xs text-green-600">
+                    <div className="flex items-center gap-1 mt-2 text-xs text-primary">
                       <CheckCircle className="h-3 w-3" />
                       Completed {new Date(milestone.completed_date).toLocaleDateString('en-US', {
                         year: 'numeric',

@@ -132,7 +132,7 @@ export function TaskList({ tasks, goalId: _goalId, pageSize = 20 }: TaskListProp
       case 5: return 'bg-red-100 text-red-800'
       case 4: return 'bg-orange-100 text-orange-800'
       case 3: return 'bg-yellow-100 text-yellow-800'
-      case 2: return 'bg-green-100 text-green-800'
+      case 2: return 'bg-primary/10 text-primary'
       default: return 'bg-gray-100 text-gray-800'
     }
   }
@@ -162,11 +162,11 @@ export function TaskList({ tasks, goalId: _goalId, pageSize = 20 }: TaskListProp
       {/* Task Statistics */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-gray-50 rounded-lg">
         <div className="text-center">
-          <div className="text-lg font-semibold text-green-600">{tasks.length}</div>
+          <div className="text-lg font-semibold text-primary">{tasks.length}</div>
           <div className="text-xs text-gray-600">Total Tasks</div>
         </div>
         <div className="text-center">
-          <div className="text-lg font-semibold text-green-600">{tasks.filter(t => t.completed).length}</div>
+          <div className="text-lg font-semibold text-primary">{tasks.filter(t => t.completed).length}</div>
           <div className="text-xs text-gray-600">Completed</div>
         </div>
         <div className="text-center">
@@ -278,7 +278,7 @@ export function TaskList({ tasks, goalId: _goalId, pageSize = 20 }: TaskListProp
                     disabled={loadingTaskId === task.id}
                   >
                     {task.completed ? (
-                      <CheckCircle className="h-4 w-4 text-green-600" />
+                      <CheckCircle className="h-4 w-4 text-primary" />
                     ) : (
                       <div className="h-4 w-4 border-2 border-gray-300 rounded" />
                     )}
@@ -310,7 +310,7 @@ export function TaskList({ tasks, goalId: _goalId, pageSize = 20 }: TaskListProp
                         {task.estimated_duration} min
                       </div>
                       {task.completed_at && (
-                        <div className="flex items-center gap-1 text-green-600">
+                        <div className="flex items-center gap-1 text-primary">
                           <CheckCircle className="h-3 w-3" />
                           Completed {format(parseISO(task.completed_at), 'h:mm a')}
                         </div>

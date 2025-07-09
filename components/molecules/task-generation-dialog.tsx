@@ -38,8 +38,8 @@ export function TaskGenerationDialog({
             transition={{ type: "spring", stiffness: 500, damping: 30 }}
             className="flex justify-center mb-4"
           >
-            <div className="rounded-full bg-green-100 p-3">
-              <CheckCircle className="h-8 w-8 text-green-600" />
+            <div className="rounded-full bg-primary/10 p-3">
+              <CheckCircle className="h-8 w-8 text-primary" />
             </div>
           </motion.div>
           

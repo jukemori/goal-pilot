@@ -137,7 +137,7 @@ export default async function DashboardPage() {
                     </p>
                   </div>
                   {task.completed && (
-                    <CheckCircle className="h-5 w-5 text-green-600" />
+                    <CheckCircle className="h-5 w-5 text-primary" />
                   )}
                 </div>
               ))}
@@ -167,7 +167,7 @@ function StatsCard({
   const colors = {
     blue: 'bg-blue-50 text-blue-600',
     purple: 'bg-purple-50 text-purple-600',
-    green: 'bg-green-50 text-green-600',
+    green: 'bg-primary/5 text-primary',
     orange: 'bg-orange-50 text-orange-600',
   }
 

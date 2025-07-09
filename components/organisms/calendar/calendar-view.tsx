@@ -166,7 +166,7 @@ export function CalendarView(_props: CalendarViewProps) {
                 <CalendarIcon className="h-5 w-5" />
                 {currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
                 {isFetching && (
-                  <div className="w-4 h-4 border-2 border-green-600 border-t-transparent rounded-full animate-spin" />
+                  <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
                 )}
               </CardTitle>
               <div className="flex items-center gap-2">
@@ -205,9 +205,9 @@ export function CalendarView(_props: CalendarViewProps) {
                           onClick={() => setSelectedDate(isSelected ? null : dateString)}
                           className={cn(
                             "p-3 h-[95px] text-left border rounded-lg transition-colors relative cursor-pointer",
-                            isToday(date) && "border-green-500 bg-green-50",
+                            isToday(date) && "border-primary bg-primary/5",
                             !isCurrentMonth(date) && "text-gray-400 bg-gray-50",
-                            isSelected && "border-green-500 bg-green-100",
+                            isSelected && "border-primary bg-primary/10",
                             dateTasks.length > 0 && "hover:bg-gray-50"
                           )}
                         >
@@ -223,8 +223,8 @@ export function CalendarView(_props: CalendarViewProps) {
                                   className={cn(
                                     "text-xs p-1 rounded truncate",
                                     task.completed 
-                                      ? "bg-green-100 text-green-800 line-through" 
-                                      : "bg-green-100 text-green-800"
+                                      ? "bg-primary/10 text-primary line-through" 
+                                      : "bg-primary/10 text-primary"
                                   )}
                                 >
                                   {task.title}
@@ -267,19 +267,19 @@ export function CalendarView(_props: CalendarViewProps) {
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <span className="text-sm text-gray-600">Completion Rate</span>
-                <span className="text-lg font-bold text-green-600">{todayProgress}%</span>
+                <span className="text-lg font-bold text-primary">{todayProgress}%</span>
               </div>
               
               <div className="w-full bg-gray-200 rounded-full h-2">
                 <div 
-                  className="bg-green-600 h-2 rounded-full transition-all duration-300"
+                  className="bg-primary h-2 rounded-full transition-all duration-300"
                   style={{ width: `${todayProgress}%` }}
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4 text-center">
                 <div>
-                  <div className="text-lg font-bold text-green-600">{completedToday}</div>
+                  <div className="text-lg font-bold text-primary">{completedToday}</div>
                   <div className="text-xs text-gray-500">Completed</div>
                 </div>
                 <div>
@@ -315,7 +315,7 @@ export function CalendarView(_props: CalendarViewProps) {
                     >
                       <div className="flex items-start gap-2">
                         {task.completed ? (
-                          <CheckCircle className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                          <CheckCircle className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
                         ) : (
                           <div className="h-4 w-4 border-2 border-gray-300 rounded mt-0.5 flex-shrink-0" />
                         )}

@@ -199,9 +199,9 @@ export function LearningPhases({ roadmapId, goalId: _goalId }: LearningPhasesPro
             key={phase.id}
             className={cn(
               "transition-all",
-              isActive && "border-green-500 shadow-md",
+              isActive && "border-primary shadow-md",
               isCompleted && "opacity-75",
-              hasGeneratedTasks && "border-green-500"
+              hasGeneratedTasks && "border-primary"
             )}
           >
             <CardHeader>
@@ -266,7 +266,7 @@ export function LearningPhases({ roadmapId, goalId: _goalId }: LearningPhasesPro
                   <ul className="text-sm text-gray-600 space-y-1">
                     {phase.learning_objectives?.map((objective: string, index: number) => (
                       <li key={index} className="flex items-start gap-2">
-                        <div className="h-1.5 w-1.5 rounded-full bg-green-400 mt-2 flex-shrink-0" />
+                        <div className="h-1.5 w-1.5 rounded-full bg-primary/80 mt-2 flex-shrink-0" />
                         {objective}
                       </li>
                     ))}
@@ -349,7 +349,7 @@ export function LearningPhases({ roadmapId, goalId: _goalId }: LearningPhasesPro
                 </Button>
 
                 {isCompleted && (
-                  <div className="flex items-center gap-1 text-sm text-green-600">
+                  <div className="flex items-center gap-1 text-sm text-primary">
                     <CheckCircle2 className="h-4 w-4" />
                     Phase Completed
                   </div>

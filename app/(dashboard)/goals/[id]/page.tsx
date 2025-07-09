@@ -61,7 +61,7 @@ export default async function GoalPage({ params }: GoalPageProps) {
 
   const statusColors = {
     active: 'bg-primary/10 text-primary border-primary/20',
-    completed: 'bg-green-50 text-green-700 border-green-200',
+    completed: 'bg-primary/5 text-primary border-primary/20',
   }
 
   return (

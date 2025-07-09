@@ -108,7 +108,7 @@ function GoalCard({ goal }: { goal: Tables<'goals'> & {
             </div>
           </div>
           {goal.status === 'completed' && (
-            <div className="mt-4 text-sm text-green-600 font-medium">
+            <div className="mt-4 text-sm text-primary font-medium">
               Completed
             </div>
           )}

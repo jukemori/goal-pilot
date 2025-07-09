@@ -111,11 +111,11 @@ export function ProgressChart({ tasks }: ProgressChartProps) {
         {/* Key Stats */}
         <div className="grid grid-cols-3 gap-4 text-center">
           <div>
-            <div className="text-2xl font-bold text-green-600">{overallProgress}%</div>
+            <div className="text-2xl font-bold text-primary">{overallProgress}%</div>
             <div className="text-xs text-gray-500">Overall Progress</div>
           </div>
           <div>
-            <div className="text-2xl font-bold text-green-600">{completedTasks}</div>
+            <div className="text-2xl font-bold text-primary">{completedTasks}</div>
             <div className="text-xs text-gray-500">Tasks Done</div>
           </div>
           <div>
@@ -139,11 +139,11 @@ export function ProgressChart({ tasks }: ProgressChartProps) {
                     <div key={day.day} className="flex flex-col items-center flex-1">
                       <div className="w-full relative">
                         <div
-                          className="bg-green-100 rounded-t w-full transition-all duration-300"
+                          className="bg-primary/10 rounded-t w-full transition-all duration-300"
                           style={{ height: `${(day.total / maxTasks) * maxHeight}px` }}
                         />
                         <div
-                          className="bg-green-500 rounded-t w-full absolute bottom-0 transition-all duration-300"
+                          className="bg-primary rounded-t w-full absolute bottom-0 transition-all duration-300"
                           style={{ height: `${(day.completed / maxTasks) * maxHeight}px` }}
                         />
                       </div>
@@ -186,7 +186,7 @@ export function ProgressChart({ tasks }: ProgressChartProps) {
               .slice(0, 3)
               .map((task) => (
                 <div key={task.id} className="flex items-center gap-2 text-sm">
-                  <div className="h-2 w-2 bg-green-500 rounded-full flex-shrink-0" />
+                  <div className="h-2 w-2 bg-primary rounded-full flex-shrink-0" />
                   <span className="text-gray-600 truncate flex-1">{task.title}</span>
                   <span className="text-xs text-gray-400">
                     {new Date(task.completed_at!).toLocaleDateString()}
