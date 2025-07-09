@@ -169,13 +169,12 @@ export async function POST(request: NextRequest) {
       
       if (currentDate > endDate) break
       
-      const weekNumber = Math.floor((currentDate.getTime() - createConsistentDate(phase.start_date || new Date().toISOString()).getTime()) / (7 * 24 * 60 * 60 * 1000)) + 1
       const baseTask = basicTasks[taskIndex % basicTasks.length]
       
       tasks.push({
         roadmap_id: roadmapId,
-        title: `${baseTask.title} (Week ${weekNumber})`,
-        description: `${baseTask.description} - Part of ${phaseData.title}`,
+        title: baseTask.title,
+        description: baseTask.description,
         scheduled_date: currentDate.toISOString().split('T')[0],
         estimated_duration: goal.daily_time_commitment || 30,
         priority: getPriorityFromType(baseTask.type),
