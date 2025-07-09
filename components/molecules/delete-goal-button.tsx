@@ -43,13 +43,12 @@ export function DeleteGoalButton({ goalId, goalTitle }: DeleteGoalButtonProps) {
           variant="outline" 
           size="sm" 
           disabled={isDeleting}
-          className="border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300"
         >
           <Trash2 className="h-4 w-4 mr-2" />
           {isDeleting ? 'Deleting...' : 'Delete'}
         </Button>
       </AlertDialogTrigger>
-      <AlertDialogContent>
+      <AlertDialogContent className="bg-white border border-gray-200 shadow-xl">
         <AlertDialogHeader>
           <AlertDialogTitle>Delete Goal</AlertDialogTitle>
           <AlertDialogDescription>
@@ -60,7 +59,7 @@ export function DeleteGoalButton({ goalId, goalTitle }: DeleteGoalButtonProps) {
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction
             onClick={handleDelete}
-            className="bg-red-600 hover:bg-red-700 text-white relative overflow-hidden"
+            className="relative overflow-hidden"
             disabled={isDeleting}
           >
             <AnimatePresence mode="wait">
