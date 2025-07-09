@@ -18,38 +18,51 @@ export function ProgressChart({ tasks }: ProgressChartProps) {
     setIsClient(true)
   }, [])
 
-  // Group tasks by week and calculate completion rate
-  const getWeeklyProgress = () => {
-    const weeklyData: Record<string, { total: number; completed: number }> = {}
+  // Group tasks by day for current week (Sunday to Saturday)
+  const getCurrentWeekProgress = () => {
+    const dailyData: Record<string, { total: number; completed: number }> = {}
     
+    // Get current week's Sunday
+    const currentDate = new Date()
+    const currentDay = currentDate.getDay() // 0 = Sunday
+    const weekStart = new Date(currentDate)
+    weekStart.setDate(currentDate.getDate() - currentDay)
+    
+    // Initialize all 7 days of current week (Sunday to Saturday)
+    const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+    for (let i = 0; i < 7; i++) {
+      const dayDate = new Date(weekStart)
+      dayDate.setDate(weekStart.getDate() + i)
+      const dayKey = dayDate.toISOString().split('T')[0]
+      
+      dailyData[dayKey] = { total: 0, completed: 0 }
+    }
+    
+    // Add task data to the days
     tasks.forEach(task => {
       const taskDate = new Date(task.scheduled_date)
-      const weekStart = new Date(taskDate)
-      weekStart.setDate(taskDate.getDate() - taskDate.getDay()) // Start of week (Sunday)
-      const weekKey = weekStart.toISOString().split('T')[0]
+      const dayKey = taskDate.toISOString().split('T')[0]
       
-      if (!weeklyData[weekKey]) {
-        weeklyData[weekKey] = { total: 0, completed: 0 }
-      }
-      
-      weeklyData[weekKey].total++
-      if (task.completed) {
-        weeklyData[weekKey].completed++
+      if (dailyData[dayKey]) {
+        dailyData[dayKey].total++
+        if (task.completed) {
+          dailyData[dayKey].completed++
+        }
       }
     })
     
-    return Object.entries(weeklyData)
-      .map(([week, data]) => ({
-        week,
+    return Object.entries(dailyData)
+      .map(([day, data], index) => ({
+        day,
+        dayName: daysOfWeek[index],
         total: data.total,
         completed: data.completed,
         percentage: data.total > 0 ? Math.round((data.completed / data.total) * 100) : 0
       }))
-      .sort((a, b) => a.week.localeCompare(b.week))
-      .slice(-8) // Last 8 weeks
+      .sort((a, b) => a.day.localeCompare(b.day))
   }
 
-  const weeklyProgress = getWeeklyProgress()
+  const weeklyProgress = getCurrentWeekProgress()
   const maxHeight = 60 // Max height for bars in pixels
 
   // Calculate overall stats
@@ -116,35 +129,41 @@ export function ProgressChart({ tasks }: ProgressChartProps) {
           <div>
             <h4 className="text-sm font-medium mb-3 flex items-center gap-2">
               <Calendar className="h-4 w-4" />
-              Weekly Progress
+              This Week's Progress
             </h4>
             <div className="space-y-4">
               <div className="flex items-end justify-between gap-2 h-20">
-                {weeklyProgress.map((week, _index) => (
-                  <div key={week.week} className="flex flex-col items-center flex-1">
-                    <div className="w-full relative">
-                      <div
-                        className="bg-green-100 rounded-t w-full transition-all duration-300"
-                        style={{ height: `${(week.total / Math.max(...weeklyProgress.map(w => w.total))) * maxHeight}px` }}
-                      />
-                      <div
-                        className="bg-green-500 rounded-t w-full absolute bottom-0 transition-all duration-300"
-                        style={{ height: `${(week.completed / Math.max(...weeklyProgress.map(w => w.total))) * maxHeight}px` }}
-                      />
+                {weeklyProgress.map((day, _index) => {
+                  const maxTasks = Math.max(...weeklyProgress.map(d => d.total), 1) // Avoid division by 0
+                  return (
+                    <div key={day.day} className="flex flex-col items-center flex-1">
+                      <div className="w-full relative">
+                        <div
+                          className="bg-green-100 rounded-t w-full transition-all duration-300"
+                          style={{ height: `${(day.total / maxTasks) * maxHeight}px` }}
+                        />
+                        <div
+                          className="bg-green-500 rounded-t w-full absolute bottom-0 transition-all duration-300"
+                          style={{ height: `${(day.completed / maxTasks) * maxHeight}px` }}
+                        />
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  )
+                })}
               </div>
               
-              {/* Week labels below the chart */}
+              {/* Day labels below the chart */}
               <div className="flex justify-between gap-2">
-                {weeklyProgress.map((week) => (
-                  <div key={`label-${week.week}`} className="text-xs text-center flex-1 space-y-1">
+                {weeklyProgress.map((day) => (
+                  <div key={`label-${day.day}`} className="text-xs text-center flex-1 space-y-1">
                     <div className="text-gray-500">
-                      {new Date(week.week).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                      {day.dayName}
+                    </div>
+                    <div className="text-gray-400 text-xs">
+                      {new Date(day.day).toLocaleDateString('en-US', { month: 'numeric', day: 'numeric' })}
                     </div>
                     <div className="font-medium text-xs">
-                      {week.percentage}%
+                      {day.percentage}%
                     </div>
                   </div>
                 ))}
