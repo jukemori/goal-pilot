@@ -35,8 +35,14 @@ export function GoalForm({ onSubmit, defaultValues, isEdit = false }: GoalFormPr
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
   
-  // Use a stable default date to avoid hydration mismatches
-  const today = typeof window !== 'undefined' ? new Date().toISOString().split('T')[0] : ''
+  // Use a stable default date in local timezone to avoid hydration mismatches
+  const today = typeof window !== 'undefined' ? (() => {
+    const now = new Date()
+    const year = now.getFullYear()
+    const month = String(now.getMonth() + 1).padStart(2, '0')
+    const day = String(now.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}`
+  })() : ''
   
   const form = useForm<GoalFormData>({
     resolver: zodResolver(goalFormSchema),

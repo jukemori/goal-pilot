@@ -18,21 +18,22 @@ export function ProgressChart({ tasks }: ProgressChartProps) {
     setIsClient(true)
   }, [])
 
-  // Group tasks by day for current week (Sunday to Saturday)
+  // Group tasks by day for current week (Sunday to Saturday) using UTC
   const getCurrentWeekProgress = () => {
     const dailyData: Record<string, { total: number; completed: number }> = {}
     
-    // Get current week's Sunday
+    // Get current week's Sunday using UTC to match task scheduling
     const currentDate = new Date()
-    const currentDay = currentDate.getDay() // 0 = Sunday
+    const currentDay = currentDate.getUTCDay() // 0 = Sunday, using UTC
     const weekStart = new Date(currentDate)
-    weekStart.setDate(currentDate.getDate() - currentDay)
+    weekStart.setUTCDate(currentDate.getUTCDate() - currentDay)
+    weekStart.setUTCHours(0, 0, 0, 0) // Set to start of day in UTC
     
     // Initialize all 7 days of current week (Sunday to Saturday)
     const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
     for (let i = 0; i < 7; i++) {
       const dayDate = new Date(weekStart)
-      dayDate.setDate(weekStart.getDate() + i)
+      dayDate.setUTCDate(weekStart.getUTCDate() + i)
       const dayKey = dayDate.toISOString().split('T')[0]
       
       dailyData[dayKey] = { total: 0, completed: 0 }
