@@ -6,7 +6,7 @@ import { GoalTabs } from '@/components/organisms/goal-tabs/goal-tabs'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { DeleteGoalButton } from '@/components/molecules/delete-goal-button'
-import { Edit3, Calendar, Clock, Target, CheckCircle, Activity } from 'lucide-react'
+import { Edit3, Calendar, Clock, Target, CheckCircle, Activity, BookOpen } from 'lucide-react'
 import { RoadmapView } from '@/components/organisms/roadmap-view/roadmap-view'
 import { TaskList } from '@/components/organisms/task-list/task-list'
 import { ProgressChart } from '@/components/molecules/progress-chart/progress-chart'
@@ -114,81 +114,126 @@ export default async function GoalPage({ params }: GoalPageProps) {
       <GoalTabs>
         {{
           overview: (
-            <div className="space-y-6">
+            <div className="space-y-8">
           {/* Stats Grid */}
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Progress</CardTitle>
-                <CheckCircle className="h-4 w-4 text-muted-foreground" />
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            <Card className="relative overflow-hidden bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20 hover:shadow-lg hover:shadow-primary/10 transition-all duration-300">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+                <CardTitle className="text-sm font-medium text-gray-700">Total Progress</CardTitle>
+                <div className="p-2 bg-primary/10 rounded-full">
+                  <CheckCircle className="h-5 w-5 text-primary" />
+                </div>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{progressPercentage}%</div>
-                <p className="text-xs text-muted-foreground">
+                <div className="text-3xl font-bold text-primary mb-1">{progressPercentage}%</div>
+                <p className="text-xs text-gray-600">
                   {completedTasks.length} of {totalTasks} tasks completed
                 </p>
+                <div className="mt-3 w-full bg-gray-200 rounded-full h-2">
+                  <div 
+                    className="bg-primary h-2 rounded-full transition-all duration-500"
+                    style={{ width: `${progressPercentage}%` }}
+                  />
+                </div>
               </CardContent>
             </Card>
             
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Days Active</CardTitle>
-                <Calendar className="h-4 w-4 text-muted-foreground" />
+            <Card className="relative overflow-hidden bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200 hover:shadow-lg hover:shadow-blue-100 transition-all duration-300">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+                <CardTitle className="text-sm font-medium text-gray-700">Days Active</CardTitle>
+                <div className="p-2 bg-blue-100 rounded-full">
+                  <Calendar className="h-5 w-5 text-blue-600" />
+                </div>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{daysActive}</div>
-                <p className="text-xs text-muted-foreground">Since start date</p>
+                <div className="text-3xl font-bold text-blue-600 mb-1">{daysActive}</div>
+                <p className="text-xs text-gray-600">Since start date</p>
+                <div className="mt-3 flex items-center text-xs text-blue-600">
+                  <div className="w-2 h-2 bg-blue-600 rounded-full mr-2"></div>
+                  Learning streak
+                </div>
               </CardContent>
             </Card>
 
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Time Invested</CardTitle>
-                <Clock className="h-4 w-4 text-muted-foreground" />
+            <Card className="relative overflow-hidden bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200 hover:shadow-lg hover:shadow-purple-100 transition-all duration-300">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+                <CardTitle className="text-sm font-medium text-gray-700">Time Invested</CardTitle>
+                <div className="p-2 bg-purple-100 rounded-full">
+                  <Clock className="h-5 w-5 text-purple-600" />
+                </div>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">
+                <div className="text-3xl font-bold text-purple-600 mb-1">
                   {Math.round((completedTasks.reduce((acc: number, task) => 
                     acc + (task.estimated_duration || 0), 0)) / 60)}h
                 </div>
-                <p className="text-xs text-muted-foreground">Total hours</p>
+                <p className="text-xs text-gray-600">Total hours</p>
+                <div className="mt-3 flex items-center text-xs text-purple-600">
+                  <div className="w-2 h-2 bg-purple-600 rounded-full mr-2"></div>
+                  Study time
+                </div>
               </CardContent>
             </Card>
 
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Tasks Today</CardTitle>
-                <Activity className="h-4 w-4 text-muted-foreground" />
+            <Card className="relative overflow-hidden bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200 hover:shadow-lg hover:shadow-orange-100 transition-all duration-300">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+                <CardTitle className="text-sm font-medium text-gray-700">Tasks Today</CardTitle>
+                <div className="p-2 bg-orange-100 rounded-full">
+                  <Activity className="h-5 w-5 text-orange-600" />
+                </div>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">
+                <div className="text-3xl font-bold text-orange-600 mb-1">
                   {tasks.filter((task) => {
                     const today = new Date().toISOString().split('T')[0]
                     return task.scheduled_date === today
                   }).length}
                 </div>
-                <p className="text-xs text-muted-foreground">Scheduled for today</p>
+                <p className="text-xs text-gray-600">Scheduled for today</p>
+                <div className="mt-3 flex items-center text-xs text-orange-600">
+                  <div className="w-2 h-2 bg-orange-600 rounded-full mr-2"></div>
+                  Daily focus
+                </div>
               </CardContent>
             </Card>
           </div>
 
           {/* Roadmap Summary */}
-          <Card>
+          <Card className="border-gray-200 shadow-sm">
             <CardHeader className="flex flex-row items-center justify-between">
               <div>
-                <CardTitle>Roadmap Summary</CardTitle>
-                <CardDescription>
+                <CardTitle className="flex items-center gap-2 text-gray-800">
+                  <div className="p-2 bg-gradient-to-br from-primary/10 to-primary/20 rounded-lg">
+                    <BookOpen className="h-5 w-5 text-primary" />
+                  </div>
+                  Roadmap Summary
+                </CardTitle>
+                <CardDescription className="text-gray-600 mt-1">
                   {roadmap ? 'Your AI-generated learning path' : 'Generating your roadmap...'}
                 </CardDescription>
               </div>
+              {roadmap && (
+                <div className="text-right">
+                  <div className="text-sm font-medium text-gray-700">Learning Path</div>
+                  <div className="text-xs text-gray-500">AI-Generated</div>
+                </div>
+              )}
             </CardHeader>
             <CardContent>
               {roadmap ? (
                 <RoadmapView roadmap={roadmap as unknown as Parameters<typeof RoadmapView>[0]['roadmap']} />
               ) : (
-                <div className="text-center py-8">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-                  <p className="text-muted-foreground">Generating your roadmap...</p>
+                <div className="text-center py-12">
+                  <div className="relative">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <BookOpen className="h-5 w-5 text-primary/50" />
+                    </div>
+                  </div>
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">Creating Your Learning Path</h3>
+                  <p className="text-gray-600 max-w-md mx-auto">
+                    Our AI is analyzing your goal and crafting a personalized roadmap tailored to your learning objectives.
+                  </p>
                 </div>
               )}
             </CardContent>
