@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -9,35 +9,171 @@ import { Switch } from '@/components/ui/switch'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
 import { toast } from 'sonner'
+import { useRouter } from 'next/navigation'
+import { Loader2 } from 'lucide-react'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
 export default function SettingsPage() {
-  const [name, setName] = useState('John Doe')
-  const [email, setEmail] = useState('john@example.com')
-  const [notifications, setNotifications] = useState(true)
+  const router = useRouter()
+  const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
+  const [deleting, setDeleting] = useState(false)
+  
+  // Profile state
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  
+  // Notification preferences state
+  const [pushNotifications, setPushNotifications] = useState(true)
   const [emailNotifications, setEmailNotifications] = useState(false)
   const [dailyReminders, setDailyReminders] = useState(true)
   const [weeklyReports, setWeeklyReports] = useState(true)
-  const [timeZone, setTimeZone] = useState('America/New_York')
+  
+  // Calendar preferences state
   const [startOfWeek, setStartOfWeek] = useState('sunday')
 
-  const handleSaveProfile = () => {
-    // TODO: Implement profile update
-    toast.success('Profile updated successfully')
+  // Fetch user data and preferences on mount
+  useEffect(() => {
+    async function fetchUserData() {
+      try {
+        // Fetch user profile
+        const profileRes = await fetch('/api/user/profile')
+        if (profileRes.ok) {
+          const { data } = await profileRes.json()
+          setName(data.name || '')
+          setEmail(data.email || '')
+        }
+
+        // Fetch user preferences
+        const prefsRes = await fetch('/api/user/preferences')
+        if (prefsRes.ok) {
+          const { data } = await prefsRes.json()
+          setPushNotifications(data.push_notifications ?? true)
+          setEmailNotifications(data.email_notifications ?? false)
+          setDailyReminders(data.daily_reminders ?? true)
+          setWeeklyReports(data.weekly_reports ?? true)
+          setStartOfWeek(data.start_of_week || 'sunday')
+        }
+      } catch (error) {
+        console.error('Error fetching user data:', error)
+        toast.error('Failed to load user data')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchUserData()
+  }, [])
+
+  const handleSaveProfile = async () => {
+    setSaving(true)
+    try {
+      const res = await fetch('/api/user/profile', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email })
+      })
+
+      if (!res.ok) {
+        const { error } = await res.json()
+        throw new Error(error || 'Failed to update profile')
+      }
+
+      toast.success('Profile updated successfully')
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Failed to update profile')
+    } finally {
+      setSaving(false)
+    }
   }
 
-  const handleSaveNotifications = () => {
-    // TODO: Implement notification preferences update
-    toast.success('Notification preferences updated')
+  const handleSaveNotifications = async () => {
+    setSaving(true)
+    try {
+      const res = await fetch('/api/user/preferences', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          push_notifications: pushNotifications,
+          email_notifications: emailNotifications,
+          daily_reminders: dailyReminders,
+          weekly_reports: weeklyReports
+        })
+      })
+
+      if (!res.ok) {
+        const { error } = await res.json()
+        throw new Error(error || 'Failed to update preferences')
+      }
+
+      toast.success('Notification preferences updated')
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Failed to update preferences')
+    } finally {
+      setSaving(false)
+    }
   }
 
-  const handleSaveCalendar = () => {
-    // TODO: Implement calendar preferences update
-    toast.success('Calendar preferences updated')
+  const handleSaveCalendar = async () => {
+    setSaving(true)
+    try {
+      const res = await fetch('/api/user/preferences', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          start_of_week: startOfWeek
+        })
+      })
+
+      if (!res.ok) {
+        const { error } = await res.json()
+        throw new Error(error || 'Failed to update preferences')
+      }
+
+      toast.success('Calendar preferences updated')
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Failed to update preferences')
+    } finally {
+      setSaving(false)
+    }
   }
 
-  const handleDeleteAccount = () => {
-    // TODO: Implement account deletion with confirmation
-    toast.error('Account deletion not implemented yet')
+  const handleDeleteAccount = async () => {
+    setDeleting(true)
+    try {
+      const res = await fetch('/api/user/delete', {
+        method: 'DELETE'
+      })
+
+      if (!res.ok) {
+        const { error } = await res.json()
+        throw new Error(error || 'Failed to delete account')
+      }
+
+      toast.success('Account deleted successfully')
+      router.push('/login')
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Failed to delete account')
+      setDeleting(false)
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-96">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    )
   }
 
   return (
@@ -80,7 +216,14 @@ export default function SettingsPage() {
                 />
               </div>
 
-              <Button onClick={handleSaveProfile}>Save Profile</Button>
+              <Button onClick={handleSaveProfile} disabled={saving}>
+                {saving ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Saving...
+                  </>
+                ) : 'Save Profile'}
+              </Button>
             </CardContent>
           </Card>
 
@@ -102,8 +245,8 @@ export default function SettingsPage() {
                 </div>
                 <Switch
                   id="notifications-toggle"
-                  checked={notifications}
-                  onCheckedChange={setNotifications}
+                  checked={pushNotifications}
+                  onCheckedChange={setPushNotifications}
                 />
               </div>
 
@@ -155,7 +298,14 @@ export default function SettingsPage() {
                 />
               </div>
 
-              <Button onClick={handleSaveNotifications}>Save Notifications</Button>
+              <Button onClick={handleSaveNotifications} disabled={saving}>
+                {saving ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Saving...
+                  </>
+                ) : 'Save Notifications'}
+              </Button>
             </CardContent>
           </Card>
 
@@ -169,24 +319,6 @@ export default function SettingsPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="timezone">Time Zone</Label>
-                <Select value={timeZone} onValueChange={setTimeZone}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select time zone" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="America/New_York">Eastern Time (UTC-5)</SelectItem>
-                    <SelectItem value="America/Chicago">Central Time (UTC-6)</SelectItem>
-                    <SelectItem value="America/Denver">Mountain Time (UTC-7)</SelectItem>
-                    <SelectItem value="America/Los_Angeles">Pacific Time (UTC-8)</SelectItem>
-                    <SelectItem value="Europe/London">London (UTC+0)</SelectItem>
-                    <SelectItem value="Europe/Paris">Paris (UTC+1)</SelectItem>
-                    <SelectItem value="Asia/Tokyo">Tokyo (UTC+9)</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
                 <Label htmlFor="start-of-week">Start of Week</Label>
                 <Select value={startOfWeek} onValueChange={setStartOfWeek}>
                   <SelectTrigger>
@@ -199,7 +331,14 @@ export default function SettingsPage() {
                 </Select>
               </div>
 
-              <Button onClick={handleSaveCalendar}>Save Calendar Settings</Button>
+              <Button onClick={handleSaveCalendar} disabled={saving}>
+                {saving ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Saving...
+                  </>
+                ) : 'Save Calendar Settings'}
+              </Button>
             </CardContent>
           </Card>
 
@@ -210,12 +349,39 @@ export default function SettingsPage() {
               <p className="text-sm text-gray-600 mb-4">
                 Once you delete your account, there is no going back. Please be certain.
               </p>
-              <Button 
-                variant="destructive" 
-                onClick={handleDeleteAccount}
-              >
-                Delete Account
-              </Button>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button 
+                    variant="destructive" 
+                    disabled={deleting}
+                  >
+                    {deleting ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Deleting...
+                      </>
+                    ) : 'Delete Account'}
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This action cannot be undone. This will permanently delete your
+                      account and remove all of your data from our servers.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction 
+                      onClick={handleDeleteAccount}
+                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                    >
+                      Delete Account
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </CardContent>
           </Card>
         </div>
