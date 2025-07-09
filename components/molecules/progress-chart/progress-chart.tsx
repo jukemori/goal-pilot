@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { Calendar } from 'lucide-react'
+import { Calendar, Target, TrendingUp, Zap, Trophy, CheckCircle2, Flame } from 'lucide-react'
 import { Tables } from '@/types/database'
 
 type Task = Tables<'tasks'>
@@ -107,18 +107,27 @@ export function ProgressChart({ tasks }: ProgressChartProps) {
   }, [isClient, tasks, getStreak])
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
         {/* Key Stats */}
-        <div className="grid grid-cols-3 gap-4 text-center">
-          <div>
+        <div className="grid grid-cols-3 gap-4">
+          <div className="text-center p-4 rounded-xl bg-gradient-to-br from-primary/5 to-primary/10 border border-primary/20 hover:shadow-lg hover:shadow-primary/10 transition-all duration-300">
+            <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-2">
+              <Trophy className="h-6 w-6 text-primary" />
+            </div>
             <div className="text-2xl font-bold text-primary">{overallProgress}%</div>
             <div className="text-xs text-gray-500">Overall Progress</div>
           </div>
-          <div>
-            <div className="text-2xl font-bold text-primary">{completedTasks}</div>
+          <div className="text-center p-4 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 hover:shadow-lg hover:shadow-blue-100 transition-all duration-300">
+            <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2">
+              <CheckCircle2 className="h-6 w-6 text-blue-600" />
+            </div>
+            <div className="text-2xl font-bold text-blue-600">{completedTasks}</div>
             <div className="text-xs text-gray-500">Tasks Done</div>
           </div>
-          <div>
+          <div className="text-center p-4 rounded-xl bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 hover:shadow-lg hover:shadow-purple-100 transition-all duration-300">
+            <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-2">
+              <Flame className="h-6 w-6 text-purple-600" />
+            </div>
             <div className="text-2xl font-bold text-purple-600">{currentStreak}</div>
             <div className="text-xs text-gray-500">Day Streak</div>
           </div>
@@ -127,23 +136,25 @@ export function ProgressChart({ tasks }: ProgressChartProps) {
         {/* Weekly Progress Chart */}
         {weeklyProgress.length > 0 && (
           <div>
-            <h4 className="text-sm font-medium mb-3 flex items-center gap-2">
-              <Calendar className="h-4 w-4" />
+            <h4 className="text-lg font-semibold mb-4 flex items-center gap-2 text-gray-800">
+              <Calendar className="h-5 w-5 text-primary" />
               This Week's Progress
             </h4>
             <div className="space-y-4">
-              <div className="flex items-end justify-between gap-2 h-20">
+              <div className="flex items-end justify-between gap-3 h-20">
                 {weeklyProgress.map((day, _index) => {
                   const maxTasks = Math.max(...weeklyProgress.map(d => d.total), 1) // Avoid division by 0
                   return (
-                    <div key={day.day} className="flex flex-col items-center flex-1">
+                    <div key={day.day} className="flex flex-col items-center flex-1 group">
                       <div className="w-full relative">
+                        {/* Background bar */}
                         <div
-                          className="bg-primary/10 rounded-t w-full transition-all duration-300"
-                          style={{ height: `${(day.total / maxTasks) * maxHeight}px` }}
+                          className="bg-gradient-to-br from-primary/5 to-primary/10 border border-primary/20 rounded-lg w-full transition-all duration-300"
+                          style={{ height: `${Math.max((day.total / maxTasks) * maxHeight, 8)}px` }}
                         />
+                        {/* Completed portion */}
                         <div
-                          className="bg-primary rounded-t w-full absolute bottom-0 transition-all duration-300"
+                          className="absolute bottom-0 w-full rounded-lg transition-all duration-300 bg-primary"
                           style={{ height: `${(day.completed / maxTasks) * maxHeight}px` }}
                         />
                       </div>
@@ -160,7 +171,7 @@ export function ProgressChart({ tasks }: ProgressChartProps) {
                       {day.dayName}
                     </div>
                     <div className="text-gray-400 text-xs">
-                      {new Date(day.day).toLocaleDateString('en-US', { month: 'numeric', day: 'numeric' })}
+                      {isClient ? new Date(day.day).toLocaleDateString('en-US', { month: 'numeric', day: 'numeric' }) : new Date(day.day).toISOString().split('T')[0].split('-').slice(1).join('/')}
                     </div>
                     <div className="font-medium text-xs">
                       {day.percentage}%
@@ -178,7 +189,10 @@ export function ProgressChart({ tasks }: ProgressChartProps) {
 
         {/* Recent Activity */}
         <div>
-          <h4 className="text-sm font-medium mb-3">Recent Activity</h4>
+          <h4 className="text-lg font-semibold mb-4 flex items-center gap-2 text-gray-800">
+            <TrendingUp className="h-5 w-5 text-primary" />
+            Recent Activity
+          </h4>
           <div className="space-y-2">
             {tasks
               .filter(task => task.completed && task.completed_at)
@@ -189,15 +203,31 @@ export function ProgressChart({ tasks }: ProgressChartProps) {
                   <div className="h-2 w-2 bg-primary rounded-full flex-shrink-0" />
                   <span className="text-gray-600 truncate flex-1">{task.title}</span>
                   <span className="text-xs text-gray-400">
-                    {new Date(task.completed_at!).toLocaleDateString()}
+                    {isClient ? new Date(task.completed_at!).toLocaleDateString() : new Date(task.completed_at!).toISOString().split('T')[0]}
                   </span>
                 </div>
               ))}
           </div>
           {tasks.filter(task => task.completed).length === 0 && (
-            <p className="text-sm text-gray-500 text-center py-4">
-              No completed tasks yet. Start completing tasks to see your progress!
-            </p>
+            <div className="text-center py-8">
+              <div className="w-16 h-16 bg-gradient-to-br from-primary/20 to-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Target className="h-8 w-8 text-primary" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Ready to Start?</h3>
+              <p className="text-sm text-gray-500 mb-4 max-w-sm mx-auto">
+                Complete your first task to begin tracking your progress and building momentum!
+              </p>
+              <div className="flex items-center justify-center gap-4 text-xs text-gray-400">
+                <div className="flex items-center gap-1">
+                  <TrendingUp className="h-3 w-3" />
+                  <span>Track Progress</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Zap className="h-3 w-3" />
+                  <span>Build Streaks</span>
+                </div>
+              </div>
+            </div>
           )}
         </div>
     </div>
