@@ -3,7 +3,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { Plus, Calendar, Clock, Target } from 'lucide-react'
-import { cn } from '@/lib/utils'
 import { Tables } from '@/types/database'
 
 export default async function GoalsPage() {
@@ -77,26 +76,12 @@ function GoalCard({ goal }: { goal: Tables<'goals'> & {
     tasks: Array<{ completed: boolean }>;
   }>;
 } }) {
-  const levelColors = {
-    beginner: 'bg-green-100 text-green-800',
-    intermediate: 'bg-blue-100 text-blue-800',
-    advanced: 'bg-purple-100 text-purple-800',
-    expert: 'bg-red-100 text-red-800',
-  }
 
   return (
     <Link href={`/goals/${goal.id}`}>
       <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
         <CardHeader>
-          <div className="flex items-start justify-between">
-            <CardTitle className="text-lg">{goal.title}</CardTitle>
-            <span className={cn(
-              "text-xs px-2 py-1 rounded-full font-medium",
-              levelColors[goal.current_level as keyof typeof levelColors]
-            )}>
-              {goal.current_level}
-            </span>
-          </div>
+          <CardTitle className="text-lg">{goal.title}</CardTitle>
           {goal.description && (
             <CardDescription className="line-clamp-2">
               {goal.description}

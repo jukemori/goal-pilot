@@ -59,13 +59,6 @@ export default async function GoalPage({ params }: GoalPageProps) {
   // Calculate days active on server side to avoid hydration mismatch
   const daysActive = Math.ceil((new Date().getTime() - new Date(goal.start_date).getTime()) / (1000 * 60 * 60 * 24))
 
-  const levelColors = {
-    beginner: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-    intermediate: 'bg-green-50 text-green-700 border-green-200',
-    advanced: 'bg-purple-50 text-purple-700 border-purple-200',
-    expert: 'bg-orange-50 text-orange-700 border-orange-200',
-  }
-
   const statusColors = {
     active: 'bg-primary/10 text-primary border-primary/20',
     completed: 'bg-green-50 text-green-700 border-green-200',
@@ -80,9 +73,6 @@ export default async function GoalPage({ params }: GoalPageProps) {
             <div className="space-y-4 flex-1">
               <div className="flex flex-wrap items-center gap-3">
                 <h1 className="text-3xl font-bold">{goal.title}</h1>
-                <Badge variant="outline" className={cn("text-xs px-3 py-1 rounded-full border", levelColors[goal.current_level as keyof typeof levelColors])}>
-                  {goal.current_level}
-                </Badge>
                 <Badge variant="outline" className={cn("text-xs px-3 py-1 rounded-full border font-medium", statusColors[goal.status as keyof typeof statusColors])}>
                   {goal.status}
                 </Badge>
