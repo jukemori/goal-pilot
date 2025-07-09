@@ -59,7 +59,7 @@ export function DeleteGoalButton({ goalId, goalTitle }: DeleteGoalButtonProps) {
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction
             onClick={handleDelete}
-            className="relative overflow-hidden bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            className="relative overflow-hidden"
             disabled={isDeleting}
           >
             <AnimatePresence mode="wait">
