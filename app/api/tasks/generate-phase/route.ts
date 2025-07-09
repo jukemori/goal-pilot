@@ -145,7 +145,7 @@ export async function POST(request: NextRequest) {
     const currentDate = createConsistentDate(phase.start_date || new Date().toISOString())
     const endDate = createConsistentDate(phase.end_date || new Date().toISOString())
     
-    console.log('Phase start date:', phase.start_date, '-> Current date:', currentDate, 'Day of week:', currentDate.getDay())
+    console.log('Phase start date:', phase.start_date, '-> Current date:', currentDate, 'Day of week:', currentDate.getUTCDay())
     console.log('Phase end date:', phase.end_date, '-> End date:', endDate)
 
     // For now, use a simple approach to ensure full coverage
@@ -161,9 +161,9 @@ export async function POST(request: NextRequest) {
     let taskIndex = 0
     
     while (currentDate <= endDate) {
-      // Find next available day
-      while (!availableDays.includes(currentDate.getDay())) {
-        currentDate.setDate(currentDate.getDate() + 1)
+      // Find next available day using UTC methods
+      while (!availableDays.includes(currentDate.getUTCDay())) {
+        currentDate.setUTCDate(currentDate.getUTCDate() + 1)
         if (currentDate > endDate) break
       }
       
@@ -183,10 +183,10 @@ export async function POST(request: NextRequest) {
         phase_number: phase.phase_number
       })
       
-      // Move to next available day
+      // Move to next available day using UTC methods
       do {
-        currentDate.setDate(currentDate.getDate() + 1)
-      } while (!availableDays.includes(currentDate.getDay()) && currentDate <= endDate)
+        currentDate.setUTCDate(currentDate.getUTCDate() + 1)
+      } while (!availableDays.includes(currentDate.getUTCDay()) && currentDate <= endDate)
       
       taskIndex++
     }
@@ -229,12 +229,12 @@ function getDayNumber(dayName: string): number {
   return dayMap[dayName.toLowerCase()] ?? 1
 }
 
-// Helper function to create consistent local dates from date strings
+// Helper function to create consistent UTC dates from date strings
 function createConsistentDate(dateString: string): Date {
-  // Parse the date string as YYYY-MM-DD and create a date without timezone issues
-  // This ensures the date represents the intended calendar date regardless of server timezone
+  // Parse the date string as YYYY-MM-DD and create a UTC date
+  // This ensures the date represents the intended calendar date consistently
   const [year, month, day] = dateString.split('-').map(Number)
-  return new Date(year, month - 1, day)
+  return new Date(Date.UTC(year, month - 1, day))
 }
 
 function getPriorityFromType(type: string): number {

@@ -8,6 +8,7 @@ import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, CheckCircle, Clock
 import { SimpleTaskList } from '@/components/organisms/calendar/simple-task-list'
 import { useQuery } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabase/client'
+import { format, parseISO } from 'date-fns'
 
 interface Task {
   id: string
@@ -143,7 +144,7 @@ export function CalendarView(_props: CalendarViewProps) {
   }
 
   const getDateString = (date: Date) => {
-    return date.toISOString().split('T')[0]
+    return format(date, 'yyyy-MM-dd')
   }
 
   const getTasksForDate = (date: Date) => {
@@ -304,11 +305,7 @@ export function CalendarView(_props: CalendarViewProps) {
           <Card>
             <CardHeader>
               <CardTitle className="text-base">
-                {new Date(selectedDate).toLocaleDateString('en-US', { 
-                  weekday: 'long', 
-                  month: 'long', 
-                  day: 'numeric' 
-                })}
+                {format(parseISO(selectedDate), 'EEEE, MMMM d')}
               </CardTitle>
               <CardDescription>
                 {selectedDateTasks.length} tasks scheduled

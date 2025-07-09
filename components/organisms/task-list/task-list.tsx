@@ -11,6 +11,7 @@ import { completeTask, uncompleteTask, rescheduleTask } from '@/app/actions/task
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import { Tables } from '@/types/database'
+import { format, parseISO } from 'date-fns'
 
 type Task = Tables<'tasks'>
 
@@ -253,11 +254,7 @@ export function TaskList({ tasks, goalId: _goalId, pageSize = 20 }: TaskListProp
           <div key={date}>
             <div className="flex items-center gap-2 mb-3">
               <h3 className="font-medium">
-                {new Date(date).toLocaleDateString('en-US', {
-                  weekday: 'long',
-                  month: 'short',
-                  day: 'numeric'
-                })}
+                {format(parseISO(date), 'EEEE, MMMM d')}
               </h3>
               <Badge variant="outline" className="text-xs">
                 {dateTasks.filter(t => t.completed).length}/{dateTasks.length}
@@ -315,10 +312,7 @@ export function TaskList({ tasks, goalId: _goalId, pageSize = 20 }: TaskListProp
                       {task.completed_at && (
                         <div className="flex items-center gap-1 text-green-600">
                           <CheckCircle className="h-3 w-3" />
-                          Completed {new Date(task.completed_at).toLocaleTimeString([], {
-                            hour: '2-digit',
-                            minute: '2-digit'
-                          })}
+                          Completed {format(parseISO(task.completed_at), 'h:mm a')}
                         </div>
                       )}
                     </div>
