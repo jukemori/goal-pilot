@@ -158,42 +158,54 @@ export function TaskList({ tasks, goalId: _goalId, pageSize = 20 }: TaskListProp
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {/* Task Statistics */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 rounded-lg">
-        <div className="text-center">
-          <div className="text-lg font-semibold text-primary">{tasks.length}</div>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="text-center p-4 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 hover:shadow-lg hover:shadow-blue-100 transition-all duration-300">
+          <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2">
+            <Calendar className="h-5 w-5 text-blue-600" />
+          </div>
+          <div className="text-2xl font-bold text-blue-600">{tasks.length}</div>
           <div className="text-xs text-gray-600">Total Tasks</div>
         </div>
-        <div className="text-center">
-          <div className="text-lg font-semibold text-primary">{tasks.filter(t => t.completed).length}</div>
+        <div className="text-center p-4 rounded-xl bg-gradient-to-br from-green-50 to-green-100 border border-green-200 hover:shadow-lg hover:shadow-green-100 transition-all duration-300">
+          <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-2">
+            <CheckCircle className="h-5 w-5 text-green-600" />
+          </div>
+          <div className="text-2xl font-bold text-green-600">{tasks.filter(t => t.completed).length}</div>
           <div className="text-xs text-gray-600">Completed</div>
         </div>
-        <div className="text-center">
-          <div className="text-lg font-semibold text-orange-600">{tasks.filter(t => !t.completed && t.scheduled_date < new Date().toISOString().split('T')[0]).length}</div>
+        <div className="text-center p-4 rounded-xl bg-gradient-to-br from-orange-50 to-orange-100 border border-orange-200 hover:shadow-lg hover:shadow-orange-100 transition-all duration-300">
+          <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-2">
+            <Clock className="h-5 w-5 text-orange-600" />
+          </div>
+          <div className="text-2xl font-bold text-orange-600">{tasks.filter(t => !t.completed && t.scheduled_date < new Date().toISOString().split('T')[0]).length}</div>
           <div className="text-xs text-gray-600">Overdue</div>
         </div>
-        <div className="text-center">
-          <div className="text-lg font-semibold text-purple-600">{filteredTasks.length}</div>
+        <div className="text-center p-4 rounded-xl bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 hover:shadow-lg hover:shadow-purple-100 transition-all duration-300">
+          <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-2">
+            <Filter className="h-5 w-5 text-purple-600" />
+          </div>
+          <div className="text-2xl font-bold text-purple-600">{filteredTasks.length}</div>
           <div className="text-xs text-gray-600">Filtered</div>
         </div>
       </div>
 
       {/* Search and Filters */}
-      <div className="space-y-3">
+      <div className="space-y-4">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
           <Input
             placeholder="Search tasks..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10"
+            className="pl-12 h-12 text-base bg-white border-gray-200 rounded-xl shadow-sm focus:border-primary focus:ring-2 focus:ring-primary/20"
           />
         </div>
         
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-3">
           <Select value={statusFilter} onValueChange={(value: typeof statusFilter) => setStatusFilter(value)}>
-            <SelectTrigger className="w-[140px]">
+            <SelectTrigger className="w-[140px] h-10 bg-white border-gray-200 rounded-xl shadow-sm focus:border-primary focus:ring-2 focus:ring-primary/20">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
@@ -204,7 +216,7 @@ export function TaskList({ tasks, goalId: _goalId, pageSize = 20 }: TaskListProp
           </Select>
 
           <Select value={priorityFilter} onValueChange={(value: typeof priorityFilter) => setPriorityFilter(value)}>
-            <SelectTrigger className="w-[140px]">
+            <SelectTrigger className="w-[140px] h-10 bg-white border-gray-200 rounded-xl shadow-sm focus:border-primary focus:ring-2 focus:ring-primary/20">
               <SelectValue placeholder="Priority" />
             </SelectTrigger>
             <SelectContent>
@@ -218,7 +230,7 @@ export function TaskList({ tasks, goalId: _goalId, pageSize = 20 }: TaskListProp
           </Select>
 
           <Select value={dateFilter} onValueChange={(value: typeof dateFilter) => setDateFilter(value)}>
-            <SelectTrigger className="w-[140px]">
+            <SelectTrigger className="w-[140px] h-10 bg-white border-gray-200 rounded-xl shadow-sm focus:border-primary focus:ring-2 focus:ring-primary/20">
               <SelectValue placeholder="Date" />
             </SelectTrigger>
             <SelectContent>
@@ -231,13 +243,14 @@ export function TaskList({ tasks, goalId: _goalId, pageSize = 20 }: TaskListProp
 
           <Button
             variant="outline"
+            size="sm"
             onClick={() => {
               setSearchQuery('')
               setStatusFilter('all')
               setPriorityFilter('all')
               setDateFilter('all')
             }}
-            className="gap-2"
+            className="gap-2 h-9 px-4 bg-white border-gray-200 rounded-xl shadow-sm focus:border-primary focus:ring-2 focus:ring-primary/20"
           >
             <Filter className="h-4 w-4" />
             Clear
@@ -246,41 +259,46 @@ export function TaskList({ tasks, goalId: _goalId, pageSize = 20 }: TaskListProp
       </div>
 
       {/* Task List */}
-      <div className="space-y-6">
+      <div className="space-y-8">
         {paginatedDates.map((date) => {
         const dateTasks = groupedTasks[date]
         
         return (
           <div key={date}>
-            <div className="flex items-center gap-2 mb-3">
-              <h3 className="font-medium">
-                {format(parseISO(date), 'EEEE, MMMM d')}
-              </h3>
-              <Badge variant="outline" className="text-xs">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-primary rounded-full"></div>
+                <h3 className="font-semibold text-gray-800">
+                  {format(parseISO(date), 'EEEE, MMMM d')}
+                </h3>
+              </div>
+              <Badge variant="outline" className="text-xs bg-gray-50">
                 {dateTasks.filter(t => t.completed).length}/{dateTasks.length}
               </Badge>
             </div>
             
-            <div className="space-y-2">
+            <div className="space-y-3">
               {dateTasks.map((task) => (
                 <div
                   key={task.id}
                   className={cn(
-                    "flex items-center gap-3 p-3 border rounded-lg transition-colors",
-                    task.completed && "opacity-60 bg-gray-50"
+                    "flex items-center gap-3 p-4 bg-white border rounded-xl shadow-sm hover:shadow-md transition-all duration-200",
+                    task.completed && "opacity-60 bg-gray-50/80"
                   )}
                 >
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="h-6 w-6 p-0"
+                    className="h-8 w-8 p-0 hover:bg-primary/10"
                     onClick={() => handleToggleComplete(task)}
                     disabled={loadingTaskId === task.id}
                   >
                     {task.completed ? (
-                      <CheckCircle className="h-4 w-4 text-primary" />
+                      <div className="h-5 w-5 bg-primary rounded-full flex items-center justify-center">
+                        <CheckCircle className="h-3 w-3 text-white" />
+                      </div>
                     ) : (
-                      <div className="h-4 w-4 border-2 border-gray-300 rounded" />
+                      <div className="h-5 w-5 border-2 border-gray-300 rounded-full hover:border-primary transition-colors" />
                     )}
                   </Button>
 
