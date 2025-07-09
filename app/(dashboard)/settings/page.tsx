@@ -8,7 +8,6 @@ import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
-import { User, Bell, Calendar, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 
 export default function SettingsPage() {
@@ -49,31 +48,8 @@ export default function SettingsPage() {
         <p className="text-gray-600 mt-2">Manage your account and preferences</p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Settings Navigation */}
-        <div className="lg:col-span-1">
-          <nav className="space-y-2">
-            <a href="#profile" className="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md bg-blue-50 text-blue-600">
-              <User className="h-4 w-4" />
-              Profile
-            </a>
-            <a href="#notifications" className="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md text-gray-700 hover:bg-gray-50">
-              <Bell className="h-4 w-4" />
-              Notifications
-            </a>
-            <a href="#calendar" className="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md text-gray-700 hover:bg-gray-50">
-              <Calendar className="h-4 w-4" />
-              Calendar
-            </a>
-            <a href="#danger" className="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md text-red-700 hover:bg-red-50">
-              <Trash2 className="h-4 w-4" />
-              Danger Zone
-            </a>
-          </nav>
-        </div>
-
-        {/* Settings Content */}
-        <div className="lg:col-span-2 space-y-8">
+      {/* Settings Content */}
+      <div className="space-y-8">
           {/* Profile Section */}
           <Card id="profile">
             <CardHeader>
@@ -227,33 +203,22 @@ export default function SettingsPage() {
             </CardContent>
           </Card>
 
-          {/* Danger Zone */}
-          <Card id="danger" className="border-red-200">
-            <CardHeader>
-              <CardTitle className="text-red-600">Danger Zone</CardTitle>
-              <CardDescription>
-                Irreversible and destructive actions
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="p-4 border border-red-200 rounded-lg">
-                  <h4 className="font-medium text-red-600 mb-2">Delete Account</h4>
-                  <p className="text-sm text-gray-600 mb-3">
-                    Once you delete your account, there is no going back. Please be certain.
-                  </p>
-                  <Button 
-                    variant="destructive" 
-                    onClick={handleDeleteAccount}
-                  >
-                    Delete Account
-                  </Button>
-                </div>
-              </div>
+          {/* Delete Account */}
+          <Card className="border-red-200">
+            <CardContent className="p-6">
+              <h4 className="font-medium text-red-600 mb-2">Delete Account</h4>
+              <p className="text-sm text-gray-600 mb-4">
+                Once you delete your account, there is no going back. Please be certain.
+              </p>
+              <Button 
+                variant="destructive" 
+                onClick={handleDeleteAccount}
+              >
+                Delete Account
+              </Button>
             </CardContent>
           </Card>
         </div>
-      </div>
     </div>
   )
 }
