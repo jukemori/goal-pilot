@@ -188,7 +188,7 @@ export function LearningPhases({ roadmapId, goalId: _goalId }: LearningPhasesPro
   console.log('Rendering phases:', phases.length, 'phases for roadmap:', roadmapId)
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {phases.map((phase) => {
         const isActive = phase.status === 'active'
         const isCompleted = phase.status === 'completed'
@@ -198,46 +198,63 @@ export function LearningPhases({ roadmapId, goalId: _goalId }: LearningPhasesPro
           <Card 
             key={phase.id}
             className={cn(
-              "transition-all",
-              isActive && "border-primary shadow-md",
-              isCompleted && "opacity-75"
+              "relative overflow-hidden transition-all duration-300 hover:shadow-lg",
+              isActive && "border-primary shadow-md bg-gradient-to-r from-primary/5 to-primary/10",
+              isCompleted && "opacity-75 bg-gradient-to-r from-green-50 to-green-100 border-green-200",
+              !isActive && !isCompleted && "bg-white border-gray-200 hover:border-gray-300"
             )}
           >
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <div className="space-y-1">
-                  <CardTitle className="text-base flex items-center gap-2">
-                    {phase.title}
-                    <Badge 
-                      variant={isActive ? "default" : isCompleted ? "secondary" : "outline"}
-                      className="ml-2"
-                    >
-                      {phase.status}
-                    </Badge>
-                  </CardTitle>
-                  <CardDescription>{phase.description}</CardDescription>
+            {/* Phase indicator line */}
+            <div className={cn(
+              "absolute left-0 top-0 w-1 h-full",
+              isActive && "bg-primary",
+              isCompleted && "bg-green-500",
+              !isActive && !isCompleted && "bg-gray-300"
+            )} />
+            
+            <CardHeader className="pl-6">
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className={cn(
+                    "inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-semibold",
+                    isActive && "bg-primary/10 text-primary border border-primary/20",
+                    isCompleted && "bg-green-100 text-green-700 border border-green-200",
+                    !isActive && !isCompleted && "bg-gray-100 text-gray-600 border border-gray-200"
+                  )}>
+                    <span className="text-xs font-bold">Phase</span>
+                    <span className="font-bold">{phase.phase_number}</span>
+                  </div>
+                  <Badge 
+                    variant={isActive ? "default" : isCompleted ? "secondary" : "outline"}
+                    className={cn(
+                      "capitalize",
+                      isActive && "bg-primary text-white",
+                      isCompleted && "bg-green-500 text-white"
+                    )}
+                  >
+                    {phase.status}
+                  </Badge>
                 </div>
-                <Badge variant="outline">
-                  Phase {phase.phase_number}
-                </Badge>
+                <div>
+                  <CardTitle className="text-xl mb-2">{phase.title}</CardTitle>
+                  <CardDescription className="text-base leading-relaxed">{phase.description}</CardDescription>
+                </div>
               </div>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex flex-wrap gap-4 text-sm text-gray-600">
-                <div className="flex items-center gap-1">
-                  <Clock className="h-4 w-4" />
-                  <span>{phase.duration_weeks} weeks</span>
+            <CardContent className="space-y-6 pl-6">
+              {/* Timeline and Duration */}
+              <div className="flex flex-wrap gap-6 text-sm">
+                <div className="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-lg">
+                  <Clock className="h-4 w-4 text-gray-500" />
+                  <span className="font-medium">{phase.duration_weeks} weeks</span>
                 </div>
-                <div className="flex items-center gap-1">
-                  <Calendar className="h-4 w-4" />
+                <div className="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-lg">
+                  <Calendar className="h-4 w-4 text-gray-500" />
                   <span>
                     {new Date(phase.start_date + 'T00:00:00').toLocaleDateString('en-US', {
-                      year: 'numeric',
                       month: 'short', 
                       day: 'numeric'
-                    })} - 
-                    {new Date(phase.end_date + 'T00:00:00').toLocaleDateString('en-US', {
-                      year: 'numeric',
+                    })} - {new Date(phase.end_date + 'T00:00:00').toLocaleDateString('en-US', {
                       month: 'short',
                       day: 'numeric'
                     })}
@@ -247,8 +264,11 @@ export function LearningPhases({ roadmapId, goalId: _goalId }: LearningPhasesPro
 
               {phase.skills_to_learn && phase.skills_to_learn.length > 0 && (
                 <div>
-                  <p className="text-sm font-medium mb-2">Skills to Learn:</p>
-                  <div className="flex flex-wrap gap-1">
+                  <p className="text-sm font-semibold mb-3 text-gray-900 flex items-center gap-2">
+                    <div className="w-2 h-2 bg-gray-600 rounded-full"></div>
+                    Skills to Learn:
+                  </p>
+                  <div className="flex flex-wrap gap-2">
                     {phase.skills_to_learn.map((skill: string, index: number) => (
                       <Badge key={index} variant="secondary" className="text-xs">
                         {skill}
@@ -260,12 +280,15 @@ export function LearningPhases({ roadmapId, goalId: _goalId }: LearningPhasesPro
 
               {/* Show learning objectives if available */}
               {phase.learning_objectives && phase.learning_objectives.length > 0 && (
-                <div>
-                  <p className="text-sm font-medium mb-2">Learning Objectives:</p>
-                  <ul className="text-sm text-gray-600 space-y-1">
+                <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+                  <p className="text-sm font-semibold mb-3 text-green-900 flex items-center gap-2">
+                    <div className="w-2 h-2 bg-green-600 rounded-full"></div>
+                    Learning Objectives:
+                  </p>
+                  <ul className="text-sm text-green-800 space-y-2">
                     {phase.learning_objectives?.map((objective: string, index: number) => (
-                      <li key={index} className="flex items-start gap-2">
-                        <div className="h-1.5 w-1.5 rounded-full bg-primary/80 mt-2 flex-shrink-0" />
+                      <li key={index} className="flex items-start gap-3">
+                        <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
                         {objective}
                       </li>
                     ))}
@@ -276,8 +299,11 @@ export function LearningPhases({ roadmapId, goalId: _goalId }: LearningPhasesPro
               {/* Show key concepts if available */}
               {phase.key_concepts && phase.key_concepts.length > 0 && (
                 <div>
-                  <p className="text-sm font-medium mb-2">Key Concepts:</p>
-                  <div className="flex flex-wrap gap-1">
+                  <p className="text-sm font-semibold mb-3 text-gray-900 flex items-center gap-2">
+                    <div className="w-2 h-2 bg-gray-600 rounded-full"></div>
+                    Key Concepts:
+                  </p>
+                  <div className="flex flex-wrap gap-2">
                     {phase.key_concepts.map((concept: string, index: number) => (
                       <Badge key={index} variant="outline" className="text-xs">
                         {concept}
