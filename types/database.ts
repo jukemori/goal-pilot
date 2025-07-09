@@ -244,6 +244,50 @@ export type Database = {
           },
         ]
       }
+      user_preferences: {
+        Row: {
+          created_at: string | null
+          daily_reminders: boolean | null
+          email_notifications: boolean | null
+          id: string
+          push_notifications: boolean | null
+          start_of_week: string | null
+          updated_at: string | null
+          user_id: string
+          weekly_reports: boolean | null
+        }
+        Insert: {
+          created_at?: string | null
+          daily_reminders?: boolean | null
+          email_notifications?: boolean | null
+          id?: string
+          push_notifications?: boolean | null
+          start_of_week?: string | null
+          updated_at?: string | null
+          user_id: string
+          weekly_reports?: boolean | null
+        }
+        Update: {
+          created_at?: string | null
+          daily_reminders?: boolean | null
+          email_notifications?: boolean | null
+          id?: string
+          push_notifications?: boolean | null
+          start_of_week?: string | null
+          updated_at?: string | null
+          user_id?: string
+          weekly_reports?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_preferences_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       users: {
         Row: {
           avatar: string | null
