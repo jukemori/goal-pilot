@@ -95,19 +95,19 @@ export const generateRoadmapPrompt = (
            goalLowerCase.includes('certification') || goalLowerCase.includes('degree') || goalLowerCase.includes('course') ||
            goalLowerCase.includes('science') || goalLowerCase.includes('math') || goalLowerCase.includes('history') ||
            goalLowerCase.includes('literature') || goalLowerCase.includes('philosophy') || goalLowerCase.includes('psychology')) {
-    // Language learning specific adjustments
+    // Language learning specific adjustments (based on FSI categories and practical experience)
     if (goalLowerCase.includes('language') || goalLowerCase.includes('spanish') || goalLowerCase.includes('french') ||
         goalLowerCase.includes('german') || goalLowerCase.includes('chinese') || goalLowerCase.includes('japanese')) {
       if (goalLowerCase.includes('basic') || goalLowerCase.includes('travel')) {
-        baseHours = 150
+        baseHours = 120 // 3-6 months for basic travel Spanish
       } else if (goalLowerCase.includes('conversational') || goalLowerCase.includes('conversation')) {
-        baseHours = 250
+        baseHours = 200 // 6-12 months for conversational level
       } else if (goalLowerCase.includes('business') || goalLowerCase.includes('professional')) {
-        baseHours = 600
+        baseHours = 450 // 1.5-2 years for business proficiency
       } else if (goalLowerCase.includes('fluent') || goalLowerCase.includes('native') || goalLowerCase.includes('advanced')) {
-        baseHours = 800
+        baseHours = 700 // 2+ years for fluency
       } else {
-        baseHours = 300 // default conversational
+        baseHours = 180 // default: basic conversational (6-9 months)
       }
     } else {
       baseHours = skillLevel === 'basic' ? 200 : skillLevel === 'professional' ? 900 : 2000
@@ -140,7 +140,12 @@ CRITICAL TIMELINE CALCULATION (MUST FOLLOW):
 - Total years required: ${totalWeeksNeeded} ÷ 52 = ${totalYearsNeeded} years
 - Completion date should be approximately: ${new Date(new Date(startDate).getTime() + totalWeeksNeeded * 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]}
 
-YOUR PHASES MUST TOTAL EXACTLY ${totalWeeksNeeded} WEEKS!
+🚨 CRITICAL REQUIREMENT: YOUR PHASES MUST TOTAL EXACTLY ${totalWeeksNeeded} WEEKS! 🚨
+
+If you create only 3 phases of 4-5 weeks each (13 total), but the calculation shows ${totalWeeksNeeded} weeks needed, you MUST create more phases. For example:
+- If ${totalWeeksNeeded} weeks are needed, create approximately ${Math.ceil(totalWeeksNeeded / 8)} phases of 6-8 weeks each
+- DO NOT create only 3-4 phases for a multi-year goal
+- VERIFY: Sum of all your phase duration_weeks MUST equal ${totalWeeksNeeded}
 
 Goal: ${goal}
 Current Level Description: ${currentLevel}
@@ -354,7 +359,14 @@ IMPORTANT:
 - VERIFY your math: Total phase weeks must equal realistic completion timeline
 
 Consider the user's current level and available time. Make the roadmap realistic and achievable.
-Break down complex goals into smaller, manageable phases with clear milestones.`
+Break down complex goals into smaller, manageable phases with clear milestones.
+
+🚨 FINAL VALIDATION CHECKLIST 🚨
+Before submitting your response, verify:
+1. ✅ Sum of all phase duration_weeks = ${totalWeeksNeeded} weeks (NOT 10-15 weeks for a multi-year goal)
+2. ✅ Number of phases appropriate for timeline (6-15 phases for ${totalWeeksNeeded} weeks)
+3. ✅ Each phase builds progressively toward mastery
+4. ✅ Completion date matches calculated timeline (~${Math.round(totalYearsNeeded * 10) / 10} years from start)`
 }
 
 export const TASK_GENERATION_SYSTEM_PROMPT = `You are an expert learning designer and task planner. 
