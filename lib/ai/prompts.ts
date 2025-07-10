@@ -1,5 +1,9 @@
 export const ROADMAP_SYSTEM_PROMPT = `You are an expert personal development coach and educational curriculum designer. 
-Your task is to create detailed, actionable learning roadmaps that are realistic and achievable.
+Your task is to create a high-level learning roadmap overview with milestones and phases.
+Always respond with valid JSON that matches the expected schema.`
+
+export const STAGES_SYSTEM_PROMPT = `You are an expert personal development coach and educational curriculum designer. 
+Your task is to create detailed, actionable learning stages based on the roadmap overview.
 Always respond with valid JSON that matches the expected schema.`
 
 export const generateRoadmapPrompt = (
@@ -431,6 +435,141 @@ Before submitting your response, verify:
 2. ✅ Number of stages matches calculated amount (exactly ${finalStageCount} stages for ${totalWeeksNeeded} weeks)
 3. ✅ Each stage builds progressively toward mastery
 4. ✅ Completion date matches calculated timeline (~${Math.round(totalYearsNeeded * 10) / 10} years from start)`
+}
+
+// Generate only the overview and roadmap (no detailed stages)
+export const generateRoadmapOverviewPrompt = (
+  goal: string,
+  currentLevel: string,
+  timeCommitment: number,
+  targetDate: string | null,
+  weeklySchedule: Record<string, boolean>,
+  startDate: string
+) => {
+  const availableDays = Object.entries(weeklySchedule)
+    .filter(([_, available]) => available)
+    .map(([day]) => day)
+    .join(', ')
+
+  const availableDaysCount = Object.values(weeklySchedule).filter(Boolean).length
+  const hoursPerWeek = Math.round(timeCommitment * availableDaysCount / 60 * 10) / 10
+  
+  // Calculate total hours needed based on goal
+  const goalLowerCase = goal.toLowerCase()
+  let baseHours = 200 // default
+  
+  // Language learning specific
+  if (goalLowerCase.includes('spanish') || goalLowerCase.includes('language')) {
+    if (goalLowerCase.includes('conversational')) {
+      baseHours = 200 // 6-12 months for conversational level
+    } else if (goalLowerCase.includes('fluent')) {
+      baseHours = 700 // 2+ years for fluency
+    } else {
+      baseHours = 180 // default: basic conversational
+    }
+  }
+  
+  const totalWeeksNeeded = Math.round(baseHours / hoursPerWeek)
+  const finalStageCount = Math.max(6, Math.min(12, Math.ceil(totalWeeksNeeded / 6)))
+
+  return `Create a high-level learning roadmap overview for this goal:
+
+Goal: ${goal}
+Current Level: ${currentLevel}
+Time Commitment: ${timeCommitment} minutes/day (${hoursPerWeek} hours/week)
+Available Days: ${availableDays}
+Start Date: ${startDate}
+${targetDate ? `Target Date: ${targetDate}` : ''}
+
+Calculate realistic timeline:
+- Total hours needed: ~${baseHours} hours
+- Total weeks: ${totalWeeksNeeded} weeks
+- Number of stages planned: ${finalStageCount}
+
+Create a JSON response with:
+1. Overview: High-level journey description
+2. Roadmap phases (4-5): Major learning phases with clear action items
+3. Milestones (3): Key achievement points
+4. Timeline calculations
+
+JSON format:
+{
+  "overview": "High-level description of the complete learning journey",
+  "total_hours_required": ${baseHours},
+  "total_weeks_required": ${totalWeeksNeeded},
+  "stage_count": ${finalStageCount},
+  "estimated_completion_date": "YYYY-MM-DD",
+  "roadmap_phases": [
+    {
+      "id": "roadmap-1",
+      "name": "Foundation Phase",
+      "description": "What happens in this phase",
+      "duration_percentage": 25,
+      "key_activities": ["Daily practice activities"],
+      "specific_goals": ["Measurable outcomes"],
+      "success_metrics": ["How to measure completion"]
+    }
+  ],
+  "milestones": [
+    {
+      "id": "milestone-1",
+      "title": "Foundation Complete",
+      "description": "First major achievement",
+      "target_date": "YYYY-MM-DD",
+      "stage_number": 3,
+      "icon": "foundation",
+      "color": "blue"
+    }
+  ]
+}`
+}
+
+// Generate detailed stages based on roadmap overview
+export const generateStagesPrompt = (
+  goal: string,
+  currentLevel: string,
+  roadmapOverview: any,
+  timeCommitment: number,
+  weeklySchedule: Record<string, boolean>
+) => {
+  const totalWeeks = roadmapOverview.total_weeks_required
+  const stageCount = roadmapOverview.stage_count
+  const avgWeeksPerStage = Math.round(totalWeeks / stageCount)
+
+  return `Create ${stageCount} detailed learning stages for this goal:
+
+Goal: ${goal}
+Current Level: ${currentLevel}
+Total Timeline: ${totalWeeks} weeks
+Number of Stages: ${stageCount}
+
+Based on this roadmap overview:
+${JSON.stringify(roadmapOverview, null, 2)}
+
+REQUIREMENTS:
+- Create exactly ${stageCount} specific, actionable stages
+- Each stage should be ${avgWeeksPerStage} weeks on average (adjust as needed)
+- Total duration must equal ${totalWeeks} weeks
+- Make stages VERY specific with exact topics, not abstract
+- Include detailed skills, objectives, and resources
+
+JSON format:
+{
+  "phases": [
+    {
+      "id": "stage-1",
+      "title": "Specific Stage Title (e.g., 'Present Tense -ar Verbs & Basic Greetings')",
+      "description": "3-5 sentences explaining what will be accomplished",
+      "duration_weeks": ${avgWeeksPerStage},
+      "skills_to_learn": ["Specific, measurable skills"],
+      "learning_objectives": ["Clear objectives"],
+      "key_concepts": ["Core concepts to master"],
+      "prerequisites": ["What's needed before starting"],
+      "outcomes": ["What user can do after completion"],
+      "resources": ["Specific tools, apps, websites, books"]
+    }
+  ]
+}`
 }
 
 export const TASK_GENERATION_SYSTEM_PROMPT = `You are an expert learning designer and task planner. 
