@@ -14,6 +14,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { LoadingSpinner, PulsingDots } from '@/components/ui/loading-spinner'
+import { AIGenerationOverlay } from '@/components/molecules/ai-generation-overlay'
 
 interface GoalFormProps {
   onSubmit: (data: FormData) => Promise<{ success: boolean; goalId?: string }>
@@ -96,8 +97,14 @@ export function GoalForm({ onSubmit, defaultValues, isEdit = false }: GoalFormPr
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+    <>
+      <AIGenerationOverlay 
+        isVisible={isLoading && !isEdit} 
+        stage="roadmap"
+        onCancel={() => setIsLoading(false)}
+      />
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
         <Card>
           <CardHeader>
             <CardTitle>Goal Details</CardTitle>
@@ -310,5 +317,6 @@ export function GoalForm({ onSubmit, defaultValues, isEdit = false }: GoalFormPr
         </Button>
       </form>
     </Form>
+    </>
   )
 }

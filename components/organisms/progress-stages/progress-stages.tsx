@@ -12,6 +12,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabase/client'
 import { LearningPhase } from '@/types'
 import { TaskGenerationDialog } from '@/components/molecules/task-generation-dialog'
+import { AIGenerationOverlay } from '@/components/molecules/ai-generation-overlay'
 
 interface StageWithTasks extends LearningPhase {
   taskCount: number
@@ -188,7 +189,13 @@ export function ProgressStages({ roadmapId, goalId: _goalId }: ProgressStagesPro
   console.log('Rendering stages:', stages.length, 'stages for roadmap:', roadmapId)
 
   return (
-    <div className="space-y-6">
+    <>
+      <AIGenerationOverlay 
+        isVisible={!!generatingPhase} 
+        stage="tasks"
+        onCancel={() => setGeneratingPhase(null)}
+      />
+      <div className="space-y-6">
       {stages.map((stage) => {
         const isActive = stage.status === 'active'
         const isCompleted = stage.status === 'completed'
@@ -433,5 +440,6 @@ export function ProgressStages({ roadmapId, goalId: _goalId }: ProgressStagesPro
         }}
       />
     </div>
+    </>
   )
 }
