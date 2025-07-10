@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
       ],
       response_format: { type: 'json_object' },
       temperature: 0.7,
-      max_tokens: 3000,
+      max_tokens: 12000, // Increased from 3000 to allow for 6-12 detailed stages
     })
 
     let roadmapData
