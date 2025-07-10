@@ -291,9 +291,40 @@ MUSIC:
 - "Yousician app - Daily 20-minute practice sessions"
 - "Ultimate Guitar website - Learn 5 beginner songs"
 
+ROADMAP PHASES REQUIREMENTS:
+In addition to detailed stages, create 4-5 high-level roadmap phases that give users a clear action plan:
+- Each roadmap phase should tell users EXACTLY what they need to do
+- Include specific activities, not abstract concepts
+- Provide concrete success metrics so users know when they've completed each phase
+- List actual tools/resources needed for that phase
+
 JSON format:
 {
-  "overview": "Comprehensive overview of the complete learning journey from the user's current level to mastery",
+  "overview": "Comprehensive overview of the complete journey from the user's current level to achieving their goal",
+  "roadmap_phases": [
+    {
+      "id": "roadmap-1",
+      "name": "Foundation Phase" (use action-oriented names like "Build Core Strength", "Master Basic Grammar", "Setup Development Environment"),
+      "description": "Clear description of what happens in this phase and why it's important",
+      "duration_percentage": 20 (percentage of total journey time),
+      "key_activities": [
+        "Specific daily/weekly activities the user will do",
+        "Concrete actions like 'Practice 30 push-ups daily', 'Complete Spanish verb drills for 20 minutes', 'Build 3 small web projects'"
+      ],
+      "specific_goals": [
+        "Measurable outcomes for this phase",
+        "Examples: 'Run 5K without stopping', 'Hold conversations about daily topics', 'Deploy first web application'"
+      ],
+      "success_metrics": [
+        "How to know you've completed this phase",
+        "Examples: 'Can do 50 consecutive push-ups', 'Score 80% on grammar tests', 'Complete all beginner projects'"
+      ],
+      "tools_needed": [
+        "Specific apps, equipment, or resources",
+        "Examples: 'Fitness tracking app', 'Duolingo Premium', 'VS Code + GitHub account'"
+      ]
+    }
+  ],
   "phases": [
     {
       "id": "stage-1",

@@ -26,6 +26,18 @@ export interface RoadmapPlan {
   estimated_completion_date: string
   total_hours_required: number
   milestones: import('./database').Milestone[]
+  roadmap_phases: RoadmapPhase[]
+}
+
+export interface RoadmapPhase {
+  id: string
+  name: string
+  description: string
+  duration_percentage: number
+  key_activities: string[]
+  specific_goals: string[]
+  success_metrics: string[]
+  tools_needed: string[]
 }
 
 export interface Phase {
