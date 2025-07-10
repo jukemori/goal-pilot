@@ -54,6 +54,7 @@ export async function POST(request: NextRequest) {
       key_concepts?: string[];
       prerequisites?: string[];
       outcomes?: string[];
+      resources?: string[];
       duration_weeks?: number;
     }> }
     const phases = planData?.phases || []
@@ -86,6 +87,7 @@ export async function POST(request: NextRequest) {
         key_concepts: phase.key_concepts || [],
         prerequisites: phase.prerequisites || [],
         outcomes: phase.outcomes || [],
+        resources: phase.resources || [],
         start_date: phaseStartDate.toISOString().split('T')[0],
         end_date: phaseEndDate.toISOString().split('T')[0],
         status: i === 0 ? 'active' : 'pending'

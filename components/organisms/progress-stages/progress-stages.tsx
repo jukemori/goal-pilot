@@ -91,7 +91,7 @@ export function ProgressStages({ roadmapId, goalId: _goalId }: ProgressStagesPro
   // Auto-create stages if none exist
   const autoCreateMutation = useMutation({
     mutationFn: async () => {
-      const response = await fetch('/api/learning-phases/auto-create', {
+      const response = await fetch('/api/progress-stages/auto-create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ roadmapId })
