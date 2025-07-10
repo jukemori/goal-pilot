@@ -15,9 +15,6 @@ const stageConfig = {
     title: 'Creating Your Personalized Roadmap',
     subtitle: 'Our AI is analyzing your goal and crafting a detailed learning path tailored just for you.',
     icon: Brain,
-    color: 'text-blue-600',
-    bgColor: 'bg-blue-50',
-    borderColor: 'border-blue-200',
     steps: [
       'Analyzing your goal and current level...',
       'Calculating optimal timeline...',
@@ -30,9 +27,6 @@ const stageConfig = {
     title: 'Generating Daily Tasks',
     subtitle: 'Breaking down your learning stages into actionable daily tasks.',
     icon: Zap,
-    color: 'text-purple-600',
-    bgColor: 'bg-purple-50',
-    borderColor: 'border-purple-200',
     steps: [
       'Analyzing stage requirements...',
       'Creating daily task sequences...',
@@ -45,9 +39,6 @@ const stageConfig = {
     title: 'Analyzing Progress',
     subtitle: 'Our AI is reviewing your progress and updating recommendations.',
     icon: Bot,
-    color: 'text-green-600',
-    bgColor: 'bg-green-50',
-    borderColor: 'border-green-200',
     steps: [
       'Reviewing completed tasks...',
       'Analyzing learning patterns...',
@@ -71,7 +62,7 @@ export function AIGenerationOverlay({ isVisible, stage, onCancel }: AIGeneration
     
     const interval = setInterval(() => {
       setCurrentStep((prev) => (prev + 1) % config.steps.length)
-    }, 3000) // Change step every 3 seconds
+    }, 2000) // Change step every 2 seconds
     
     return () => clearInterval(interval)
   }, [isVisible, config.steps.length])
@@ -114,7 +105,7 @@ export function AIGenerationOverlay({ isVisible, stage, onCancel }: AIGeneration
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
-            className={`relative max-w-md w-full mx-4 ${config.bgColor} ${config.borderColor} border-2 rounded-2xl p-8 shadow-2xl`}
+            className="relative max-w-md w-full mx-4 bg-white border-2 border-gray-200 rounded-2xl p-8 shadow-2xl"
           >
             {/* Animated background pattern */}
             <div className="absolute inset-0 overflow-hidden rounded-2xl">
@@ -135,7 +126,7 @@ export function AIGenerationOverlay({ isVisible, stage, onCancel }: AIGeneration
                   repeat: Infinity,
                   ease: "easeInOut"
                 }}
-                className={`inline-flex items-center justify-center w-16 h-16 ${config.color} bg-white rounded-2xl shadow-lg mb-6`}
+                className="inline-flex items-center justify-center w-16 h-16 text-primary bg-white rounded-2xl shadow-lg mb-6"
               >
                 <IconComponent className="w-8 h-8" />
               </motion.div>
@@ -159,7 +150,7 @@ export function AIGenerationOverlay({ isVisible, stage, onCancel }: AIGeneration
                   exit={{ opacity: 0, y: -10 }}
                   className="flex items-center gap-2 text-gray-700"
                 >
-                  <Sparkles className={`w-4 h-4 ${config.color}`} />
+                  <Sparkles className="w-4 h-4 text-primary" />
                   <span className="text-sm font-medium">
                     {config.steps[currentStep]}{dots}
                   </span>
@@ -172,7 +163,7 @@ export function AIGenerationOverlay({ isVisible, stage, onCancel }: AIGeneration
                   <motion.div
                     key={index}
                     className={`w-2 h-2 rounded-full transition-colors duration-300 ${
-                      index === currentStep ? config.color.replace('text-', 'bg-') : 'bg-gray-300'
+                      index === currentStep ? 'bg-primary' : 'bg-gray-300'
                     }`}
                     animate={index === currentStep ? { scale: [1, 1.2, 1] } : { scale: 1 }}
                     transition={{ duration: 0.3 }}
@@ -191,7 +182,7 @@ export function AIGenerationOverlay({ isVisible, stage, onCancel }: AIGeneration
                       Please don't navigate away
                     </p>
                     <p className="text-amber-700 text-xs leading-relaxed">
-                      This process can take 1-2 minutes. Leaving this page will interrupt the generation.
+                      This process takes about 30 seconds. Leaving this page will interrupt the generation.
                     </p>
                   </div>
                 </div>
