@@ -61,6 +61,52 @@ export function RoadmapTimeline({ roadmapId, goalId: _goalId }: RoadmapTimelineP
       const phases = aiPlan?.phases || []
       const milestones = (roadmap.milestones as unknown as Milestone[]) || []
 
+      console.log('AI Plan phases count:', phases.length)
+      console.log('AI Plan phases:', phases)
+
+      // If we only have 1 stage, create a default 3-phase timeline
+      if (phases.length <= 1) {
+        const singlePhase = phases[0]
+        const totalWeeks = singlePhase?.duration_weeks || 12
+        const phaseWeeks = Math.ceil(totalWeeks / 3)
+        
+        return {
+          phases: [
+            {
+              id: 'timeline-phase-1',
+              name: 'Getting Started',
+              icon: '🚀',
+              color: 'blue',
+              duration_weeks: phaseWeeks,
+              key_skills: [],
+              stage_range: '1 stage',
+              description: 'Begin your journey with essential foundations and first steps'
+            },
+            {
+              id: 'timeline-phase-2', 
+              name: 'Building Momentum',
+              icon: '⚡',
+              color: 'purple',
+              duration_weeks: phaseWeeks,
+              key_skills: [],
+              stage_range: '1 stage',
+              description: 'Develop core competencies and gain confidence'
+            },
+            {
+              id: 'timeline-phase-3',
+              name: 'Achievement',
+              icon: '🏆', 
+              color: 'green',
+              duration_weeks: totalWeeks - (2 * phaseWeeks),
+              key_skills: [],
+              stage_range: '1 stage',
+              description: 'Reach your goal and demonstrate mastery'
+            }
+          ],
+          milestones
+        }
+      }
+
       // Group phases into high-level timeline phases (every 3-4 stages = 1 timeline phase)
       const timelinePhases = []
       const phaseGroups = Math.ceil(phases.length / 3) // Group every 3 stages
