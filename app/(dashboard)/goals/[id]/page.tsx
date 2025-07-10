@@ -11,6 +11,7 @@ import { RoadmapView } from '@/components/organisms/roadmap-view/roadmap-view'
 import { TaskList } from '@/components/organisms/task-list/task-list'
 import { ProgressChart } from '@/components/molecules/progress-chart/progress-chart'
 import { ProgressStages } from '@/components/organisms/progress-stages/progress-stages'
+import { RoadmapTimeline } from '@/components/organisms/roadmap-timeline/roadmap-timeline'
 import { cn } from '@/lib/utils'
 
 interface GoalPageProps {
@@ -242,28 +243,54 @@ export default async function GoalPage({ params }: GoalPageProps) {
           ),
           roadmap: (
             <div className="space-y-6">
-          {roadmap ? (
-            <div className="space-y-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-lg font-semibold">Stages</h3>
-                  <p className="text-sm text-muted-foreground">Track your progress through each stage</p>
+              {roadmap ? (
+                <div className="space-y-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-lg font-semibold">Visual Timeline</h3>
+                      <p className="text-sm text-muted-foreground">See your journey at a glance</p>
+                    </div>
+                    <Button variant="outline" size="sm">
+                      <Calendar className="h-4 w-4 mr-2" />
+                      Export to Calendar
+                    </Button>
+                  </div>
+                  <RoadmapTimeline roadmapId={roadmap.id} goalId={goal.id} />
                 </div>
-                <Button variant="outline" size="sm">
-                  <Calendar className="h-4 w-4 mr-2" />
-                  Export to Calendar
-                </Button>
-              </div>
-              <ProgressStages roadmapId={roadmap.id} goalId={goal.id} />
+              ) : (
+                <div className="bg-card rounded-lg border p-8">
+                  <div className="text-center">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+                    <p className="text-muted-foreground">Generating your roadmap...</p>
+                  </div>
+                </div>
+              )}
             </div>
-          ) : (
-            <div className="bg-card rounded-lg border p-8">
-              <div className="text-center">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-                <p className="text-muted-foreground">Generating your roadmap...</p>
-              </div>
-            </div>
-          )}
+          ),
+          stages: (
+            <div className="space-y-6">
+              {roadmap ? (
+                <div className="space-y-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-lg font-semibold">Detailed Stages</h3>
+                      <p className="text-sm text-muted-foreground">Deep dive into each stage with full details</p>
+                    </div>
+                    <Button variant="outline" size="sm">
+                      <Target className="h-4 w-4 mr-2" />
+                      Generate Tasks
+                    </Button>
+                  </div>
+                  <ProgressStages roadmapId={roadmap.id} goalId={goal.id} />
+                </div>
+              ) : (
+                <div className="bg-card rounded-lg border p-8">
+                  <div className="text-center">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+                    <p className="text-muted-foreground">Generating your stages...</p>
+                  </div>
+                </div>
+              )}
             </div>
           ),
           progress: (

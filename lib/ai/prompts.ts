@@ -337,10 +337,33 @@ JSON format:
   "milestones": [
     {
       "id": "milestone-1",
-      "title": "Major milestone title",
-      "description": "What achieving this milestone means and its significance",
+      "title": "Foundation Complete",
+      "description": "Basic skills established and ready for intermediate concepts",
       "target_date": "YYYY-MM-DD",
-      "skills_validated": ["skills that should be mastered by this milestone"]
+      "stage_number": 3,
+      "skills_validated": ["Core fundamentals mastered", "Ready for next level"],
+      "icon": "foundation",
+      "color": "blue"
+    },
+    {
+      "id": "milestone-2", 
+      "title": "Intermediate Mastery",
+      "description": "Confident application of intermediate skills",
+      "target_date": "YYYY-MM-DD",
+      "stage_number": 6,
+      "skills_validated": ["Intermediate concepts applied", "Complex problems solved"],
+      "icon": "target",
+      "color": "green"
+    },
+    {
+      "id": "milestone-3",
+      "title": "Goal Achievement", 
+      "description": "Full mastery achieved and goal completed successfully",
+      "target_date": "YYYY-MM-DD",
+      "stage_number": 9,
+      "skills_validated": ["Expert level reached", "Goal fully accomplished"],
+      "icon": "trophy",
+      "color": "gold"
     }
   ]
 }
