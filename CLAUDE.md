@@ -43,8 +43,13 @@ This is a Next.js application that uses:
 ## TypeScript Guidelines
 - **Avoid `any` type** - Use proper TypeScript types and interfaces
 - **No type casting with `any`** - Use type assertions with `as unknown as Type` when necessary
-- Use generated Supabase types directly instead of custom interfaces
+- **Use generated Supabase types exclusively** - Always import from `@/types/database` or `@/types`
 - Prefer proper type definitions over type assertions
+- **Generated Type Usage**:
+  - Import types: `import { Goal, Task, LearningPhase, Milestone } from '@/types/database'`
+  - For table operations: `Tables<'goals'>`, `TablesInsert<'goals'>`, `TablesUpdate<'goals'>`
+  - Never create custom interfaces that duplicate database schema
+  - Use `Tables<'table_name'>` for row types, not custom interfaces
 
 ## Architecture Guidelines
 - Use React Server Components where appropriate

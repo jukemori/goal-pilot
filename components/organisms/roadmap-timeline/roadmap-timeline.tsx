@@ -2,19 +2,34 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Calendar, Clock, Target, CheckCircle2, ArrowRight, MapPin } from 'lucide-react'
+import { Calendar, Clock, Target, CheckCircle2, ArrowRight, MapPin, Trophy, Star, Flag } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useQuery } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabase/client'
-import { LearningPhase } from '@/types'
+import { LearningPhase, Milestone } from '@/types/database'
 
 interface RoadmapTimelineProps {
   roadmapId: string
   goalId: string
 }
 
-// TODO: Implement milestones in future version
-// interface Milestone { ... }
+// Milestone icon mapping
+const getMilestoneIcon = (icon: string) => {
+  switch (icon) {
+    case 'foundation':
+      return Target
+    case 'target':
+      return Target
+    case 'trophy':
+      return Trophy
+    case 'star':
+      return Star
+    case 'flag':
+      return Flag
+    default:
+      return Target
+  }
+}
 
 interface TimelineStage extends LearningPhase {
   taskCount: number
@@ -26,8 +41,23 @@ interface TimelineStage extends LearningPhase {
 export function RoadmapTimeline({ roadmapId, goalId: _goalId }: RoadmapTimelineProps) {
   const supabase = createClient()
 
-  // TODO: Fetch milestones in future version
-  // const { data: milestones } = useQuery<Milestone[]>({...
+  // Fetch milestones
+  const { data: milestones } = useQuery<Milestone[]>({
+    queryKey: ['roadmap-milestones', roadmapId],
+    queryFn: async () => {
+      const { data: roadmap } = await supabase
+        .from('roadmaps')
+        .select('milestones')
+        .eq('id', roadmapId)
+        .single()
+
+      if (roadmap?.milestones) {
+        return roadmap.milestones as unknown as Milestone[]
+      }
+      return []
+    },
+    staleTime: 10 * 60 * 1000, // 10 minutes
+  })
 
   // Fetch stages with task progress
   const { data: stages, isLoading, error } = useQuery<TimelineStage[]>({
@@ -157,10 +187,45 @@ export function RoadmapTimeline({ roadmapId, goalId: _goalId }: RoadmapTimelineP
               ? Math.round((stage.completedTasks / stage.taskCount) * 100) 
               : 0
 
-            // Note: Milestones will be implemented in future version
+            // Check if there's a milestone at this stage
+            const milestoneAtStage = milestones?.find(m => m.stage_number === stage.phase_number)
 
             return (
-              <div key={stage.id} className="relative flex items-start gap-6">
+              <div key={stage.id}>
+                {/* Milestone marker (if exists) */}
+                {milestoneAtStage && (
+                  <div className="relative flex items-start gap-6 mb-6">
+                    <div className="relative z-10 w-16 h-16 rounded-full border-4 border-yellow-400 bg-gradient-to-br from-yellow-100 to-yellow-200 flex items-center justify-center">
+                      {(() => {
+                        const IconComponent = getMilestoneIcon(milestoneAtStage.icon)
+                        return <IconComponent className="h-8 w-8 text-yellow-600" />
+                      })()}
+                    </div>
+                    <Card className="flex-1 border-yellow-200 bg-gradient-to-r from-yellow-50 to-yellow-100">
+                      <CardContent className="p-4">
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="flex-1">
+                            <h4 className="text-lg font-bold text-yellow-800 mb-1">🎯 {milestoneAtStage.title}</h4>
+                            <p className="text-yellow-700 text-sm">{milestoneAtStage.description}</p>
+                            <div className="flex flex-wrap gap-2 mt-2">
+                              {milestoneAtStage.skills_validated.map((skill, skillIndex) => (
+                                <Badge key={skillIndex} className="text-xs bg-yellow-200 text-yellow-800">
+                                  {skill}
+                                </Badge>
+                              ))}
+                            </div>
+                          </div>
+                          <Badge className="bg-yellow-500 text-white">
+                            Milestone
+                          </Badge>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                )}
+
+                {/* Regular stage */}
+                <div className="relative flex items-start gap-6">
                 {/* Timeline dot */}
                 <div className={cn(
                   "relative z-10 w-12 h-12 rounded-full border-4 flex items-center justify-center font-bold text-sm",
@@ -274,6 +339,7 @@ export function RoadmapTimeline({ roadmapId, goalId: _goalId }: RoadmapTimelineP
                     <ArrowRight className="h-4 w-4 text-gray-400" />
                   </div>
                 )}
+              </div>
               </div>
             )
           })}

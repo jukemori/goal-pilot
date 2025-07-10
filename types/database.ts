@@ -456,3 +456,23 @@ export const Constants = {
     Enums: {},
   },
 } as const
+
+// Additional type definitions for the application
+export interface Milestone {
+  id: string
+  title: string
+  description: string
+  target_date: string
+  stage_number: number
+  skills_validated: string[]
+  icon: 'foundation' | 'target' | 'trophy' | 'star' | 'flag'
+  color: 'blue' | 'green' | 'gold' | 'purple' | 'red'
+}
+
+// Type aliases for cleaner usage
+export type Goal = Tables<'goals'>
+export type Task = Tables<'tasks'>
+export type LearningPhase = Tables<'learning_phases'>
+export type Roadmap = Tables<'roadmaps'>
+export type User = Tables<'users'>
+export type UserPreferences = Tables<'user_preferences'>
