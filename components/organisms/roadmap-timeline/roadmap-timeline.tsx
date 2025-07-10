@@ -1,6 +1,6 @@
 'use client'
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Clock, Target, CheckCircle2, ArrowRight, MapPin, Trophy, Star, Flag } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -106,10 +106,9 @@ export function RoadmapTimeline({ roadmapId, goalId: _goalId }: RoadmapTimelineP
           phaseColor = 'purple'
         }
 
-        // Calculate total duration and create high-level summary
+        // Calculate total duration and create very high-level summary
         const totalWeeks = groupPhases.reduce((sum: number, p: { duration_weeks?: number }) => sum + (p.duration_weeks || 0), 0)
-        const allSkills = groupPhases.flatMap((p: { skills_to_learn?: string[] }) => p.skills_to_learn || [])
-        const keyOutcomes = allSkills.slice(0, 2) // Just 2 high-level outcomes
+        // No specific skills - keep it completely general
         
         timelinePhases.push({
           id: `timeline-phase-${i + 1}`,
@@ -117,7 +116,7 @@ export function RoadmapTimeline({ roadmapId, goalId: _goalId }: RoadmapTimelineP
           icon: phaseIcon,
           color: phaseColor,
           duration_weeks: totalWeeks,
-          key_skills: keyOutcomes,
+          key_skills: [], // No specific skills for timeline
           stage_range: `${endIdx - startIdx} stages`,
           description: phaseDescription
         })
@@ -183,60 +182,38 @@ export function RoadmapTimeline({ roadmapId, goalId: _goalId }: RoadmapTimelineP
         </CardHeader>
       </Card>
 
-      {/* Timeline Progress Bar */}
-      <div className="relative">
-        <div className="absolute left-8 top-0 bottom-0 w-1 bg-gray-200 rounded-full"></div>
-        <div 
-          className="absolute left-8 top-0 w-1 bg-gradient-to-b from-primary to-green-500 transition-all duration-1000 rounded-full"
-          style={{ height: `${(1 / totalPhases) * 100}%` }}
-        ></div>
-        
-        <div className="space-y-12">
-          {timelinePhases.map((phase, index) => {
-            // Check if there's a milestone near this phase
-            const nearbyMilestone = timelineMilestones?.find(m => 
-              m.stage_number >= (index * 3) + 1 && m.stage_number <= (index * 3) + 3
-            )
+      {/* Horizontal Timeline */}
+      <div className="overflow-x-auto pb-4">
+        <div className="relative min-w-[800px]">
+          {/* Timeline line */}
+          <div className="absolute top-16 left-16 right-16 h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-green-500 rounded-full"></div>
+          
+          {/* Timeline phases */}
+          <div className="flex justify-between items-start pt-8">
+            {timelinePhases.map((phase, index) => {
+              // Check if there's a milestone near this phase
+              const nearbyMilestone = timelineMilestones?.find(m => 
+                m.stage_number >= (index * 3) + 1 && m.stage_number <= (index * 3) + 3
+              )
 
-            return (
-              <div key={phase.id}>
-                {/* Milestone marker (if exists) */}
-                {nearbyMilestone && (
-                  <div className="relative flex items-start gap-8 mb-8">
-                    <div className="relative z-10 w-20 h-20 rounded-full border-4 border-yellow-400 bg-gradient-to-br from-yellow-100 to-yellow-200 flex items-center justify-center shadow-lg">
-                      {(() => {
-                        const IconComponent = getMilestoneIcon(nearbyMilestone.icon)
-                        return <IconComponent className="h-10 w-10 text-yellow-600" />
-                      })()}
+              return (
+                <div key={phase.id} className="flex flex-col items-center text-center max-w-[200px]">
+                  {/* Milestone marker above if exists */}
+                  {nearbyMilestone && (
+                    <div className="mb-4">
+                      <div className="w-12 h-12 rounded-full border-4 border-yellow-400 bg-gradient-to-br from-yellow-100 to-yellow-200 flex items-center justify-center shadow-lg mb-2">
+                        {(() => {
+                          const IconComponent = getMilestoneIcon(nearbyMilestone.icon)
+                          return <IconComponent className="h-6 w-6 text-yellow-600" />
+                        })()}
+                      </div>
+                      <div className="text-xs text-yellow-700 font-medium">{nearbyMilestone.title}</div>
                     </div>
-                    <Card className="flex-1 border-yellow-200 bg-gradient-to-r from-yellow-50 to-yellow-100 shadow-md">
-                      <CardContent className="p-6">
-                        <div className="flex items-start justify-between gap-4">
-                          <div className="flex-1">
-                            <h4 className="text-xl font-bold text-yellow-800 mb-2">🏆 {nearbyMilestone.title}</h4>
-                            <p className="text-yellow-700 text-sm mb-3">{nearbyMilestone.description}</p>
-                            <div className="flex flex-wrap gap-2">
-                              {nearbyMilestone.skills_validated.map((skill, skillIndex) => (
-                                <Badge key={skillIndex} className="text-xs bg-yellow-200 text-yellow-800">
-                                  {skill}
-                                </Badge>
-                              ))}
-                            </div>
-                          </div>
-                          <Badge className="bg-yellow-500 text-white text-xs">
-                            Key Milestone
-                          </Badge>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </div>
-                )}
+                  )}
 
-                {/* High-level Timeline Phase */}
-                <div className="relative flex items-start gap-8">
-                  {/* Large Timeline dot with icon */}
+                  {/* Phase circle */}
                   <div className={cn(
-                    "relative z-10 w-16 h-16 rounded-full border-4 flex items-center justify-center text-2xl shadow-lg",
+                    "relative z-10 w-16 h-16 rounded-full border-4 flex items-center justify-center text-2xl shadow-lg mb-4",
                     phase.color === 'blue' && "bg-blue-500 border-blue-500 text-white",
                     phase.color === 'purple' && "bg-purple-500 border-purple-500 text-white", 
                     phase.color === 'green' && "bg-green-500 border-green-500 text-white"
@@ -244,71 +221,31 @@ export function RoadmapTimeline({ roadmapId, goalId: _goalId }: RoadmapTimelineP
                     {phase.icon}
                   </div>
 
-                  {/* Timeline Phase card */}
-                  <Card className={cn(
-                    "flex-1 transition-all duration-300 hover:shadow-xl border-2",
-                    phase.color === 'blue' && "border-blue-200 bg-gradient-to-r from-blue-50 to-blue-100",
-                    phase.color === 'purple' && "border-purple-200 bg-gradient-to-r from-purple-50 to-purple-100",
-                    phase.color === 'green' && "border-green-200 bg-gradient-to-r from-green-50 to-green-100"
-                  )}>
-                    <CardContent className="p-8">
-                      <div className="space-y-6">
-                        {/* Phase header */}
-                        <div className="flex items-start justify-between gap-4">
-                          <div className="flex-1">
-                            <h3 className="text-2xl font-bold mb-3 text-gray-800">{phase.name}</h3>
-                            <p className="text-gray-600 text-base leading-relaxed mb-4">
-                              {phase.description.length > 200 
-                                ? phase.description.substring(0, 200) + '...' 
-                                : phase.description}
-                            </p>
-                          </div>
-                          <Badge variant="outline" className="text-sm px-3 py-1">
-                            {phase.stage_range}
-                          </Badge>
-                        </div>
+                  {/* Phase info */}
+                  <div className="space-y-2">
+                    <h3 className="font-bold text-lg text-gray-800">{phase.name}</h3>
+                    <p className="text-sm text-gray-600 leading-relaxed">
+                      {phase.description}
+                    </p>
+                    <div className="flex items-center justify-center gap-1 text-xs text-gray-500">
+                      <Clock className="h-3 w-3" />
+                      <span>{phase.duration_weeks} weeks</span>
+                    </div>
+                    <Badge variant="outline" className="text-xs">
+                      {phase.stage_range}
+                    </Badge>
+                  </div>
 
-                        {/* Duration */}
-                        <div className="flex items-center gap-2 text-gray-600">
-                          <Clock className="h-5 w-5" />
-                          <span className="text-lg font-medium">{phase.duration_weeks} weeks total</span>
-                        </div>
-
-                        {/* Key Outcomes Preview */}
-                        {phase.key_skills && phase.key_skills.length > 0 && (
-                          <div>
-                            <h4 className="text-sm font-semibold mb-3 text-gray-700">What You'll Achieve:</h4>
-                            <div className="flex flex-wrap gap-2">
-                              {phase.key_skills.map((outcome: string, outcomeIndex: number) => (
-                                <Badge key={outcomeIndex} variant="secondary" className={cn(
-                                  "text-sm px-3 py-1",
-                                  phase.color === 'blue' && "bg-blue-100 text-blue-800",
-                                  phase.color === 'purple' && "bg-purple-100 text-purple-800",
-                                  phase.color === 'green' && "bg-green-100 text-green-800"
-                                )}>
-                                  {outcome}
-                                </Badge>
-                              ))}
-                              <Badge variant="outline" className="text-xs px-2 py-1 text-gray-500">
-                                {phase.stage_range}
-                              </Badge>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                  {/* Arrow to next phase */}
+                  {/* Connecting arrow */}
                   {index < timelinePhases.length - 1 && (
-                    <div className="absolute left-8 -bottom-6 z-10 w-16 flex justify-center">
-                      <ArrowRight className="h-6 w-6 text-gray-400" />
+                    <div className="absolute top-16 left-full w-8 flex justify-center z-0">
+                      <ArrowRight className="h-4 w-4 text-gray-400" />
                     </div>
                   )}
                 </div>
-              </div>
-            )
-          })}
+              )
+            })}
+          </div>
         </div>
       </div>
     </div>
