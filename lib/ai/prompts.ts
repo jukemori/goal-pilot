@@ -130,6 +130,16 @@ export const generateRoadmapPrompt = (
   
   const totalWeeksNeeded = Math.round(totalHoursNeeded / hoursPerWeek)
   const totalYearsNeeded = Math.round(totalWeeksNeeded / 52 * 10) / 10
+  
+  // Calculate expected number of stages based on timeline
+  const estimatedStages = totalWeeksNeeded < 12 
+    ? Math.ceil(totalWeeksNeeded / 2)      // Short timeline: 1-3 weeks per stage
+    : totalWeeksNeeded < 50 
+    ? Math.ceil(totalWeeksNeeded / 6)      // Medium timeline: 2-8 weeks per stage  
+    : Math.ceil(totalWeeksNeeded / 8)      // Long timeline: 4-12 weeks per stage
+  
+  // Ensure we stay within 6-12 stages range
+  const finalStageCount = Math.max(6, Math.min(12, estimatedStages))
 
   return `Create a comprehensive learning roadmap for the following goal:
 
@@ -162,7 +172,7 @@ IMPORTANT:
 - Avoid repeating content they already know based on their description
 
 STAGE REQUIREMENTS:
-- Create 6-12 SPECIFIC, ACTIONABLE stages that cover the COMPLETE journey from the user's current level to mastery
+- Create exactly ${finalStageCount} SPECIFIC, ACTIONABLE stages that cover the COMPLETE journey from the user's current level to mastery
 - Stage durations must be realistic and shorter for better engagement:
   * For short timelines (< 12 weeks): 1-3 weeks per stage
   * For medium timelines (12-50 weeks): 2-8 weeks per stage
@@ -371,7 +381,7 @@ JSON format:
       "title": "Foundation Complete",
       "description": "Basic skills established and ready for intermediate concepts",
       "target_date": "${new Date(new Date(startDate).getTime() + Math.floor(totalWeeksNeeded * 0.33) * 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]}",
-      "stage_number": 3,
+      "stage_number": ${Math.ceil(finalStageCount * 0.33)},
       "skills_validated": ["Core fundamentals mastered", "Ready for next level"],
       "icon": "foundation",
       "color": "blue"
@@ -381,7 +391,7 @@ JSON format:
       "title": "Intermediate Mastery",
       "description": "Confident application of intermediate skills",
       "target_date": "${new Date(new Date(startDate).getTime() + Math.floor(totalWeeksNeeded * 0.67) * 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]}",
-      "stage_number": 6,
+      "stage_number": ${Math.ceil(finalStageCount * 0.67)},
       "skills_validated": ["Intermediate concepts applied", "Complex problems solved"],
       "icon": "target",
       "color": "green"
@@ -391,7 +401,7 @@ JSON format:
       "title": "Goal Achievement", 
       "description": "Full mastery achieved and goal completed successfully",
       "target_date": "${new Date(new Date(startDate).getTime() + totalWeeksNeeded * 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]}",
-      "stage_number": 9,
+      "stage_number": ${finalStageCount},
       "skills_validated": ["Expert level reached", "Goal fully accomplished"],
       "icon": "trophy",
       "color": "gold"
@@ -418,7 +428,7 @@ Break down complex goals into smaller, manageable phases with clear milestones.
 🚨 FINAL VALIDATION CHECKLIST 🚨
 Before submitting your response, verify:
 1. ✅ Sum of all stage duration_weeks = ${totalWeeksNeeded} weeks (NOT 10-15 weeks for a multi-year goal)
-2. ✅ Number of stages appropriate for timeline (6-15 stages for ${totalWeeksNeeded} weeks)
+2. ✅ Number of stages matches calculated amount (exactly ${finalStageCount} stages for ${totalWeeksNeeded} weeks)
 3. ✅ Each stage builds progressively toward mastery
 4. ✅ Completion date matches calculated timeline (~${Math.round(totalYearsNeeded * 10) / 10} years from start)`
 }
