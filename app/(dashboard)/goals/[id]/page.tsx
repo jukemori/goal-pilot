@@ -247,8 +247,8 @@ export default async function GoalPage({ params }: GoalPageProps) {
                 <div className="space-y-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h3 className="text-lg font-semibold">Visual Timeline</h3>
-                      <p className="text-sm text-muted-foreground">See your journey at a glance</p>
+                      <h3 className="text-lg font-semibold">Visual Roadmap</h3>
+                      <p className="text-sm text-muted-foreground">Your personalized path to success</p>
                     </div>
                     <Button variant="outline" size="sm">
                       <Calendar className="h-4 w-4 mr-2" />

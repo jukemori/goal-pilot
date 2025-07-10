@@ -34,16 +34,25 @@ const getMilestoneIcon = (icon: string) => {
 export function RoadmapTimeline({ roadmapId, goalId: _goalId }: RoadmapTimelineProps) {
   const supabase = createClient()
 
-  // Fetch roadmap data for high-level timeline view
-  const { data: timelineData, isLoading, error } = useQuery({
-    queryKey: ['roadmap-overview', roadmapId],
+  // Fetch roadmap data to create high-level roadmap view
+  const { data: roadmapData, isLoading, error } = useQuery({
+    queryKey: ['roadmap-visual', roadmapId],
     queryFn: async () => {
-      console.log('Fetching roadmap overview for timeline:', roadmapId)
+      console.log('Fetching roadmap for visual view:', roadmapId)
       
-      // Get roadmap with AI plan and milestones
+      // Get roadmap with AI plan and goal details
       const { data: roadmap, error: roadmapError } = await supabase
         .from('roadmaps')
-        .select('ai_generated_plan, milestones')
+        .select(`
+          ai_generated_plan,
+          milestones,
+          goals!inner (
+            title,
+            description,
+            target_date,
+            daily_time_commitment
+          )
+        `)
         .eq('id', roadmapId)
         .single()
 
@@ -53,123 +62,85 @@ export function RoadmapTimeline({ roadmapId, goalId: _goalId }: RoadmapTimelineP
       }
 
       if (!roadmap?.ai_generated_plan) {
-        return { phases: [], milestones: [] }
+        return { roadmapPhases: [], milestones: [], goal: roadmap.goals }
       }
 
-      const aiPlan = roadmap.ai_generated_plan as { phases: Array<{ duration_weeks?: number; skills_to_learn?: string[] }> }
-      const phases = aiPlan?.phases || []
-      const milestones = (roadmap.milestones as unknown as Milestone[]) || []
-
-      console.log('AI Plan phases count:', phases.length)
-      console.log('AI Plan phases:', phases)
-
-      // If we only have 1-2 stages, create a default multi-phase timeline
-      if (phases.length <= 2) {
-        const totalWeeks = phases.reduce((sum: number, p: { duration_weeks?: number }) => sum + (p.duration_weeks || 0), 0) || 12
-        const phaseWeeks = Math.ceil(totalWeeks / 3)
-        
-        return {
-          phases: [
-            {
-              id: 'timeline-phase-1',
-              name: 'Getting Started',
-              icon: '🚀',
-              color: 'blue',
-              duration_weeks: phaseWeeks,
-              key_skills: [],
-              stage_range: phases.length === 1 ? '1 stage' : '1-2 stages',
-              description: 'Begin your journey with essential foundations and first steps'
-            },
-            {
-              id: 'timeline-phase-2', 
-              name: 'Building Momentum',
-              icon: '⚡',
-              color: 'purple',
-              duration_weeks: phaseWeeks,
-              key_skills: [],
-              stage_range: '1 stage',
-              description: 'Develop core competencies and gain confidence'
-            },
-            {
-              id: 'timeline-phase-3',
-              name: 'Achievement',
-              icon: '🏆', 
-              color: 'green',
-              duration_weeks: totalWeeks - (2 * phaseWeeks),
-              key_skills: [],
-              stage_range: '1 stage',
-              description: 'Reach your goal and demonstrate mastery'
-            }
-          ],
-          milestones
-        }
+      const aiPlan = roadmap.ai_generated_plan as { 
+        overview: string;
+        phases: Array<{ 
+          title: string;
+          description: string;
+          duration_weeks?: number; 
+          skills_to_learn?: string[];
+          learning_objectives?: string[];
+          outcomes?: string[];
+        }>;
+        total_hours_required: number;
+        estimated_completion_date: string;
       }
-
-      // Group phases into high-level timeline phases (every 2 stages = 1 timeline phase)
-      const timelinePhases = []
-      const phaseGroups = Math.ceil(phases.length / 2) // Group every 2 stages for more timeline phases
       
-      for (let i = 0; i < phaseGroups; i++) {
-        const startIdx = i * 2
-        const endIdx = Math.min(startIdx + 2, phases.length)
-        const groupPhases = phases.slice(startIdx, endIdx)
+      const milestones = (roadmap.milestones as unknown as Milestone[]) || []
+      
+      // Create high-level roadmap phases based on actual goal content
+      // Not grouping stages - creating independent roadmap view
+      const roadmapPhases = []
+      
+      // Create 4-5 major roadmap phases based on the goal journey
+      if (aiPlan.phases && aiPlan.phases.length > 0) {
+        const totalDuration = aiPlan.phases.reduce((sum, p) => sum + (p.duration_weeks || 0), 0)
         
-        // Create high-level, conceptual phase names based on journey position
-        let phaseName = ''
-        let phaseIcon = ''
-        let phaseColor = ''
-        let phaseDescription = ''
+        // Phase 1: Foundation (first 20% of journey)
+        roadmapPhases.push({
+          id: 'roadmap-1',
+          name: 'Foundation Phase',
+          icon: '🏗️',
+          description: `Build essential ${roadmap.goals.title.toLowerCase()} fundamentals and establish learning habits`,
+          duration: Math.ceil(totalDuration * 0.2),
+          focus: aiPlan.phases[0]?.learning_objectives?.slice(0, 2) || ['Core basics', 'Initial concepts']
+        })
         
-        if (i === 0) {
-          phaseName = 'Getting Started'
-          phaseIcon = '🚀'
-          phaseColor = 'blue'
-          phaseDescription = 'Begin your journey with essential foundations and first steps'
-        } else if (i === phaseGroups - 1) {
-          phaseName = 'Achievement'
-          phaseIcon = '🏆'
-          phaseColor = 'green'
-          phaseDescription = 'Reach your goal and demonstrate mastery'
-        } else if (phaseGroups === 3 && i === 1) {
-          phaseName = 'Building Momentum'
-          phaseIcon = '⚡'
-          phaseColor = 'purple'
-          phaseDescription = 'Develop core competencies and gain confidence'
-        } else {
-          // For longer journeys with multiple middle phases
-          const midPhaseNames = [
-            { name: 'Building Momentum', icon: '⚡', desc: 'Develop core competencies and gain confidence' },
-            { name: 'Expanding Knowledge', icon: '🌟', desc: 'Broaden your understanding and skills' },
-            { name: 'Deepening Expertise', icon: '💎', desc: 'Refine your abilities and tackle challenges' },
-            { name: 'Advanced Practice', icon: '🎯', desc: 'Apply knowledge in complex scenarios' }
-          ]
-          const phaseIndex = Math.min(i - 1, midPhaseNames.length - 1)
-          phaseName = midPhaseNames[phaseIndex].name
-          phaseIcon = midPhaseNames[phaseIndex].icon
-          phaseDescription = midPhaseNames[phaseIndex].desc
-          phaseColor = 'purple'
-        }
-
-        // Calculate total duration and create very high-level summary
-        const totalWeeks = groupPhases.reduce((sum: number, p: { duration_weeks?: number }) => sum + (p.duration_weeks || 0), 0)
-        // No specific skills - keep it completely general
+        // Phase 2: Skill Development (next 30%)
+        roadmapPhases.push({
+          id: 'roadmap-2', 
+          name: 'Skill Building',
+          icon: '📈',
+          description: `Develop practical ${roadmap.goals.title.toLowerCase()} skills through hands-on practice`,
+          duration: Math.ceil(totalDuration * 0.3),
+          focus: aiPlan.phases[Math.floor(aiPlan.phases.length * 0.3)]?.skills_to_learn?.slice(0, 2) || ['Core skills', 'Practical application']
+        })
         
-        timelinePhases.push({
-          id: `timeline-phase-${i + 1}`,
-          name: phaseName,
-          icon: phaseIcon,
-          color: phaseColor,
-          duration_weeks: totalWeeks,
-          key_skills: [], // No specific skills for timeline
-          stage_range: `${endIdx - startIdx} stages`,
-          description: phaseDescription
+        // Phase 3: Advanced Learning (next 30%)
+        roadmapPhases.push({
+          id: 'roadmap-3',
+          name: 'Advanced Development', 
+          icon: '🚀',
+          description: `Master complex ${roadmap.goals.title.toLowerCase()} concepts and tackle real challenges`,
+          duration: Math.ceil(totalDuration * 0.3),
+          focus: aiPlan.phases[Math.floor(aiPlan.phases.length * 0.6)]?.outcomes?.slice(0, 2) || ['Advanced techniques', 'Complex scenarios']
+        })
+        
+        // Phase 4: Mastery (final 20%)
+        roadmapPhases.push({
+          id: 'roadmap-4',
+          name: 'Mastery & Application',
+          icon: '🎯',
+          description: `Achieve ${roadmap.goals.title.toLowerCase()} proficiency and apply skills confidently`,
+          duration: Math.ceil(totalDuration * 0.2),
+          focus: aiPlan.phases[aiPlan.phases.length - 1]?.outcomes?.slice(0, 2) || ['Professional application', 'Goal achievement']
         })
       }
 
-      return { phases: timelinePhases, milestones }
+      return { 
+        roadmapPhases, 
+        milestones,
+        goal: roadmap.goals,
+        overview: aiPlan.overview,
+        totalHours: aiPlan.total_hours_required,
+        completionDate: aiPlan.estimated_completion_date
+      }
     },
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    gcTime: 10 * 60 * 1000, // 10 minutes
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
     refetchOnWindowFocus: false,
   })
 
@@ -187,48 +158,48 @@ export function RoadmapTimeline({ roadmapId, goalId: _goalId }: RoadmapTimelineP
     </div>
   }
 
-  if (!timelineData || !timelineData.phases || timelineData.phases.length === 0) {
+  if (!roadmapData || !roadmapData.roadmapPhases || roadmapData.roadmapPhases.length === 0) {
     return <div className="text-center py-8 text-gray-500">
-      <p>No timeline found</p>
-      <p className="text-sm mt-2">Timeline will be created automatically.</p>
+      <p>No roadmap found</p>
+      <p className="text-sm mt-2">Roadmap will be created automatically.</p>
     </div>
   }
 
-  const { phases: timelinePhases, milestones: timelineMilestones } = timelineData
-  const totalPhases = timelinePhases.length
+  const { roadmapPhases, milestones, goal, overview, totalHours, completionDate } = roadmapData
+  const totalPhases = roadmapPhases.length
 
   return (
     <div className="space-y-6">
-      {/* Timeline Header */}
-      <Card className="border-gray-200 bg-gradient-to-r from-primary/5 to-primary/10">
+      {/* Roadmap Header */}
+      <Card className="border-gray-200">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-xl">
             <MapPin className="h-6 w-6 text-primary" />
-            Your Learning Journey
+            Roadmap to {goal?.title || 'Your Goal'}
           </CardTitle>
-          <p className="text-sm text-gray-600 mt-2 max-w-2xl">
-            This high-level view shows the major phases of your journey. Each phase represents multiple detailed stages that you can explore in the "Stages" tab.
+          <p className="text-sm text-gray-600 mt-2">
+            {overview || 'Your personalized roadmap showing the key phases to achieve your goal.'}
           </p>
           <div className="flex items-center gap-6 text-sm text-gray-600 mt-4">
             <div className="flex items-center gap-2">
               <Target className="h-4 w-4" />
-              <span>{totalPhases} Journey Phases</span>
+              <span>{totalPhases} Major Phases</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Clock className="h-4 w-4" />
+              <span>{totalHours} hours total</span>
             </div>
             <div className="flex items-center gap-2">
               <CheckCircle2 className="h-4 w-4" />
-              <span>{timelineMilestones?.length || 0} Milestones</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-primary rounded-full"></div>
-              <span>Big Picture View</span>
+              <span>Complete by {completionDate ? new Date(completionDate).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : 'TBD'}</span>
             </div>
           </div>
         </CardHeader>
       </Card>
 
-      {/* Vertical Timeline */}
+      {/* Vertical Roadmap */}
       <div className="relative">
-        {/* Timeline line */}
+        {/* Roadmap line */}
         <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-gray-200"></div>
         <div 
           className="absolute left-8 top-0 w-0.5 bg-gradient-to-b from-primary to-primary/60 transition-all duration-1000"
@@ -236,20 +207,22 @@ export function RoadmapTimeline({ roadmapId, goalId: _goalId }: RoadmapTimelineP
         ></div>
         
         <div className="space-y-8">
-          {timelinePhases.map((phase, index) => {
-            // Check if there's a milestone near this phase
-            const nearbyMilestone = timelineMilestones?.find(m => 
-              m.stage_number >= (index * 2) + 1 && m.stage_number <= (index * 2) + 2
-            )
+          {roadmapPhases.map((phase, index) => {
+            // Find milestone that matches this phase position
+            const phaseMilestone = milestones?.find(m => {
+              const phasePosition = (index + 1) / totalPhases
+              const milestonePosition = m.stage_number / 6 // Assuming 6 total stages
+              return Math.abs(phasePosition - milestonePosition) < 0.2
+            })
 
             return (
               <div key={phase.id}>
                 {/* Milestone marker (if exists) */}
-                {nearbyMilestone && (
+                {phaseMilestone && (
                   <div className="relative flex items-start gap-6 mb-6">
                     <div className="relative z-10 w-12 h-12 rounded-full border-2 border-orange-300 bg-orange-100 flex items-center justify-center shadow-sm">
                       {(() => {
-                        const IconComponent = getMilestoneIcon(nearbyMilestone.icon)
+                        const IconComponent = getMilestoneIcon(phaseMilestone.icon)
                         return <IconComponent className="h-5 w-5 text-orange-600" />
                       })()}
                     </div>
@@ -257,8 +230,8 @@ export function RoadmapTimeline({ roadmapId, goalId: _goalId }: RoadmapTimelineP
                       <CardHeader className="pb-3">
                         <div className="flex items-start justify-between gap-4">
                           <div className="flex-1">
-                            <h4 className="text-sm font-semibold text-orange-800 mb-1">🎯 {nearbyMilestone.title}</h4>
-                            <p className="text-orange-700 text-xs">{nearbyMilestone.description}</p>
+                            <h4 className="text-sm font-semibold text-orange-800 mb-1">🎯 {phaseMilestone.title}</h4>
+                            <p className="text-orange-700 text-xs">{phaseMilestone.description}</p>
                           </div>
                           <Badge variant="secondary" className="text-xs bg-orange-200 text-orange-800">
                             Milestone
@@ -269,9 +242,9 @@ export function RoadmapTimeline({ roadmapId, goalId: _goalId }: RoadmapTimelineP
                   </div>
                 )}
 
-                {/* Timeline Phase */}
+                {/* Roadmap Phase */}
                 <div className="relative flex items-start gap-6">
-                  {/* Timeline dot */}
+                  {/* Roadmap dot */}
                   <div className="relative z-10 w-16 h-16 rounded-full border-2 border-gray-200 bg-white flex items-center justify-center text-2xl shadow-sm">
                     {phase.icon}
                   </div>
@@ -279,28 +252,39 @@ export function RoadmapTimeline({ roadmapId, goalId: _goalId }: RoadmapTimelineP
                   {/* Phase card */}
                   <Card className="flex-1 border-gray-200 hover:shadow-md transition-shadow duration-200">
                     <CardHeader className="pb-4">
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="flex-1">
-                          <h3 className="text-lg font-semibold mb-2 text-gray-900">{phase.name}</h3>
-                          <p className="text-gray-600 text-sm leading-relaxed">
-                            {phase.description}
-                          </p>
+                      <div className="space-y-4">
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="flex-1">
+                            <h3 className="text-lg font-semibold mb-2 text-gray-900">{phase.name}</h3>
+                            <p className="text-gray-600 text-sm leading-relaxed">
+                              {phase.description}
+                            </p>
+                          </div>
+                          <div className="flex items-center gap-2 text-gray-500 text-sm">
+                            <Clock className="h-4 w-4" />
+                            <span>{phase.duration} weeks</span>
+                          </div>
                         </div>
-                        <Badge variant="outline" className="text-xs text-gray-500">
-                          {phase.stage_range}
-                        </Badge>
-                      </div>
 
-                      {/* Duration */}
-                      <div className="flex items-center gap-2 text-gray-500 text-sm mt-3">
-                        <Clock className="h-4 w-4" />
-                        <span>{phase.duration_weeks} weeks</span>
+                        {/* Focus areas */}
+                        {phase.focus && phase.focus.length > 0 && (
+                          <div>
+                            <h4 className="text-sm font-medium text-gray-700 mb-2">Key Focus Areas:</h4>
+                            <div className="flex flex-wrap gap-2">
+                              {phase.focus.map((item, idx) => (
+                                <Badge key={idx} variant="secondary" className="text-xs">
+                                  {item}
+                                </Badge>
+                              ))}
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </CardHeader>
                   </Card>
 
                   {/* Arrow to next phase */}
-                  {index < timelinePhases.length - 1 && (
+                  {index < roadmapPhases.length - 1 && (
                     <div className="absolute left-8 -bottom-4 z-10 w-16 flex justify-center">
                       <ArrowRight className="h-4 w-4 text-gray-300 rotate-90" />
                     </div>
