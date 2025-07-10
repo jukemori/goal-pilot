@@ -9,7 +9,7 @@ import { Switch } from '@/components/ui/switch'
 import { Separator } from '@/components/ui/separator'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
-import { Loader2 } from 'lucide-react'
+import { Loader2, Settings } from 'lucide-react'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -152,18 +152,31 @@ export default function SettingsPage() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900">Settings</h1>
-        <p className="text-gray-600 mt-2">Manage your account and preferences</p>
+      <div className="relative">
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-primary/5 rounded-2xl -z-10" />
+        <div className="p-8">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="p-2 bg-primary/10 rounded-lg">
+              <Settings className="h-6 w-6 text-primary" />
+            </div>
+            <h1 className="text-3xl font-bold text-gray-900">Settings</h1>
+          </div>
+          <p className="text-gray-600 text-lg">Manage your account and learning preferences</p>
+        </div>
       </div>
 
       {/* Settings Content */}
       <div className="space-y-8">
           {/* Profile Section */}
-          <Card id="profile">
+          <Card id="profile" className="border-gray-200 shadow-sm">
             <CardHeader>
-              <CardTitle>Profile Information</CardTitle>
-              <CardDescription>
+              <CardTitle className="flex items-center gap-2 text-gray-800">
+                <div className="p-2 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg">
+                  <Settings className="h-5 w-5 text-blue-600" />
+                </div>
+                Profile Information
+              </CardTitle>
+              <CardDescription className="text-gray-600 mt-1">
                 Update your personal information and account details
               </CardDescription>
             </CardHeader>
@@ -201,10 +214,15 @@ export default function SettingsPage() {
           </Card>
 
           {/* Notifications Section */}
-          <Card id="notifications">
+          <Card id="notifications" className="border-gray-200 shadow-sm">
             <CardHeader>
-              <CardTitle>Notification Preferences</CardTitle>
-              <CardDescription>
+              <CardTitle className="flex items-center gap-2 text-gray-800">
+                <div className="p-2 bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg">
+                  <Settings className="h-5 w-5 text-purple-600" />
+                </div>
+                Notification Preferences
+              </CardTitle>
+              <CardDescription className="text-gray-600 mt-1">
                 Choose how you want to be notified about your goals and tasks
               </CardDescription>
             </CardHeader>
@@ -283,10 +301,15 @@ export default function SettingsPage() {
           </Card>
 
           {/* Delete Account */}
-          <Card className="border-red-200">
+          <Card className="border-red-200 shadow-sm">
             <CardHeader>
-              <CardTitle className="text-red-600">Delete Account</CardTitle>
-              <CardDescription>
+              <CardTitle className="flex items-center gap-2 text-red-600">
+                <div className="p-2 bg-gradient-to-br from-red-50 to-red-100 rounded-lg">
+                  <Settings className="h-5 w-5 text-red-600" />
+                </div>
+                Delete Account
+              </CardTitle>
+              <CardDescription className="text-gray-600 mt-1">
                 Once you delete your account, there is no going back. Please be certain.
               </CardDescription>
             </CardHeader>
