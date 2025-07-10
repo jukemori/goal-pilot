@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Goal not found' }, { status: 404 })
     }
 
-    // Generate the roadmap using OpenAI
+    // Generate the roadmap using OpenAI with retry logic
     const prompt = generateRoadmapPrompt(
       goal.title,
       goal.current_level || 'beginner',
@@ -38,16 +38,48 @@ export async function POST(request: NextRequest) {
       goal.start_date
     )
 
-    const completion = await openai.chat.completions.create({
-      model: AI_MODELS.roadmap,
-      messages: [
-        { role: 'system', content: ROADMAP_SYSTEM_PROMPT },
-        { role: 'user', content: prompt }
-      ],
-      response_format: { type: 'json_object' },
-      temperature: 0.7,
-      max_tokens: 12000, // Increased from 3000 to allow for 6-12 detailed stages
-    })
+    // Retry logic for reliability
+    let completion
+    let lastError
+    const maxRetries = 3
+    
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        console.log(`AI generation attempt ${attempt}/${maxRetries}`)
+        
+        completion = await openai.chat.completions.create({
+          model: AI_MODELS.roadmap,
+          messages: [
+            { role: 'system', content: ROADMAP_SYSTEM_PROMPT },
+            { role: 'user', content: prompt }
+          ],
+          response_format: { type: 'json_object' },
+          temperature: 0.7,
+          max_tokens: 12000, // Increased from 3000 to allow for 6-12 detailed stages
+        }, {
+          timeout: 120000, // 2 minutes timeout
+        })
+        
+        // If we get here, the request succeeded
+        break
+        
+      } catch (error) {
+        console.error(`AI generation attempt ${attempt} failed:`, error)
+        lastError = error
+        
+        if (attempt < maxRetries) {
+          // Exponential backoff: wait 2^attempt seconds
+          const waitTime = Math.pow(2, attempt) * 1000
+          console.log(`Retrying in ${waitTime}ms...`)
+          await new Promise(resolve => setTimeout(resolve, waitTime))
+        }
+      }
+    }
+    
+    if (!completion) {
+      console.error('All AI generation attempts failed')
+      throw lastError || new Error('AI generation failed after all retries')
+    }
 
     let roadmapData
     
@@ -71,6 +103,15 @@ export async function POST(request: NextRequest) {
       }
       
       roadmapData = JSON.parse(content)
+      
+      // Validate that we have a complete response
+      if (!roadmapData.phases || !Array.isArray(roadmapData.phases) || roadmapData.phases.length < 3) {
+        console.error('API - Incomplete response: only', roadmapData.phases?.length || 0, 'phases generated')
+        throw new Error(`Incomplete AI response: only ${roadmapData.phases?.length || 0} phases generated, expected 6-12`)
+      }
+      
+      console.log('API - Complete response validated:', roadmapData.phases.length, 'phases generated')
+      
     } catch (parseError) {
       console.error('API - JSON parsing error:', parseError)
       console.error('API - Raw content:', completion.choices[0].message.content)
