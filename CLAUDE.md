@@ -74,6 +74,12 @@ This is a Next.js application that uses:
 - Use React Query for data fetching and caching
 - Implement proper Row-Level Security (RLS) policies
 
+## AI & Roadmap Generation
+- AI prompts should generate 6-12 detailed stages for comprehensive learning paths
+- Timeline component has fallback logic for cases where AI generates fewer stages
+- Roadmap generation uses OpenAI GPT-3.5 with structured prompts for consistency
+- If timeline shows only 1 phase, check console logs for actual AI output vs expected stage count
+
 ## Git Workflow
 - Use conventional commits (feat:, fix:, refactor:, etc.)
 - Commit frequently with descriptive messages
