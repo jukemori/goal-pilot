@@ -13,55 +13,55 @@ import { createClient } from '@/lib/supabase/client'
 import { LearningPhase } from '@/types'
 import { TaskGenerationDialog } from '@/components/molecules/task-generation-dialog'
 
-interface LearningPhaseWithTasks extends LearningPhase {
+interface StageWithTasks extends LearningPhase {
   taskCount: number
   hasGeneratedTasks: boolean
 }
 
-interface LearningPhasesProps {
+interface ProgressStagesProps {
   roadmapId: string
   goalId: string
 }
 
-export function LearningPhases({ roadmapId, goalId: _goalId }: LearningPhasesProps) {
+export function ProgressStages({ roadmapId, goalId: _goalId }: ProgressStagesProps) {
   const [generatingPhase, setGeneratingPhase] = useState<string | null>(null)
   const [hasTriggeredAutoCreate, setHasTriggeredAutoCreate] = useState(false)
   const [taskDialogOpen, setTaskDialogOpen] = useState(false)
-  const [lastGeneratedTask, setLastGeneratedTask] = useState<{ count: number; phaseTitle: string } | null>(null)
+  const [lastGeneratedTask, setLastGeneratedTask] = useState<{ count: number; stageTitle: string } | null>(null)
   const queryClient = useQueryClient()
   const supabase = createClient()
 
-  // Fetch learning phases with task counts
-  const { data: phases, isLoading, error } = useQuery<LearningPhaseWithTasks[]>({
-    queryKey: ['learning-phases', roadmapId],
+  // Fetch progress stages with task counts
+  const { data: stages, isLoading, error } = useQuery<StageWithTasks[]>({
+    queryKey: ['progress-stages', roadmapId],
     queryFn: async () => {
-      console.log('Fetching learning phases for roadmap:', roadmapId)
+      console.log('Fetching stages for roadmap:', roadmapId)
       
-      // Get phases first
-      const { data: phasesData, error: phasesError } = await supabase
+      // Get stages first
+      const { data: stagesData, error: stagesError } = await supabase
         .from('learning_phases')
         .select('*')
         .eq('roadmap_id', roadmapId)
         .order('phase_number')
 
-      if (phasesError) {
-        console.error('Error fetching learning phases:', phasesError)
-        throw phasesError
+      if (stagesError) {
+        console.error('Error fetching stages:', stagesError)
+        throw stagesError
       }
 
-      if (!phasesData || phasesData.length === 0) {
+      if (!stagesData || stagesData.length === 0) {
         return []
       }
 
-      // Get task counts for all phases in a single query using OR conditions
-      const phaseIds = phasesData.map(p => p.phase_id)
+      // Get task counts for all stages in a single query using OR conditions
+      const stageIds = stagesData.map(p => p.phase_id)
       const { data: taskCounts } = await supabase
         .from('tasks')
         .select('phase_id')
         .eq('roadmap_id', roadmapId)
-        .in('phase_id', phaseIds)
+        .in('phase_id', stageIds)
 
-      // Count tasks per phase
+      // Count tasks per stage
       const taskCountMap = new Map<string, number>()
       taskCounts?.forEach(task => {
         if (task.phase_id) {
@@ -71,24 +71,24 @@ export function LearningPhases({ roadmapId, goalId: _goalId }: LearningPhasesPro
       })
 
       // Transform the data to include task counts
-      const phasesWithTaskCounts = phasesData.map((phase: LearningPhase) => {
-        const taskCount = taskCountMap.get(phase.phase_id || '') || 0
+      const stagesWithTaskCounts = stagesData.map((stage: LearningPhase) => {
+        const taskCount = taskCountMap.get(stage.phase_id || '') || 0
         return {
-          ...phase,
+          ...stage,
           taskCount,
           hasGeneratedTasks: taskCount > 0
         }
       })
 
-      console.log('Learning phases with task counts:', phasesWithTaskCounts)
-      return phasesWithTaskCounts
+      console.log('Stages with task counts:', stagesWithTaskCounts)
+      return stagesWithTaskCounts
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes
     refetchOnWindowFocus: false,
   })
 
-  // Auto-create phases if none exist
+  // Auto-create stages if none exist
   const autoCreateMutation = useMutation({
     mutationFn: async () => {
       const response = await fetch('/api/learning-phases/auto-create', {
@@ -99,25 +99,25 @@ export function LearningPhases({ roadmapId, goalId: _goalId }: LearningPhasesPro
       
       if (!response.ok) {
         const error = await response.json()
-        throw new Error(error.error || 'Failed to create learning phases')
+        throw new Error(error.error || 'Failed to create stages')
       }
       
       return response.json()
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['learning-phases', roadmapId] })
+      queryClient.invalidateQueries({ queryKey: ['progress-stages', roadmapId] })
       setHasTriggeredAutoCreate(false)
     }
   })
 
-  // Generate tasks for a phase
+  // Generate tasks for a stage
   const generateTasksMutation = useMutation({
-    mutationFn: async (phase: LearningPhase) => {
-      console.log('Generating tasks for phase:', phase)
+    mutationFn: async (stage: LearningPhase) => {
+      console.log('Generating tasks for stage:', stage)
       const response = await fetch('/api/tasks/generate-phase', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phaseId: phase.id, roadmapId })
+        body: JSON.stringify({ phaseId: stage.id, roadmapId })
       })
       
       if (!response.ok) {
@@ -131,7 +131,7 @@ export function LearningPhases({ roadmapId, goalId: _goalId }: LearningPhasesPro
       // Store the generated task info for the dialog
       setLastGeneratedTask({
         count: data.tasksCount,
-        phaseTitle: variables.title
+        stageTitle: variables.title
       })
       
       // Show the success dialog first
@@ -139,7 +139,7 @@ export function LearningPhases({ roadmapId, goalId: _goalId }: LearningPhasesPro
       
       // Delay query invalidations to avoid re-render conflicts
       setTimeout(() => {
-        queryClient.invalidateQueries({ queryKey: ['learning-phases', roadmapId] })
+        queryClient.invalidateQueries({ queryKey: ['progress-stages', roadmapId] })
         queryClient.invalidateQueries({ queryKey: ['tasks', roadmapId] })
         queryClient.invalidateQueries({ queryKey: ['goals'] })
       }, 100)
@@ -153,15 +153,15 @@ export function LearningPhases({ roadmapId, goalId: _goalId }: LearningPhasesPro
   })
 
 
-  // Auto-trigger phase creation if needed
+  // Auto-trigger stage creation if needed
   useEffect(() => {
-    if (!phases || phases.length === 0) {
+    if (!stages || stages.length === 0) {
       if (!isLoading && !error && !autoCreateMutation.isPending && !autoCreateMutation.isSuccess && !hasTriggeredAutoCreate) {
         setHasTriggeredAutoCreate(true)
         autoCreateMutation.mutate()
       }
     }
-  }, [phases, isLoading, error, autoCreateMutation, hasTriggeredAutoCreate])
+  }, [stages, isLoading, error, autoCreateMutation, hasTriggeredAutoCreate])
 
   if (isLoading || autoCreateMutation.isPending) {
     return <div className="animate-pulse space-y-4">
@@ -173,30 +173,30 @@ export function LearningPhases({ roadmapId, goalId: _goalId }: LearningPhasesPro
 
   if (error) {
     return <div className="text-center py-8 text-red-500">
-      Error loading learning phases: {error.message}
+      Error loading stages: {error.message}
     </div>
   }
 
-  if (!phases || phases.length === 0) {
+  if (!stages || stages.length === 0) {
     return <div className="text-center py-8 text-gray-500">
-      <p>No learning phases found</p>
-      <p className="text-sm mt-2">Learning phases will be created automatically.</p>
+      <p>No stages found</p>
+      <p className="text-sm mt-2">Stages will be created automatically.</p>
       <p className="text-xs mt-1 text-gray-400">Roadmap ID: {roadmapId}</p>
     </div>
   }
 
-  console.log('Rendering phases:', phases.length, 'phases for roadmap:', roadmapId)
+  console.log('Rendering stages:', stages.length, 'stages for roadmap:', roadmapId)
 
   return (
     <div className="space-y-6">
-      {phases.map((phase) => {
-        const isActive = phase.status === 'active'
-        const isCompleted = phase.status === 'completed'
-        const hasGeneratedTasks = phase.hasGeneratedTasks
+      {stages.map((stage) => {
+        const isActive = stage.status === 'active'
+        const isCompleted = stage.status === 'completed'
+        const hasGeneratedTasks = stage.hasGeneratedTasks
         
         return (
           <Card 
-            key={phase.id}
+            key={stage.id}
             className={cn(
               "relative overflow-hidden transition-all duration-300 hover:shadow-lg",
               isActive && "border-primary shadow-md bg-gradient-to-r from-primary/5 to-primary/10",
@@ -204,7 +204,7 @@ export function LearningPhases({ roadmapId, goalId: _goalId }: LearningPhasesPro
               !isActive && !isCompleted && "bg-white border-gray-200 hover:border-gray-300"
             )}
           >
-            {/* Phase indicator line */}
+            {/* Stage indicator line */}
             <div className={cn(
               "absolute left-0 top-0 w-1 h-full",
               isActive && "bg-primary",
@@ -221,8 +221,8 @@ export function LearningPhases({ roadmapId, goalId: _goalId }: LearningPhasesPro
                     isCompleted && "bg-green-100 text-green-700 border border-green-200",
                     !isActive && !isCompleted && "bg-gray-100 text-gray-600 border border-gray-200"
                   )}>
-                    <span className="text-xs font-bold">Phase</span>
-                    <span className="font-bold">{phase.phase_number}</span>
+                    <span className="text-xs font-bold">Stage</span>
+                    <span className="font-bold">{stage.phase_number}</span>
                   </div>
                   <Badge 
                     variant={isActive ? "default" : isCompleted ? "secondary" : "outline"}
@@ -232,12 +232,12 @@ export function LearningPhases({ roadmapId, goalId: _goalId }: LearningPhasesPro
                       isCompleted && "bg-green-500 text-white"
                     )}
                   >
-                    {phase.status}
+                    {stage.status}
                   </Badge>
                 </div>
                 <div>
-                  <CardTitle className="text-xl mb-2">{phase.title}</CardTitle>
-                  <CardDescription className="text-base leading-relaxed">{phase.description}</CardDescription>
+                  <CardTitle className="text-xl mb-2">{stage.title}</CardTitle>
+                  <CardDescription className="text-base leading-relaxed">{stage.description}</CardDescription>
                 </div>
               </div>
             </CardHeader>
@@ -246,15 +246,15 @@ export function LearningPhases({ roadmapId, goalId: _goalId }: LearningPhasesPro
               <div className="flex flex-wrap gap-6 text-sm">
                 <div className="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-lg">
                   <Clock className="h-4 w-4 text-gray-500" />
-                  <span className="font-medium">{phase.duration_weeks} weeks</span>
+                  <span className="font-medium">{stage.duration_weeks} weeks</span>
                 </div>
                 <div className="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-lg">
                   <Calendar className="h-4 w-4 text-gray-500" />
                   <span>
-                    {new Date(phase.start_date + 'T00:00:00').toLocaleDateString('en-US', {
+                    {new Date(stage.start_date + 'T00:00:00').toLocaleDateString('en-US', {
                       month: 'short', 
                       day: 'numeric'
-                    })} - {new Date(phase.end_date + 'T00:00:00').toLocaleDateString('en-US', {
+                    })} - {new Date(stage.end_date + 'T00:00:00').toLocaleDateString('en-US', {
                       month: 'short',
                       day: 'numeric'
                     })}
@@ -262,14 +262,14 @@ export function LearningPhases({ roadmapId, goalId: _goalId }: LearningPhasesPro
                 </div>
               </div>
 
-              {phase.skills_to_learn && phase.skills_to_learn.length > 0 && (
+              {stage.skills_to_learn && stage.skills_to_learn.length > 0 && (
                 <div>
                   <p className="text-sm font-semibold mb-3 text-gray-900 flex items-center gap-2">
                     <span className="w-2 h-2 bg-gray-600 rounded-full"></span>
-                    Skills to Learn:
+                    Skills to Develop:
                   </p>
                   <div className="flex flex-wrap gap-2">
-                    {phase.skills_to_learn.map((skill: string, index: number) => (
+                    {stage.skills_to_learn.map((skill: string, index: number) => (
                       <Badge key={index} variant="secondary" className="text-xs bg-gray-50">
                         {skill}
                       </Badge>
@@ -278,15 +278,15 @@ export function LearningPhases({ roadmapId, goalId: _goalId }: LearningPhasesPro
                 </div>
               )}
 
-              {/* Show learning objectives if available */}
-              {phase.learning_objectives && phase.learning_objectives.length > 0 && (
+              {/* Show objectives if available */}
+              {stage.learning_objectives && stage.learning_objectives.length > 0 && (
                 <div className="p-4">
                   <p className="text-sm font-semibold mb-3 text-gray-900 flex items-center gap-2">
                     <span className="w-2 h-2 bg-green-600 rounded-full"></span>
-                    Learning Objectives:
+                    Objectives:
                   </p>
                   <ul className="text-sm text-gray-700 space-y-2">
-                    {phase.learning_objectives?.map((objective: string, index: number) => (
+                    {stage.learning_objectives?.map((objective: string, index: number) => (
                       <li key={index} className="flex items-start gap-3">
                         <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
                         {objective}
@@ -297,22 +297,22 @@ export function LearningPhases({ roadmapId, goalId: _goalId }: LearningPhasesPro
               )}
 
               {/* Show resources if available */}
-              {phase.resources && (
+              {stage.resources && (
                 <div className="p-4">
                   <p className="text-sm font-semibold mb-3 text-gray-900 flex items-center gap-2">
                     <span className="w-2 h-2 bg-green-600 rounded-full"></span>
                     Resources & Tools:
                   </p>
                   <div className="space-y-2">
-                    {Array.isArray(phase.resources) ? (
-                      phase.resources.map((resource, index: number) => (
+                    {Array.isArray(stage.resources) ? (
+                      stage.resources.map((resource, index: number) => (
                         <div key={index} className="flex items-start gap-3 text-sm text-gray-700">
                           <BookOpen className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
                           <span>{String(resource)}</span>
                         </div>
                       ))
-                    ) : typeof phase.resources === 'object' && phase.resources !== null ? (
-                      Object.entries(phase.resources as Record<string, unknown>).map(([key, value], index) => (
+                    ) : typeof stage.resources === 'object' && stage.resources !== null ? (
+                      Object.entries(stage.resources as Record<string, unknown>).map(([key, value], index) => (
                         <div key={index} className="flex items-start gap-3 text-sm text-gray-700">
                           <BookOpen className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
                           <span><strong>{key}:</strong> {String(value)}</span>
@@ -321,7 +321,7 @@ export function LearningPhases({ roadmapId, goalId: _goalId }: LearningPhasesPro
                     ) : (
                       <div className="flex items-start gap-3 text-sm text-gray-700">
                         <BookOpen className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                        <span>{String(phase.resources)}</span>
+                        <span>{String(stage.resources)}</span>
                       </div>
                     )}
                   </div>
@@ -329,14 +329,14 @@ export function LearningPhases({ roadmapId, goalId: _goalId }: LearningPhasesPro
               )}
 
               {/* Show key concepts if available */}
-              {phase.key_concepts && phase.key_concepts.length > 0 && (
+              {stage.key_concepts && stage.key_concepts.length > 0 && (
                 <div>
                   <p className="text-sm font-semibold mb-3 text-gray-900 flex items-center gap-2">
                     <span className="w-2 h-2 bg-gray-600 rounded-full"></span>
                     Key Concepts:
                   </p>
                   <div className="flex flex-wrap gap-2">
-                    {phase.key_concepts.map((concept: string, index: number) => (
+                    {stage.key_concepts.map((concept: string, index: number) => (
                       <Badge key={index} variant="secondary" className="text-xs bg-gray-50">
                         {concept}
                       </Badge>
@@ -350,14 +350,14 @@ export function LearningPhases({ roadmapId, goalId: _goalId }: LearningPhasesPro
                   size="sm"
                   variant={hasGeneratedTasks ? "secondary" : (isActive ? "default" : "outline")}
                   onClick={() => {
-                    setGeneratingPhase(phase.id)
-                    generateTasksMutation.mutate(phase)
+                    setGeneratingPhase(stage.id)
+                    generateTasksMutation.mutate(stage)
                   }}
-                  disabled={generatingPhase === phase.id || isCompleted || hasGeneratedTasks}
+                  disabled={generatingPhase === stage.id || isCompleted || hasGeneratedTasks}
                   className="gap-2 relative overflow-hidden"
                 >
                   <AnimatePresence mode="wait">
-                    {generatingPhase === phase.id ? (
+                    {generatingPhase === stage.id ? (
                       <motion.div
                         key="generating"
                         initial={{ opacity: 0, scale: 0.8 }}
@@ -388,7 +388,7 @@ export function LearningPhases({ roadmapId, goalId: _goalId }: LearningPhasesPro
                         >
                           <CheckCircle2 className="h-3 w-3" />
                         </motion.div>
-                        <span>Tasks Generated ({phase.taskCount})</span>
+                        <span>Tasks Generated ({stage.taskCount})</span>
                       </motion.div>
                     ) : (
                       <motion.div
@@ -408,7 +408,7 @@ export function LearningPhases({ roadmapId, goalId: _goalId }: LearningPhasesPro
                 {isCompleted && (
                   <div className="flex items-center gap-1 text-sm text-primary">
                     <CheckCircle2 className="h-4 w-4" />
-                    Phase Completed
+                    Stage Completed
                   </div>
                 )}
               </div>
@@ -422,7 +422,7 @@ export function LearningPhases({ roadmapId, goalId: _goalId }: LearningPhasesPro
         open={taskDialogOpen}
         onOpenChange={setTaskDialogOpen}
         taskCount={lastGeneratedTask?.count || 0}
-        phaseTitle={lastGeneratedTask?.phaseTitle || ''}
+        phaseTitle={lastGeneratedTask?.stageTitle || ''}
         onViewTasks={() => {
           setTaskDialogOpen(false)
           // Navigate to progress tab and tasks section using query parameter and hash

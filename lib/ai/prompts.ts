@@ -161,55 +161,55 @@ IMPORTANT:
 - If they mention specific skills, technologies, or knowledge areas, incorporate these into early phases
 - Avoid repeating content they already know based on their description
 
-PHASE REQUIREMENTS:
-- Create 6-12 SPECIFIC, ACTIONABLE learning phases that cover the COMPLETE journey from the user's current level to mastery
-- Phase durations must be realistic and shorter for better engagement:
-  * For short timelines (< 12 weeks): 1-3 weeks per phase
-  * For medium timelines (12-50 weeks): 2-8 weeks per phase
-  * For long timelines (50+ weeks): 4-12 weeks per phase (MAX)
-- CRITICAL: All phase durations MUST sum to exactly ${totalWeeksNeeded} weeks
-- Each phase should have CONCRETE, MEASURABLE outcomes
+STAGE REQUIREMENTS:
+- Create 6-12 SPECIFIC, ACTIONABLE stages that cover the COMPLETE journey from the user's current level to mastery
+- Stage durations must be realistic and shorter for better engagement:
+  * For short timelines (< 12 weeks): 1-3 weeks per stage
+  * For medium timelines (12-50 weeks): 2-8 weeks per stage
+  * For long timelines (50+ weeks): 4-12 weeks per stage (MAX)
+- CRITICAL: All stage durations MUST sum to exactly ${totalWeeksNeeded} weeks
+- Each stage should have CONCRETE, MEASURABLE outcomes
 - Focus on PRACTICAL APPLICATION rather than abstract theory
-- Ensure phases build upon each other progressively with clear prerequisites
+- Ensure stages build upon each other progressively with clear prerequisites
 - Cover ALL essential skills, sub-skills, and competencies needed for mastery
-- Include phases for: foundations, intermediate skills, advanced concepts, specialization, and mastery
-- Each phase should have detailed descriptions explaining what will be accomplished
-- Design phases to take someone from their current level to true professional competency
+- Include stages for: foundations, intermediate skills, advanced concepts, specialization, and mastery
+- Each stage should have detailed descriptions explaining what will be accomplished
+- Design stages to take someone from their current level to true professional competency
 
-CRITICAL: MAKE PHASES EXTREMELY SPECIFIC AND DETAILED:
+CRITICAL: MAKE STAGES EXTREMELY SPECIFIC AND DETAILED:
 Instead of abstract titles like "Spanish Grammar Foundations", use specific topics:
 - "Basic Spanish Greetings & Present Tense Conjugation (-ar verbs)"
 - "Expressing Likes/Dislikes (me gusta) & Describing People/Places"
 - "Past Tense (Preterite) & Time Expressions (ayer, la semana pasada)"
 
-EXAMPLES OF SPECIFIC PHASE CONTENT BY DOMAIN:
+EXAMPLES OF SPECIFIC STAGE CONTENT BY DOMAIN:
 
-LANGUAGE LEARNING - Each phase should specify exact grammar topics and vocabulary:
-PHASE TITLES: "Present Tense -ar Verbs & Basic Introductions", "Expressing Preferences (me gusta/no me gusta) & Adjectives", "Past Tense Preterite & Time Expressions"
+LANGUAGE LEARNING - Each stage should specify exact grammar topics and vocabulary:
+STAGE TITLES: "Present Tense -ar Verbs & Basic Introductions", "Expressing Preferences (me gusta/no me gusta) & Adjectives", "Past Tense Preterite & Time Expressions"
 SKILLS: ["Conjugate regular -ar verbs (hablar, estudiar, caminar)", "Use 'me gusta/no me gusta' with nouns and infinitives", "Form basic yes/no questions with ¿Te gusta...?"]
 OBJECTIVES: ["Master present tense conjugation of 20 common -ar verbs", "Express personal preferences about food, activities, and people", "Ask and answer questions about likes and dislikes"]
 KEY CONCEPTS: ["Subject pronouns (yo, tú, él/ella)", "Verb endings: -o, -as, -a, -amos, -áis, -an", "Agreement with 'gusta' vs 'gustan'"]
 
-PROGRAMMING - Each phase should specify exact technologies, concepts, and projects:
-PHASE TITLES: "HTML Structure & CSS Box Model", "JavaScript Variables, Functions & DOM Manipulation", "React Components & State Management"
+PROGRAMMING - Each stage should specify exact technologies, concepts, and projects:
+STAGE TITLES: "HTML Structure & CSS Box Model", "JavaScript Variables, Functions & DOM Manipulation", "React Components & State Management"
 SKILLS: ["Create semantic HTML with proper tags (header, nav, main, footer)", "Style layouts using Flexbox and CSS Grid", "Write JavaScript functions that manipulate DOM elements"]
 OBJECTIVES: ["Build 3 responsive web pages with semantic HTML", "Create interactive forms with JavaScript validation", "Deploy a functional React app with 5+ components"]
 KEY CONCEPTS: ["HTML5 semantic elements", "CSS selectors and specificity", "Event listeners and callbacks"]
 
-FITNESS - Each phase should specify exact exercises, rep ranges, and progressions:
-PHASE TITLES: "Bodyweight Basics & Core Strength", "Push/Pull Movements & Lower Body Foundation", "Cardio Endurance & Movement Patterns"
+FITNESS - Each stage should specify exact exercises, rep ranges, and progressions:
+STAGE TITLES: "Bodyweight Basics & Core Strength", "Push/Pull Movements & Lower Body Foundation", "Cardio Endurance & Movement Patterns"
 SKILLS: ["Perform 10 consecutive push-ups with proper form", "Hold a plank for 60 seconds", "Complete 20 bodyweight squats"]
 OBJECTIVES: ["Establish daily movement routine of 30+ minutes", "Master fundamental movement patterns safely", "Build base cardiovascular fitness"]
 KEY CONCEPTS: ["Proper push-up progression (wall → knee → full)", "Core engagement and breathing", "Progressive overload principles"]
 
-MUSIC - Each phase should specify exact chords, scales, and songs:
-PHASE TITLES: "Basic Open Chords & Strumming Patterns", "Chord Transitions & First Songs", "Barre Chords & Intermediate Techniques"
+MUSIC - Each stage should specify exact chords, scales, and songs:
+STAGE TITLES: "Basic Open Chords & Strumming Patterns", "Chord Transitions & First Songs", "Barre Chords & Intermediate Techniques"
 SKILLS: ["Play G, C, D, Em chords cleanly", "Transition between chords smoothly", "Strum in 4/4 time with down-up patterns"]
 OBJECTIVES: ["Play 5 beginner songs using basic chords", "Maintain steady rhythm while changing chords", "Perform simple chord progressions"]
 KEY CONCEPTS: ["Finger placement and pressure", "Chord shapes and muscle memory", "Timing and rhythm fundamentals"]
 
-BUSINESS/PROFESSIONAL - Each phase should specify exact skills and deliverables:
-PHASE TITLES: "Market Research & Customer Validation", "Business Model Canvas & Value Propositions", "Financial Planning & Revenue Projections"
+BUSINESS/PROFESSIONAL - Each stage should specify exact skills and deliverables:
+STAGE TITLES: "Market Research & Customer Validation", "Business Model Canvas & Value Propositions", "Financial Planning & Revenue Projections"
 SKILLS: ["Conduct 20 customer interviews", "Create detailed buyer personas", "Build financial models in Excel"]
 OBJECTIVES: ["Validate business idea with market research", "Define clear value proposition", "Create 12-month financial projections"]
 KEY CONCEPTS: ["Customer discovery methodology", "Lean startup principles", "Basic accounting and cash flow"]
@@ -219,23 +219,23 @@ REALISTIC TIMELINE CALCULATION:
 - Time available per week: ${timeCommitment} minutes/day × ${Object.values(weeklySchedule).filter(Boolean).length} days = ${Math.round(timeCommitment * Object.values(weeklySchedule).filter(Boolean).length / 60 * 10) / 10} hours/week
 - For this specific goal: expect ${totalHoursNeeded} total hours
 - Total weeks needed: Total hours ÷ hours per week (${totalHoursNeeded} hours ÷ ${Math.round(timeCommitment * Object.values(weeklySchedule).filter(Boolean).length / 60 * 10) / 10} hours/week = ${Math.round(totalHoursNeeded / (timeCommitment * Object.values(weeklySchedule).filter(Boolean).length / 60))} weeks)
-- Phase durations must add up to the total realistic timeline
-- IMPORTANT: Each phase duration must be calculated to fit within the realistic total timeline
+- Stage durations must add up to the total realistic timeline
+- IMPORTANT: Each stage duration must be calculated to fit within the realistic total timeline
 - Include time for review, practice, and skill consolidation
 - Account for the natural learning curve and plateau periods
 
-CRITICAL: The sum of all phase durations must equal the total realistic weeks needed for mastery.
+CRITICAL: The sum of all stage durations must equal the total realistic weeks needed for mastery.
 
-PHASE DETAIL REQUIREMENTS:
-- Each phase must have comprehensive descriptions (3-5 sentences minimum)
-- CRITICAL: Phase titles must be EXTREMELY SPECIFIC and detailed, not abstract
+STAGE DETAIL REQUIREMENTS:
+- Each stage must have comprehensive descriptions (3-5 sentences minimum)
+- CRITICAL: Stage titles must be EXTREMELY SPECIFIC and detailed, not abstract
 - Example: Instead of "Spanish Grammar Basics" → "Present Tense -ar Verbs & Expressing Likes/Dislikes (me gusta)"
 - Example: Instead of "Web Development Fundamentals" → "HTML5 Semantic Elements & CSS Flexbox Layouts"
-- Include specific learning objectives with exact topics, concepts, and techniques
+- Include specific objectives with exact topics, concepts, and techniques
 - Skills must be granular and measurable (e.g., "Conjugate 15 regular -ar verbs in present tense")
 - Key concepts should list specific grammar rules, formulas, techniques, or methods
-- Learning objectives must specify exact outcomes and measurable skills
-- Explain how each phase prepares for the next level with concrete prerequisites
+- Objectives must specify exact outcomes and measurable skills
+- Explain how each stage prepares for the next level with concrete prerequisites
 - CRITICAL: Include a "resources" array with 3-6 specific tools, apps, websites, books, or materials
 - Resources should be concrete and actionable (e.g., "Duolingo Units 1-5", "YouTube: Python Tutorial Playlist by Corey Schafer")
 - Mention popular, well-known resources relevant to the subject area
@@ -296,9 +296,9 @@ JSON format:
   "overview": "Comprehensive overview of the complete learning journey from the user's current level to mastery",
   "phases": [
     {
-      "id": "phase-1",
+      "id": "stage-1",
       "title": "Present Tense -ar Verbs & Basic Introductions (Hola, me llamo...)",
-      "description": "Master the fundamentals of Spanish communication by learning present tense conjugation of regular -ar verbs and essential greeting phrases. You'll practice introducing yourself, asking basic questions, and forming simple sentences using the most common verb pattern in Spanish. This phase establishes the foundation for all future grammar learning and provides immediate practical communication skills.",
+      "description": "Master the fundamentals of Spanish communication by learning present tense conjugation of regular -ar verbs and essential greeting phrases. You'll practice introducing yourself, asking basic questions, and forming simple sentences using the most common verb pattern in Spanish. This stage establishes the foundation for all future grammar learning and provides immediate practical communication skills.",
       "duration_weeks": 3,
       "skills_to_learn": [
         "Conjugate regular -ar verbs in present tense (hablar, estudiar, caminar)",
@@ -348,24 +348,24 @@ JSON format:
 CALCULATION EXAMPLE FOR YOUR SPECIFIC CASE:
 - You have ${timeCommitment} minutes/day × ${Object.values(weeklySchedule).filter(Boolean).length} days/week = ${Math.round(timeCommitment * Object.values(weeklySchedule).filter(Boolean).length / 60 * 10) / 10} hours/week
 - For this goal (${totalHoursNeeded} hours): ${totalHoursNeeded} ÷ ${Math.round(timeCommitment * Object.values(weeklySchedule).filter(Boolean).length / 60 * 10) / 10} = ${Math.round(totalHoursNeeded / (timeCommitment * Object.values(weeklySchedule).filter(Boolean).length / 60))} weeks = ${Math.round(totalHoursNeeded / (timeCommitment * Object.values(weeklySchedule).filter(Boolean).length / 60) / 52 * 10) / 10} years
-- Your phases should total approximately ${Math.round(totalHoursNeeded / (timeCommitment * Object.values(weeklySchedule).filter(Boolean).length / 60))} weeks
-- Example phase distribution: Adjust based on total timeline - shorter goals need shorter phases
+- Your stages should total approximately ${Math.round(totalHoursNeeded / (timeCommitment * Object.values(weeklySchedule).filter(Boolean).length / 60))} weeks
+- Example stage distribution: Adjust based on total timeline - shorter goals need shorter stages
 
 IMPORTANT: 
 - Do NOT include daily_tasks in the roadmap generation
-- Tasks will be generated separately for each phase when requested
-- Focus on creating comprehensive phase descriptions and realistic timelines
+- Tasks will be generated separately for each stage when requested
+- Focus on creating comprehensive stage descriptions and realistic timelines
 - Ensure the roadmap covers the COMPLETE journey to mastery
-- VERIFY your math: Total phase weeks must equal realistic completion timeline
+- VERIFY your math: Total stage weeks must equal realistic completion timeline
 
 Consider the user's current level and available time. Make the roadmap realistic and achievable.
 Break down complex goals into smaller, manageable phases with clear milestones.
 
 🚨 FINAL VALIDATION CHECKLIST 🚨
 Before submitting your response, verify:
-1. ✅ Sum of all phase duration_weeks = ${totalWeeksNeeded} weeks (NOT 10-15 weeks for a multi-year goal)
-2. ✅ Number of phases appropriate for timeline (6-15 phases for ${totalWeeksNeeded} weeks)
-3. ✅ Each phase builds progressively toward mastery
+1. ✅ Sum of all stage duration_weeks = ${totalWeeksNeeded} weeks (NOT 10-15 weeks for a multi-year goal)
+2. ✅ Number of stages appropriate for timeline (6-15 stages for ${totalWeeksNeeded} weeks)
+3. ✅ Each stage builds progressively toward mastery
 4. ✅ Completion date matches calculated timeline (~${Math.round(totalYearsNeeded * 10) / 10} years from start)`
 }
 
@@ -392,15 +392,15 @@ export const generateTasksForPhasePrompt = (
 
   const totalSessions = durationWeeks * Object.values(weeklySchedule).filter(Boolean).length
 
-  return `Break down this learning phase into specific, daily actionable tasks:
+  return `Break down this stage into specific, daily actionable tasks:
 
-PHASE DETAILS:
-Phase: ${phaseTitle} (Phase ${phaseNumber})
+STAGE DETAILS:
+Stage: ${phaseTitle} (Stage ${phaseNumber})
 Goal: ${goalTitle}
 Description: ${phaseDescription}
 Duration: ${durationWeeks} weeks
-Skills to Learn: ${skillsToLearn.join(', ')}
-Learning Objectives: ${learningObjectives?.join(', ') || 'Not specified'}
+Skills to Develop: ${skillsToLearn.join(', ')}
+Objectives: ${learningObjectives?.join(', ') || 'Not specified'}
 Key Concepts: ${keyConcepts?.join(', ') || 'Not specified'}
 
 SCHEDULING DETAILS:
@@ -421,8 +421,8 @@ TASK GENERATION REQUIREMENTS:
 - Include specific websites, apps, books, or tools when relevant
 - Mention specific quantities, timeframes, or metrics when possible
 
-CRITICAL: TASKS MUST BE EXTREMELY SPECIFIC TO THE PHASE CONTENT:
-If the phase is about "Present Tense -ar Verbs & Basic Introductions", tasks should be:
+CRITICAL: TASKS MUST BE EXTREMELY SPECIFIC TO THE STAGE CONTENT:
+If the stage is about "Present Tense -ar Verbs & Basic Introductions", tasks should be:
 - "Practice conjugating 10 -ar verbs (hablar, estudiar, trabajar) using Conjuguemos.com"
 - "Complete Duolingo lessons on present tense -ar verbs (Basics 1, Units 1-3)"
 - "Record yourself introducing yourself using: 'Hola, me llamo... Yo estudio español'"
@@ -430,7 +430,7 @@ If the phase is about "Present Tense -ar Verbs & Basic Introductions", tasks sho
 
 NOT abstract tasks like "Study Spanish grammar" or "Practice vocabulary"
 
-PATTERN APPROACH FOR LONG PHASES:
+PATTERN APPROACH FOR LONG STAGES:
 - Week 1-4: Foundation pattern (basic level)
 - Week 5-8: Development pattern (intermediate level)  
 - Week 9-12: Application pattern (advanced level)
@@ -445,27 +445,27 @@ TASK TYPES TO INCLUDE:
 - Project: Larger practical applications spanning multiple days
 - Assessment: Self-evaluation, quizzes, skill checks
 
-EXAMPLES OF SPECIFIC, ACTIONABLE TASKS THAT MATCH PHASE CONTENT:
+EXAMPLES OF SPECIFIC, ACTIONABLE TASKS THAT MATCH STAGE CONTENT:
 
-LANGUAGE LEARNING (for "Present Tense -ar Verbs & Basic Introductions" phase):
+LANGUAGE LEARNING (for "Present Tense -ar Verbs & Basic Introductions" stage):
 - "Conjugate 10 -ar verbs (hablar, estudiar, trabajar, caminar, cocinar) using Conjuguemos.com with 90% accuracy"
 - "Complete Duolingo Present Tense lessons: Basics 1 Units 1-3, focus on -ar verb endings"
 - "Practice introductions: Record yourself saying 'Hola, me llamo [name]. Yo estudio español. ¿Cómo te llamas?'"
 - "Write 15 sentences using different -ar verbs: 'Yo hablo español', 'Tú estudias mucho', 'Ella camina rápido'"
 
-PROGRAMMING (for "HTML5 Semantic Elements & CSS Flexbox" phase):
+PROGRAMMING (for "HTML5 Semantic Elements & CSS Flexbox" stage):
 - "Create a webpage using semantic HTML: header, nav, main, section, footer tags"
 - "Build a 3-column layout using CSS Flexbox with justify-content and align-items"
 - "Complete freeCodeCamp Responsive Web Design: CSS Flexbox lessons 1-8"
 - "Code a navigation bar with flex properties: display: flex, space-between, center alignment"
 
-FITNESS (for "Bodyweight Basics & Core Strength" phase):
+FITNESS (for "Bodyweight Basics & Core Strength" stage):
 - "Perform push-up progression: 3 sets of wall push-ups, focus on proper elbow position"
 - "Hold plank position for 30 seconds, 3 times, maintaining straight line from head to heels"
 - "Complete 3 sets of 10 bodyweight squats with proper knee tracking over toes"
 - "Follow Yoga with Adriene 'Core Strength' 20-minute video, focus on breathing technique"
 
-MUSIC (for "Basic Open Chords & Strumming Patterns" phase):
+MUSIC (for "Basic Open Chords & Strumming Patterns" stage):
 - "Practice G, C, D chord shapes for 15 minutes: clean finger placement, no buzzing strings"
 - "Master chord transition G-C-G using JustinGuitar One Minute Changes exercise"
 - "Learn down-down-up-up-down-up strumming pattern in 4/4 time using metronome at 60 BPM"
@@ -473,7 +473,7 @@ MUSIC (for "Basic Open Chords & Strumming Patterns" phase):
 
 JSON format:
 {
-  "phase_summary": "Brief summary of what this phase accomplishes",
+  "stage_summary": "Brief summary of what this stage accomplishes",
   "task_patterns": [
     {
       "pattern_name": "Foundation Pattern (Weeks 1-4)",
@@ -495,9 +495,9 @@ JSON format:
       ]
     }
   ],
-  "phase_outcomes": ["What you should be able to do after completing all these tasks"],
+  "stage_outcomes": ["What you should be able to do after completing all these tasks"],
   "progression_notes": "How difficulty increases across patterns"
 }
 
-Create tasks that build systematically through the phase, ensuring comprehensive coverage of all skills and concepts.`
+Create tasks that build systematically through the stage, ensuring comprehensive coverage of all skills and concepts.`
 }

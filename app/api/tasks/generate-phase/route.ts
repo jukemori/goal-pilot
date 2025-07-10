@@ -16,8 +16,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Get the learning phase details
-    const { data: phase, error: phaseError } = await supabase
+    // Get the stage details
+    const { data: stage, error: stageError } = await supabase
       .from('learning_phases')
       .select(`
         *,
@@ -34,27 +34,27 @@ export async function POST(request: NextRequest) {
       .eq('roadmaps.goals.user_id', user.id)
       .single()
 
-    if (phaseError || !phase) {
-      return NextResponse.json({ error: 'Phase not found' }, { status: 404 })
+    if (stageError || !stage) {
+      return NextResponse.json({ error: 'Stage not found' }, { status: 404 })
     }
 
-    // Check if tasks already exist for this phase
+    // Check if tasks already exist for this stage
     const { data: existingTasks } = await supabase
       .from('tasks')
       .select('id')
       .eq('roadmap_id', roadmapId)
-      .eq('phase_id', phase.phase_id)
+      .eq('phase_id', stage.phase_id)
       .limit(1)
 
     if (existingTasks && existingTasks.length > 0) {
       return NextResponse.json({ 
-        message: 'Tasks already generated for this phase',
+        message: 'Tasks already generated for this stage',
         tasksCount: existingTasks.length 
       })
     }
 
-    // Extract phase data from the roadmap - cast to Json then parse
-    const aiPlan = phase.roadmaps.ai_generated_plan as Json
+    // Extract stage data from the roadmap - cast to Json then parse
+    const aiPlan = stage.roadmaps.ai_generated_plan as Json
     const planData = aiPlan as { phases?: Array<{ 
       id?: string; 
       title: string; 
@@ -63,18 +63,18 @@ export async function POST(request: NextRequest) {
       learning_objectives?: string[];
       key_concepts?: string[];
     }> }
-    const phases = planData?.phases || []
-    const phaseData = phases.find((p) => p.id === phase.phase_id) || phases[phase.phase_number - 1]
+    const stages = planData?.phases || []
+    const stageData = stages.find((p) => p.id === stage.phase_id) || stages[stage.phase_number - 1]
     
-    if (!phaseData) {
-      return NextResponse.json({ error: 'Phase data not found in roadmap' }, { status: 404 })
+    if (!stageData) {
+      return NextResponse.json({ error: 'Stage data not found in roadmap' }, { status: 404 })
     }
 
     // Get goal details for context
     const { data: goal, error: goalError } = await supabase
       .from('goals')
       .select('title, daily_time_commitment')
-      .eq('id', phase.roadmaps.goal_id || '')
+      .eq('id', stage.roadmaps.goal_id || '')
       .single()
 
     if (goalError || !goal) {
@@ -82,22 +82,22 @@ export async function POST(request: NextRequest) {
     }
 
     // Generate tasks using AI
-    const weeklySchedule = phase.roadmaps.goals.weekly_schedule as Record<string, boolean>
+    const weeklySchedule = stage.roadmaps.goals.weekly_schedule as Record<string, boolean>
     
     const prompt = generateTasksForPhasePrompt(
-      phaseData.title,
-      phaseData.description || 'Learning phase',
-      phaseData.skills_to_learn || [],
-      phaseData.learning_objectives || [],
-      phaseData.key_concepts || [],
-      phase.duration_weeks || 1,
+      stageData.title,
+      stageData.description || 'Stage',
+      stageData.skills_to_learn || [],
+      stageData.learning_objectives || [],
+      stageData.key_concepts || [],
+      stage.duration_weeks || 1,
       goal.daily_time_commitment || 30,
       weeklySchedule,
-      phase.phase_number,
+      stage.phase_number,
       goal.title
     )
 
-    console.log('Generating tasks with AI for phase:', phase.title)
+    console.log('Generating tasks with AI for stage:', stage.title)
     
     const completion = await openai.chat.completions.create({
       model: AI_MODELS.roadmap,
@@ -142,20 +142,20 @@ export async function POST(request: NextRequest) {
 
     const tasks = []
     // Create dates consistently to ensure correct weekday calculation
-    const currentDate = createConsistentDate(phase.start_date || new Date().toISOString())
-    const endDate = createConsistentDate(phase.end_date || new Date().toISOString())
+    const currentDate = createConsistentDate(stage.start_date || new Date().toISOString())
+    const endDate = createConsistentDate(stage.end_date || new Date().toISOString())
     
-    console.log('Phase start date:', phase.start_date, '-> Current date:', currentDate, 'Day of week:', currentDate.getUTCDay())
-    console.log('Phase end date:', phase.end_date, '-> End date:', endDate)
+    console.log('Stage start date:', stage.start_date, '-> Current date:', currentDate, 'Day of week:', currentDate.getUTCDay())
+    console.log('Stage end date:', stage.end_date, '-> End date:', endDate)
 
     // For now, use a simple approach to ensure full coverage
-    // Generate tasks for the entire phase duration
+    // Generate tasks for the entire stage duration
     const basicTasks = [
-      { title: 'Practice Spanish vocabulary', type: 'practice', description: 'Study and practice new Spanish words and phrases' },
-      { title: 'Study Spanish grammar', type: 'study', description: 'Learn and understand Spanish grammar rules' },
-      { title: 'Listen to Spanish audio', type: 'exercise', description: 'Listen to Spanish podcasts, music, or conversations' },
-      { title: 'Practice Spanish pronunciation', type: 'practice', description: 'Practice speaking Spanish words and sentences' },
-      { title: 'Review Spanish lessons', type: 'review', description: 'Review previous lessons and practice materials' }
+      { title: 'Practice vocabulary', type: 'practice', description: 'Study and practice new words and phrases' },
+      { title: 'Study concepts', type: 'study', description: 'Learn and understand key concepts' },
+      { title: 'Apply knowledge', type: 'exercise', description: 'Apply what you have learned in practical exercises' },
+      { title: 'Practice skills', type: 'practice', description: 'Practice and refine your skills' },
+      { title: 'Review progress', type: 'review', description: 'Review previous lessons and practice materials' }
     ]
     
     let taskIndex = 0
@@ -178,8 +178,8 @@ export async function POST(request: NextRequest) {
         scheduled_date: currentDate.toISOString().split('T')[0],
         estimated_duration: goal.daily_time_commitment || 30,
         priority: getPriorityFromType(baseTask.type),
-        phase_id: phase.phase_id,
-        phase_number: phase.phase_number
+        phase_id: stage.phase_id,
+        phase_number: stage.phase_number
       })
       
       // Move to next available day using UTC methods
@@ -190,7 +190,7 @@ export async function POST(request: NextRequest) {
       taskIndex++
     }
     
-    console.log(`Generated ${tasks.length} tasks for phase: ${phase.title}`)
+    console.log(`Generated ${tasks.length} tasks for stage: ${stage.title}`)
     console.log(`Date range: ${tasks[0]?.scheduled_date} to ${tasks[tasks.length-1]?.scheduled_date}`)
 
     // Insert tasks
@@ -210,7 +210,7 @@ export async function POST(request: NextRequest) {
       tasksCount: tasks.length 
     })
   } catch (error) {
-    console.error('Error generating phase tasks:', error)
+    console.error('Error generating stage tasks:', error)
     return NextResponse.json({ error: 'Failed to generate tasks' }, { status: 500 })
   }
 }

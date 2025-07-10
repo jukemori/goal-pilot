@@ -10,7 +10,7 @@ import { Edit3, Calendar, Clock, Target, CheckCircle, Activity, BookOpen } from 
 import { RoadmapView } from '@/components/organisms/roadmap-view/roadmap-view'
 import { TaskList } from '@/components/organisms/task-list/task-list'
 import { ProgressChart } from '@/components/molecules/progress-chart/progress-chart'
-import { LearningPhases } from '@/components/organisms/learning-phases/learning-phases'
+import { ProgressStages } from '@/components/organisms/progress-stages/progress-stages'
 import { cn } from '@/lib/utils'
 
 interface GoalPageProps {
@@ -246,15 +246,15 @@ export default async function GoalPage({ params }: GoalPageProps) {
             <div className="space-y-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-lg font-semibold">Learning Phases</h3>
-                  <p className="text-sm text-muted-foreground">Track your progress through each phase</p>
+                  <h3 className="text-lg font-semibold">Stages</h3>
+                  <p className="text-sm text-muted-foreground">Track your progress through each stage</p>
                 </div>
                 <Button variant="outline" size="sm">
                   <Calendar className="h-4 w-4 mr-2" />
                   Export to Calendar
                 </Button>
               </div>
-              <LearningPhases roadmapId={roadmap.id} goalId={goal.id} />
+              <ProgressStages roadmapId={roadmap.id} goalId={goal.id} />
             </div>
           ) : (
             <div className="bg-card rounded-lg border p-8">

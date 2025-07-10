@@ -94,19 +94,19 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Failed to save roadmap' }, { status: 500 })
     }
 
-    // Create learning phase records only (no tasks initially)
+    // Create stage records only (no tasks initially)
     if (roadmapData.phases && roadmapData.phases.length > 0) {
-      console.log(`Creating ${roadmapData.phases.length} learning phases for roadmap ${roadmap.id}`)
+      console.log(`Creating ${roadmapData.phases.length} stages for roadmap ${roadmap.id}`)
       try {
         await createLearningPhases(supabase, roadmap.id, roadmapData.phases, goal.start_date)
-        console.log('Learning phases created successfully')
-      } catch (phaseError) {
-        console.error('Failed to create learning phases:', phaseError)
-        // Continue anyway - phases can be created later
+        console.log('Stages created successfully')
+      } catch (stageError) {
+        console.error('Failed to create stages:', stageError)
+        // Continue anyway - stages can be created later
       }
-      // Tasks will be generated on-demand per phase when user clicks "Generate Tasks"
+      // Tasks will be generated on-demand per stage when user clicks "Generate Tasks"
     } else {
-      console.log('No phases found in roadmap data')
+      console.log('No stages found in roadmap data')
     }
 
     return NextResponse.json(roadmap)
@@ -139,54 +139,54 @@ interface Phase {
 async function createLearningPhases(
   supabase: Awaited<ReturnType<typeof createClient>>, // Supabase client type from external library
   roadmapId: string,
-  phases: Phase[],
+  stages: Phase[],
   startDate: string
 ) {
   let weekOffset = 0
-  const learningPhases = []
+  const stageRecords = []
   
-  for (let i = 0; i < phases.length; i++) {
-    const phase = phases[i]
-    const phaseStartDate = new Date(startDate)
-    phaseStartDate.setDate(phaseStartDate.getDate() + (weekOffset * 7))
+  for (let i = 0; i < stages.length; i++) {
+    const stage = stages[i]
+    const stageStartDate = new Date(startDate)
+    stageStartDate.setDate(stageStartDate.getDate() + (weekOffset * 7))
     
-    const durationWeeks = phase.duration_weeks || 4
-    const phaseEndDate = new Date(phaseStartDate)
-    phaseEndDate.setDate(phaseEndDate.getDate() + (durationWeeks * 7) - 1)
+    const durationWeeks = stage.duration_weeks || 4
+    const stageEndDate = new Date(stageStartDate)
+    stageEndDate.setDate(stageEndDate.getDate() + (durationWeeks * 7) - 1)
     
-    learningPhases.push({
+    stageRecords.push({
       roadmap_id: roadmapId,
-      phase_id: phase.id || `phase-${i + 1}`,
+      phase_id: stage.id || `stage-${i + 1}`,
       phase_number: i + 1,
-      title: phase.title,
-      description: phase.description,
+      title: stage.title,
+      description: stage.description,
       duration_weeks: durationWeeks,
-      skills_to_learn: phase.skills_to_learn || [],
-      learning_objectives: phase.learning_objectives || [],
-      key_concepts: phase.key_concepts || [],
-      prerequisites: phase.prerequisites || [],
-      outcomes: phase.outcomes || [],
-      resources: phase.resources as Json || null,
-      start_date: phaseStartDate.toISOString().split('T')[0],
-      end_date: phaseEndDate.toISOString().split('T')[0],
+      skills_to_learn: stage.skills_to_learn || [],
+      learning_objectives: stage.learning_objectives || [],
+      key_concepts: stage.key_concepts || [],
+      prerequisites: stage.prerequisites || [],
+      outcomes: stage.outcomes || [],
+      resources: stage.resources as Json || null,
+      start_date: stageStartDate.toISOString().split('T')[0],
+      end_date: stageEndDate.toISOString().split('T')[0],
       status: i === 0 ? 'active' : 'pending'
     })
     
     weekOffset += durationWeeks
   }
   
-  console.log('Inserting learning phases:', learningPhases.length, 'phases')
+  console.log('Inserting stages:', stageRecords.length, 'stages')
   
   const { data, error } = await supabase
     .from('learning_phases')
-    .insert(learningPhases)
+    .insert(stageRecords)
     .select()
   
   if (error) {
-    console.error('Failed to create learning phases:', error)
+    console.error('Failed to create stages:', error)
     throw error
   } else {
-    console.log('Successfully created learning phases:', data?.length)
+    console.log('Successfully created stages:', data?.length)
   }
 }
 
