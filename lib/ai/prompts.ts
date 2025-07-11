@@ -573,7 +573,10 @@ JSON format:
 }
 
 export const TASK_GENERATION_SYSTEM_PROMPT = `You are an expert learning designer and task planner. 
-Your task is to break down a specific learning phase into detailed, daily actionable tasks.
+Your task is to break down a specific learning phase into EXTREMELY SPECIFIC, CONCRETE, daily actionable tasks.
+
+CRITICAL: Tasks must be ACTIONABLE and SPECIFIC, not abstract. Instead of "Practice vocabulary", use "Complete Duolingo lessons 1-3 on family vocabulary (madre, padre, hermano, hermana)".
+
 Always respond with valid JSON that matches the expected schema.`
 
 export const generateTasksForPhasePrompt = (
@@ -624,14 +627,25 @@ TASK GENERATION REQUIREMENTS:
 - Include specific websites, apps, books, or tools when relevant
 - Mention specific quantities, timeframes, or metrics when possible
 
-CRITICAL: TASKS MUST BE EXTREMELY SPECIFIC TO THE STAGE CONTENT:
+🚨 CRITICAL: TASKS MUST BE EXTREMELY SPECIFIC TO THE STAGE CONTENT 🚨
 If the stage is about "Present Tense -ar Verbs & Basic Introductions", tasks should be:
-- "Practice conjugating 10 -ar verbs (hablar, estudiar, trabajar) using Conjuguemos.com"
-- "Complete Duolingo lessons on present tense -ar verbs (Basics 1, Units 1-3)"
-- "Record yourself introducing yourself using: 'Hola, me llamo... Yo estudio español'"
-- "Practice greeting conversations with HelloTalk app for 15 minutes"
+- "Practice conjugating 10 -ar verbs (hablar, estudiar, trabajar) using Conjuguemos.com for 15 minutes, aiming for 90% accuracy"
+- "Complete Duolingo lessons on present tense -ar verbs (Basics 1, Units 1-3) and practice pronunciation"
+- "Record yourself introducing yourself using: 'Hola, me llamo... Yo estudio español' and replay 3 times"
+- "Practice greeting conversations with HelloTalk app for 15 minutes with native speakers"
+- "Write 10 sentences using different -ar verbs: 'Yo hablo español', 'Tú estudias mucho', etc."
+- "Watch YouTube SpanishDict video on -ar verb pronunciation and repeat each example 5 times"
 
-NOT abstract tasks like "Study Spanish grammar" or "Practice vocabulary"
+🚫 NEVER USE ABSTRACT TASKS like:
+- "Study Spanish grammar" → TOO VAGUE
+- "Practice vocabulary" → TOO VAGUE  
+- "Review concepts" → TOO VAGUE
+- "Apply knowledge" → TOO VAGUE
+
+✅ ALWAYS USE SPECIFIC TASKS like:
+- "Complete Duolingo Unit 5: Family vocabulary (15 new words)"
+- "Practice conjugating 'hablar' in all present tense forms using flashcards"
+- "Watch Conjuguemos.com tutorial on -ar verbs and complete 20 practice questions"
 
 PATTERN APPROACH FOR LONG STAGES:
 - Week 1-4: Foundation pattern (basic level)
@@ -689,11 +703,11 @@ JSON format:
           "estimated_minutes": ${timeCommitment},
           "type": "study|practice|exercise|review|project|assessment",
           "skills_practiced": ["basic vocabulary", "pronunciation"],
-          "materials_needed": ["Duolingo app", "smartphone/computer", "headphones"],
-          "success_criteria": "All 3 lessons completed with 80% accuracy or higher",
-          "specific_instructions": "Download Duolingo from app store, create account, start Spanish course",
-          "resources": ["https://duolingo.com", "Duolingo mobile app"],
-          "variations": ["Week 1: Lessons 1-3", "Week 2: Lessons 4-6", "Week 3: Lessons 7-9"]
+          "materials_needed": ["Duolingo app", "smartphone/computer", "headphones for pronunciation"],
+          "success_criteria": "All 3 lessons completed with 80% accuracy or higher, pronunciation score above 75%",
+          "specific_instructions": "Download Duolingo from app store, create account, select Spanish course, complete lessons with pronunciation enabled",
+          "resources": ["https://duolingo.com", "Duolingo mobile app", "SpanishDict.com for reference"],
+          "variations": ["Week 1: Lessons 1-3 (greetings)", "Week 2: Lessons 4-6 (family)", "Week 3: Lessons 7-9 (colors)", "Week 4: Lessons 10-12 (numbers)"]
         }
       ]
     }

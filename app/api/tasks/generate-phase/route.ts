@@ -100,7 +100,7 @@ export async function POST(request: NextRequest) {
     console.log('Generating tasks with AI for stage:', stage.title)
     
     const completion = await openai.chat.completions.create({
-      model: AI_MODELS.roadmap,
+      model: AI_MODELS.tasks,
       messages: [
         { role: 'system', content: TASK_GENERATION_SYSTEM_PROMPT },
         { role: 'user', content: prompt }
@@ -110,7 +110,7 @@ export async function POST(request: NextRequest) {
       max_tokens: 4000, // Maximum supported by the model
     })
 
-    // let _taskData
+    let taskData
     try {
       let content = completion.choices[0].message.content!
       console.log('AI task generation response length:', content.length)
@@ -126,13 +126,14 @@ export async function POST(request: NextRequest) {
         content = content.substring(0, jsonEnd + 1)
       }
       
-      // _taskData = JSON.parse(content) // AI generated data not currently used
+      taskData = JSON.parse(content)
+      console.log('Successfully parsed AI task data:', taskData)
     } catch (parseError) {
       console.error('Failed to parse AI task generation response:', parseError)
       return NextResponse.json({ error: 'Failed to generate tasks' }, { status: 500 })
     }
 
-    // Schedule the generated tasks using pattern-based approach
+    // Schedule the AI-generated tasks
     const availableDays = Object.entries(weeklySchedule)
       .filter(([_, available]) => available)
       .map(([day]) => getDayNumber(day))
@@ -148,15 +149,44 @@ export async function POST(request: NextRequest) {
     console.log('Stage start date:', stage.start_date, '-> Current date:', currentDate, 'Day of week:', currentDate.getUTCDay())
     console.log('Stage end date:', stage.end_date, '-> End date:', endDate)
 
-    // For now, use a simple approach to ensure full coverage
-    // Generate tasks for the entire stage duration
-    const basicTasks = [
-      { title: 'Practice vocabulary', type: 'practice', description: 'Study and practice new words and phrases' },
-      { title: 'Study concepts', type: 'study', description: 'Learn and understand key concepts' },
-      { title: 'Apply knowledge', type: 'exercise', description: 'Apply what you have learned in practical exercises' },
-      { title: 'Practice skills', type: 'practice', description: 'Practice and refine your skills' },
-      { title: 'Review progress', type: 'review', description: 'Review previous lessons and practice materials' }
-    ]
+    // Extract AI-generated tasks and schedule them
+    const taskPatterns = taskData?.task_patterns || []
+    let allTasks: Array<{
+      title: string
+      description: string
+      type: string
+      estimated_minutes: number
+    }> = []
+
+    // Collect all tasks from all patterns
+    taskPatterns.forEach((pattern: any) => {
+      const weeklyTasks = pattern.weekly_tasks || []
+      const patternWeeks = pattern.weeks_duration || 1
+      
+      // Repeat the pattern for the specified number of weeks
+      for (let week = 0; week < patternWeeks; week++) {
+        weeklyTasks.forEach((task: any) => {
+          allTasks.push({
+            title: task.title || 'Practice skills',
+            description: task.description || 'Practice and refine your skills',
+            type: task.type || 'practice',
+            estimated_minutes: task.estimated_minutes || goal.daily_time_commitment || 30
+          })
+        })
+      }
+    })
+
+    // If no AI tasks generated, use fallback
+    if (allTasks.length === 0) {
+      console.log('No AI tasks found, using fallback tasks')
+      allTasks = [
+        { title: 'Practice vocabulary', type: 'practice', description: 'Study and practice new words and phrases', estimated_minutes: goal.daily_time_commitment || 30 },
+        { title: 'Study concepts', type: 'study', description: 'Learn and understand key concepts', estimated_minutes: goal.daily_time_commitment || 30 },
+        { title: 'Apply knowledge', type: 'exercise', description: 'Apply what you have learned in practical exercises', estimated_minutes: goal.daily_time_commitment || 30 },
+        { title: 'Practice skills', type: 'practice', description: 'Practice and refine your skills', estimated_minutes: goal.daily_time_commitment || 30 },
+        { title: 'Review progress', type: 'review', description: 'Review previous lessons and practice materials', estimated_minutes: goal.daily_time_commitment || 30 }
+      ]
+    }
     
     let taskIndex = 0
     
@@ -169,14 +199,14 @@ export async function POST(request: NextRequest) {
       
       if (currentDate > endDate) break
       
-      const baseTask = basicTasks[taskIndex % basicTasks.length]
+      const baseTask = allTasks[taskIndex % allTasks.length]
       
       tasks.push({
         roadmap_id: roadmapId,
         title: baseTask.title,
         description: baseTask.description,
         scheduled_date: currentDate.toISOString().split('T')[0],
-        estimated_duration: goal.daily_time_commitment || 30,
+        estimated_duration: baseTask.estimated_minutes,
         priority: getPriorityFromType(baseTask.type),
         phase_id: stage.phase_id,
         phase_number: stage.phase_number
