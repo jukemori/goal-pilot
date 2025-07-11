@@ -274,7 +274,7 @@ export function GoalForm({ onSubmit, defaultValues, isEdit = false }: GoalFormPr
                 render={() => (
                   <FormItem className="space-y-4">
                     <FormLabel>Weekly Schedule</FormLabel>
-                    <div className="grid grid-cols-7 gap-2">
+                    <div className="flex flex-wrap gap-2">
                       {weekDays.map((day) => (
                         <FormField
                           key={day.id}
@@ -285,9 +285,9 @@ export function GoalForm({ onSubmit, defaultValues, isEdit = false }: GoalFormPr
                               <FormControl>
                                 <div 
                                   className={`
-                                    relative flex items-center justify-center py-2 px-1 rounded-lg border-2 transition-all cursor-pointer w-full min-w-0
+                                    relative flex items-center justify-center py-1.5 px-3 rounded-md border-2 transition-all cursor-pointer
                                     ${field.value 
-                                      ? 'border-primary bg-primary text-white shadow-md' 
+                                      ? 'border-primary bg-primary text-white shadow-sm' 
                                       : 'border-gray-200 bg-gray-50 hover:border-gray-300 hover:bg-gray-100'
                                     }
                                   `}
