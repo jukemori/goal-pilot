@@ -265,65 +265,55 @@ export function GoalForm({ onSubmit, defaultValues, isEdit = false }: GoalFormPr
                 )}
               />
             </div>
-            </CardContent>
-          </Card>
 
-          {/* Weekly Schedule Section */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Weekly Schedule</CardTitle>
-              <CardDescription>
-                Select which days you can work on this goal
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <FormField
-                  control={form.control}
-                  name="weekly_schedule"
-                  render={() => (
-                    <FormItem className="space-y-4">
-                      <FormLabel>Weekly Schedule</FormLabel>
-                      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-1">
-                        {weekDays.map((day) => (
-                          <FormField
-                            key={day.id}
-                            control={form.control}
-                            name={`weekly_schedule.${day.id}` as `weekly_schedule.${keyof GoalFormData['weekly_schedule']}`}
-                            render={({ field }) => (
-                              <FormItem className="flex items-center space-x-0">
-                                <FormControl>
-                                  <div 
-                                    className={`
-                                      relative flex items-center justify-center py-3 px-2 rounded-xl border-2 transition-all cursor-pointer w-full min-w-0
-                                      ${field.value 
-                                        ? 'border-primary bg-primary text-white shadow-md' 
-                                        : 'border-gray-200 bg-gray-50 hover:border-gray-300 hover:bg-gray-100'
-                                      }
-                                    `}
-                                    onClick={() => field.onChange(!field.value)}
-                                  >
-                                    <Checkbox
-                                      checked={!!field.value}
-                                      onCheckedChange={field.onChange}
-                                      className="sr-only"
-                                    />
-                                    <span className="text-sm font-medium">
-                                      {day.label.slice(0, 3)}
-                                    </span>
-                                  </div>
-                                </FormControl>
-                              </FormItem>
-                            )}
-                          />
-                        ))}
-                      </div>
-                      <p className="text-sm text-gray-500">Select at least one day to continue</p>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+            {/* Weekly Schedule within the same card */}
+            <div className="mt-6">
+              <FormField
+                control={form.control}
+                name="weekly_schedule"
+                render={() => (
+                  <FormItem className="space-y-4">
+                    <FormLabel>Weekly Schedule</FormLabel>
+                    <div className="grid grid-cols-7 gap-2">
+                      {weekDays.map((day) => (
+                        <FormField
+                          key={day.id}
+                          control={form.control}
+                          name={`weekly_schedule.${day.id}` as `weekly_schedule.${keyof GoalFormData['weekly_schedule']}`}
+                          render={({ field }) => (
+                            <FormItem className="flex items-center space-x-0">
+                              <FormControl>
+                                <div 
+                                  className={`
+                                    relative flex items-center justify-center py-2 px-1 rounded-lg border-2 transition-all cursor-pointer w-full min-w-0
+                                    ${field.value 
+                                      ? 'border-primary bg-primary text-white shadow-md' 
+                                      : 'border-gray-200 bg-gray-50 hover:border-gray-300 hover:bg-gray-100'
+                                    }
+                                  `}
+                                  onClick={() => field.onChange(!field.value)}
+                                >
+                                  <Checkbox
+                                    checked={!!field.value}
+                                    onCheckedChange={field.onChange}
+                                    className="sr-only"
+                                  />
+                                  <span className="text-xs font-medium">
+                                    {day.label.slice(0, 3)}
+                                  </span>
+                                </div>
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                      ))}
+                    </div>
+                    <FormDescription>Select which days you can work on this goal</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
             </CardContent>
           </Card>
 
