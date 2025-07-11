@@ -170,10 +170,7 @@ export default function SettingsPage() {
           {/* Profile Section */}
           <Card id="profile" className="border-gray-200 shadow-sm">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-gray-800">
-                <div className="p-2 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg">
-                  <Settings className="h-5 w-5 text-blue-600" />
-                </div>
+              <CardTitle className="text-gray-800">
                 Profile Information
               </CardTitle>
               <CardDescription className="text-gray-600 mt-1">
@@ -216,10 +213,7 @@ export default function SettingsPage() {
           {/* Notifications Section */}
           <Card id="notifications" className="border-gray-200 shadow-sm">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-gray-800">
-                <div className="p-2 bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg">
-                  <Settings className="h-5 w-5 text-purple-600" />
-                </div>
+              <CardTitle className="text-gray-800">
                 Notification Preferences
               </CardTitle>
               <CardDescription className="text-gray-600 mt-1">
@@ -303,10 +297,7 @@ export default function SettingsPage() {
           {/* Delete Account */}
           <Card className="border-red-200 shadow-sm">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-red-600">
-                <div className="p-2 bg-gradient-to-br from-red-50 to-red-100 rounded-lg">
-                  <Settings className="h-5 w-5 text-red-600" />
-                </div>
+              <CardTitle className="text-red-600">
                 Delete Account
               </CardTitle>
               <CardDescription className="text-gray-600 mt-1">
