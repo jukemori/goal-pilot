@@ -1,9 +1,8 @@
 import { createClient } from '@/lib/supabase/server'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 import Link from 'next/link'
-import { Plus, Clock, Target, Star, ArrowRight } from 'lucide-react'
+import { Plus, Clock, Target, Calendar } from 'lucide-react'
 import { Tables } from '@/types/database'
 
 export default async function GoalsPage() {
@@ -58,7 +57,7 @@ export default async function GoalsPage() {
         </CardHeader>
         <CardContent>
           {activeGoals.length > 0 ? (
-            <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {activeGoals.map((goal) => (
                 <GoalCard key={goal.id} goal={goal as unknown as Parameters<typeof GoalCard>[0]['goal']} />
               ))}
@@ -101,7 +100,7 @@ export default async function GoalsPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {completedGoals.map((goal) => (
                 <GoalCard key={goal.id} goal={goal as unknown as Parameters<typeof GoalCard>[0]['goal']} />
               ))}
@@ -122,52 +121,42 @@ function GoalCard({ goal }: { goal: Tables<'goals'> & {
 } }) {
 
   return (
-    <Link href={`/goals/${goal.id}`} className="block group">
-      <div className="p-4 border rounded-xl hover:bg-gradient-to-r hover:from-primary/5 hover:to-primary/10 hover:border-primary/20 transition-all duration-300 hover:shadow-md">
-        <div className="flex items-center justify-between">
-          <div className="flex-1">
-            <div className="flex items-center gap-3 mb-2">
-              <h3 className="font-semibold text-gray-900 group-hover:text-primary transition-colors">
-                {goal.title}
-              </h3>
-              <Badge variant="secondary" className="text-xs">
-                {goal.status}
-              </Badge>
+    <Link href={`/goals/${goal.id}`}>
+      <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
+        <CardHeader>
+          <CardTitle className="text-lg">{goal.title}</CardTitle>
+          {goal.description && (
+            <CardDescription className="line-clamp-2">
+              {goal.description}
+            </CardDescription>
+          )}
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-2 text-sm text-gray-600">
+            <div className="flex items-center gap-2">
+              <Calendar className="h-4 w-4" />
+              <span>Started {new Date(goal.start_date).toLocaleDateString()}</span>
             </div>
-            {goal.description && (
-              <p className="text-sm text-gray-600 mb-3 line-clamp-2">
-                {goal.description}
-              </p>
-            )}
-            <div className="flex items-center gap-4 text-sm text-gray-600">
-              <div className="flex items-center gap-1">
-                <Star className="h-3 w-3" />
-                {goal.current_level} level
-              </div>
-              <div className="flex items-center gap-1">
-                <Clock className="h-3 w-3" />
-                {goal.daily_time_commitment} min/day
-              </div>
+            <div className="flex items-center gap-2">
+              <Clock className="h-4 w-4" />
+              <span>{goal.daily_time_commitment} min/day</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Target className="h-4 w-4" />
+              <span>
+                {goal.roadmaps && goal.roadmaps.length > 0 
+                  ? 'Roadmap ready' 
+                  : 'Generating roadmap...'}
+              </span>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1">
-              {goal.roadmaps && goal.roadmaps.length > 0 ? (
-                <>
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
-                  <span className="text-sm text-primary font-medium">Ready</span>
-                </>
-              ) : (
-                <>
-                  <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></div>
-                  <span className="text-sm text-orange-600 font-medium">Generating...</span>
-                </>
-              )}
+          {goal.status === 'completed' && (
+            <div className="mt-4 text-sm text-primary font-medium">
+              Completed
             </div>
-            <ArrowRight className="h-4 w-4 text-gray-400 group-hover:text-primary transition-colors" />
-          </div>
-        </div>
-      </div>
+          )}
+        </CardContent>
+      </Card>
     </Link>
   )
 }
