@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { Plus, Clock, Target, Calendar } from 'lucide-react'
 import { Tables } from '@/types/database'
+import { TemplatesSection } from '@/components/organisms/goal-templates/templates-section'
 
 export default async function GoalsPage() {
   const supabase = await createClient()
@@ -41,6 +42,9 @@ export default async function GoalsPage() {
           </div>
         </div>
       </div>
+
+      {/* Goal Templates Section */}
+      <TemplatesSection hasActiveGoals={activeGoals.length > 0} />
 
       {/* Active Goals */}
       <Card className="border-gray-200 shadow-sm">
