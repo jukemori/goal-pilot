@@ -16,6 +16,7 @@ export default function NewGoalPage() {
   const fromTemplate = searchParams.get('fromTemplate') === 'true'
   const [selectedTemplate, setSelectedTemplate] = useState<GoalTemplate | null>(null)
   const [templateDefaults, setTemplateDefaults] = useState<Partial<GoalFormData>>({})
+  const [isLoadingTemplate, setIsLoadingTemplate] = useState(fromTemplate)
 
   useEffect(() => {
     if (fromTemplate) {
@@ -27,6 +28,7 @@ export default function NewGoalPage() {
           
           // Convert template to goal form defaults with all fields pre-filled
           const today = new Date()
+          const startDate = today.toISOString().split('T')[0]
           const targetDate = template.suggested_target_date_weeks ? (() => {
             const target = new Date(today)
             target.setDate(target.getDate() + (template.suggested_target_date_weeks * 7))
@@ -38,6 +40,7 @@ export default function NewGoalPage() {
             description: template.description,
             daily_time_commitment: template.default_time_commitment,
             current_level: template.suggested_current_levels[0] || '',
+            start_date: startDate,
             target_date: targetDate,
             weekly_schedule: template.default_weekly_schedule,
           }
@@ -49,7 +52,11 @@ export default function NewGoalPage() {
         }
       } catch (error) {
         console.error('Error loading template:', error)
+      } finally {
+        setIsLoadingTemplate(false)
       }
+    } else {
+      setIsLoadingTemplate(false)
     }
   }, [fromTemplate])
 
@@ -123,7 +130,16 @@ export default function NewGoalPage() {
       </div>
 
       {/* Form Container - Full Width */}
-      <GoalForm onSubmit={createGoal} defaultValues={templateDefaults} />
+      {isLoadingTemplate ? (
+        <div className="flex items-center justify-center py-12">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading template...</p>
+          </div>
+        </div>
+      ) : (
+        <GoalForm onSubmit={createGoal} defaultValues={templateDefaults} />
+      )}
     </div>
   )
 }

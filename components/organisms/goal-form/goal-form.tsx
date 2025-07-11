@@ -10,7 +10,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Checkbox } from '@/components/ui/checkbox'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { toast } from 'sonner'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { LoadingSpinner, PulsingDots } from '@/components/ui/loading-spinner'
@@ -67,6 +67,32 @@ export function GoalForm({ onSubmit, defaultValues, isEdit = false }: GoalFormPr
       ...defaultValues,
     },
   })
+
+  // Update form values when defaultValues change (e.g., when template is loaded)
+  useEffect(() => {
+    if (defaultValues) {
+      const formDefaults = {
+        title: defaultValues.title || '',
+        description: defaultValues.description || '',
+        current_level: defaultValues.current_level || '',
+        start_date: defaultValues.start_date || today,
+        target_date: defaultValues.target_date || '',
+        daily_time_commitment: defaultValues.daily_time_commitment || 30,
+        weekly_schedule: defaultValues.weekly_schedule || {
+          monday: true,
+          tuesday: true,
+          wednesday: true,
+          thursday: true,
+          friday: true,
+          saturday: false,
+          sunday: false,
+        },
+      }
+      
+      // Reset form with new values
+      form.reset(formDefaults)
+    }
+  }, [defaultValues, form, today])
 
   async function handleSubmit(values: GoalFormData) {
     setIsLoading(true)
