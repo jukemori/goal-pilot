@@ -189,84 +189,94 @@ export function GoalForm({ onSubmit, defaultValues, isEdit = false }: GoalFormPr
             </CardHeader>
             <CardContent>
             
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <div className="space-y-6">
-                <FormField
-                  control={form.control}
-                  name="start_date"
-                  render={({ field }) => (
-                    <FormItem className="space-y-2">
-                      <FormLabel>Start Date</FormLabel>
-                      <FormControl>
-                        <Input 
-                          type="date" 
-                          className="border-gray-200 focus:border-primary focus:ring-primary/20"
-                          {...field} 
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <FormField
+                control={form.control}
+                name="start_date"
+                render={({ field }) => (
+                  <FormItem className="space-y-2">
+                    <FormLabel>Start Date</FormLabel>
+                    <FormControl>
+                      <Input 
+                        type="date" 
+                        className="border-gray-200 focus:border-primary focus:ring-primary/20"
+                        {...field} 
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-                <FormField
-                  control={form.control}
-                  name="target_date"
-                  render={({ field }) => (
-                    <FormItem className="space-y-2">
-                      <FormLabel>Target Date (optional)</FormLabel>
-                      <FormControl>
-                        <Input 
-                          type="date" 
-                          className="border-gray-200 focus:border-primary focus:ring-primary/20"
-                          {...field} 
-                          value={field.value || ''} 
-                        />
-                      </FormControl>
-                      <p className="text-sm text-gray-500">Leave empty to let us calculate the optimal timeline</p>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+              <FormField
+                control={form.control}
+                name="target_date"
+                render={({ field }) => (
+                  <FormItem className="space-y-2">
+                    <FormLabel>Target Date (optional)</FormLabel>
+                    <FormControl>
+                      <Input 
+                        type="date" 
+                        className="border-gray-200 focus:border-primary focus:ring-primary/20"
+                        {...field} 
+                        value={field.value || ''} 
+                      />
+                    </FormControl>
+                    <FormDescription>Leave empty to let us calculate the optimal timeline</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-                <FormField
-                  control={form.control}
-                  name="daily_time_commitment"
-                  render={({ field }) => (
-                    <FormItem className="space-y-2">
-                      <FormLabel>Daily Time Commitment (minutes)</FormLabel>
-                      <FormControl>
-                        <div className="relative">
-                          <Input 
-                            type="number" 
-                            min={15} 
-                            max={480} 
-                            {...field}
-                            className="text-lg py-3 pr-20 border-gray-200 focus:border-primary focus:ring-primary/20"
-                            placeholder="30"
-                            onChange={(e) => {
-                              const value = e.target.value
-                              field.onChange(value === '' ? 0 : parseInt(value) || 0)
-                            }}
-                            onBlur={(e) => {
-                              const value = parseInt(e.target.value) || 0
-                              if (value < 15) {
-                                field.onChange(15)
-                              }
-                            }}
-                          />
-                          <div className="absolute right-3 top-1/2 -translate-y-1/2 text-base text-gray-500 font-medium">
-                            minutes
-                          </div>
+              <FormField
+                control={form.control}
+                name="daily_time_commitment"
+                render={({ field }) => (
+                  <FormItem className="space-y-2">
+                    <FormLabel>Daily Time (minutes)</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Input 
+                          type="number" 
+                          min={15} 
+                          max={480} 
+                          {...field}
+                          className="pr-16 border-gray-200 focus:border-primary focus:ring-primary/20"
+                          placeholder="30"
+                          onChange={(e) => {
+                            const value = e.target.value
+                            field.onChange(value === '' ? 0 : parseInt(value) || 0)
+                          }}
+                          onBlur={(e) => {
+                            const value = parseInt(e.target.value) || 0
+                            if (value < 15) {
+                              field.onChange(15)
+                            }
+                          }}
+                        />
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-500">
+                          min
                         </div>
-                      </FormControl>
-                      <p className="text-sm text-gray-500">How many minutes per day can you dedicate? (15-480 minutes)</p>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+                      </div>
+                    </FormControl>
+                    <FormDescription>15-480 minutes per day</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            </CardContent>
+          </Card>
 
+          {/* Weekly Schedule Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Weekly Schedule</CardTitle>
+              <CardDescription>
+                Select which days you can work on this goal
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
               <div className="space-y-4">
                 <FormField
                   control={form.control}
@@ -314,7 +324,6 @@ export function GoalForm({ onSubmit, defaultValues, isEdit = false }: GoalFormPr
                   )}
                 />
               </div>
-            </div>
             </CardContent>
           </Card>
 
