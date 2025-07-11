@@ -25,6 +25,8 @@ import {
 export default function SettingsPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(true)
+  const [profileLoaded, setProfileLoaded] = useState(false)
+  const [preferencesLoaded, setPreferencesLoaded] = useState(false)
   const [saving, setSaving] = useState(false)
   const [deleting, setDeleting] = useState(false)
   
@@ -44,26 +46,41 @@ export default function SettingsPage() {
     async function fetchUserData() {
       try {
         // Fetch both profile and preferences in parallel for better performance
-        const [profileRes, prefsRes] = await Promise.all([
-          fetch('/api/user/profile'),
-          fetch('/api/user/preferences')
-        ])
+        const [profilePromise, prefsPromise] = [
+          fetch('/api/user/profile', { cache: 'default' }),
+          fetch('/api/user/preferences', { cache: 'default' })
+        ]
 
-        // Handle profile data
-        if (profileRes.ok) {
-          const { data } = await profileRes.json()
-          setName(data.name || '')
-          setEmail(data.email || '')
-        }
+        // Handle profile data as soon as it loads
+        profilePromise.then(async (profileRes) => {
+          if (profileRes.ok) {
+            const { data } = await profileRes.json()
+            setName(data.name || '')
+            setEmail(data.email || '')
+            setProfileLoaded(true)
+          }
+        }).catch((error) => {
+          console.error('Error fetching profile:', error)
+          setProfileLoaded(true) // Still set as loaded to show partial content
+        })
 
-        // Handle preferences data
-        if (prefsRes.ok) {
-          const { data } = await prefsRes.json()
-          setPushNotifications(data.push_notifications ?? true)
-          setEmailNotifications(data.email_notifications ?? false)
-          setDailyReminders(data.daily_reminders ?? true)
-          setWeeklyReports(data.weekly_reports ?? true)
-        }
+        // Handle preferences data as soon as it loads
+        prefsPromise.then(async (prefsRes) => {
+          if (prefsRes.ok) {
+            const { data } = await prefsRes.json()
+            setPushNotifications(data.push_notifications ?? true)
+            setEmailNotifications(data.email_notifications ?? false)
+            setDailyReminders(data.daily_reminders ?? true)
+            setWeeklyReports(data.weekly_reports ?? true)
+            setPreferencesLoaded(true)
+          }
+        }).catch((error) => {
+          console.error('Error fetching preferences:', error)
+          setPreferencesLoaded(true) // Still set as loaded to show partial content
+        })
+
+        // Wait for both to complete before removing main loading state
+        await Promise.allSettled([profilePromise, prefsPromise])
       } catch (error) {
         console.error('Error fetching user data:', error)
         toast.error('Failed to load user data')

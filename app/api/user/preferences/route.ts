@@ -2,41 +2,56 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 
 export async function GET() {
-  const supabase = await createClient()
-  
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
-
-  // Default preferences
-  const defaultPreferences = {
-    user_id: user.id,
-    push_notifications: true,
-    email_notifications: false,
-    daily_reminders: true,
-    weekly_reports: true
-  }
-
   try {
+    const supabase = await createClient()
+    
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    if (authError || !user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    // Default preferences
+    const defaultPreferences = {
+      user_id: user.id,
+      push_notifications: true,
+      email_notifications: false,
+      daily_reminders: true,
+      weekly_reports: true
+    }
+
     // Check if the table exists by attempting a query
     const { data, error } = await supabase
       .from('user_preferences')
-      .select('*')
+      .select('user_id, push_notifications, email_notifications, daily_reminders, weekly_reports')
       .eq('user_id', user.id)
       .single()
 
     if (error) {
       if (error.code === 'PGRST116' || error.code === '42P01') {
         // Table doesn't exist or no rows found, return defaults
-        return NextResponse.json({ data: defaultPreferences })
+        return NextResponse.json({ data: defaultPreferences }, {
+          headers: {
+            'Cache-Control': 'private, max-age=30'
+          }
+        })
       }
       throw error
     }
 
-    return NextResponse.json({ data: data || defaultPreferences })
+    return NextResponse.json({ data: data || defaultPreferences }, {
+      headers: {
+        'Cache-Control': 'private, max-age=60'
+      }
+    })
   } catch (error) {
-    console.warn('User preferences table not yet available:', error)
+    console.warn('User preferences error:', error)
+    const defaultPreferences = {
+      user_id: 'unknown',
+      push_notifications: true,
+      email_notifications: false,
+      daily_reminders: true,
+      weekly_reports: true
+    }
     return NextResponse.json({ data: defaultPreferences })
   }
 }
