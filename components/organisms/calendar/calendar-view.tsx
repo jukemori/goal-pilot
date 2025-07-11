@@ -156,11 +156,11 @@ export function CalendarView(_props: CalendarViewProps) {
   const todayProgress = totalToday > 0 ? Math.round((completedToday / totalToday) * 100) : 0
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 h-[600px]">
       {/* Calendar */}
       <div className="lg:col-span-2">
-        <Card>
-          <CardHeader>
+        <Card className="h-full flex flex-col">
+          <CardHeader className="flex-shrink-0">
             <div className="flex items-center justify-between">
               <CardTitle className="flex items-center gap-2">
                 <CalendarIcon className="h-5 w-5" />
@@ -179,10 +179,10 @@ export function CalendarView(_props: CalendarViewProps) {
               </div>
             </div>
           </CardHeader>
-          <CardContent>
-            <div className={`space-y-4 transition-opacity duration-200 ${isFetching ? 'opacity-60' : 'opacity-100'}`}>
+          <CardContent className="flex-1 flex flex-col">
+            <div className={`flex-1 flex flex-col transition-opacity duration-200 ${isFetching ? 'opacity-60' : 'opacity-100'}`}>
               {/* Day headers */}
-              <div className="grid grid-cols-7 gap-1">
+              <div className="grid grid-cols-7 gap-1 mb-2 flex-shrink-0">
                 {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
                   <div key={day} className="p-2 text-center text-sm font-medium text-gray-500">
                     {day}
@@ -191,53 +191,56 @@ export function CalendarView(_props: CalendarViewProps) {
               </div>
 
               {/* Calendar grid */}
-              <div className="space-y-1">
+              <div className="grid grid-rows-6 gap-1 flex-1">
                 {weeks.map((week, weekIndex) => (
                   <div key={weekIndex} className="grid grid-cols-7 gap-1">
                     {week.map((date) => {
                       const dateString = getDateString(date)
                       const dateTasks = getTasksForDate(date)
                       const isSelected = selectedDate === dateString
+                      const completedTasks = dateTasks.filter(task => task.completed)
+                      const pendingTasks = dateTasks.filter(task => !task.completed)
 
                       return (
                         <button
                           key={dateString}
                           onClick={() => setSelectedDate(isSelected ? null : dateString)}
                           className={cn(
-                            "p-3 h-[95px] text-left border rounded-lg transition-colors relative cursor-pointer",
+                            "p-2 text-left border rounded-lg transition-colors relative cursor-pointer flex flex-col h-full",
                             isToday(date) && "border-primary bg-primary/5",
                             !isCurrentMonth(date) && "text-gray-400 bg-gray-50",
                             isSelected && "border-primary bg-primary/10",
                             dateTasks.length > 0 && "hover:bg-gray-50"
                           )}
                         >
-                          <div className="text-sm font-medium mb-2">
+                          <div className="text-xs md:text-sm font-medium mb-1 flex-shrink-0">
                             {date.getDate()}
                           </div>
                           
                           {dateTasks.length > 0 && (
-                            <div className="space-y-1 pb-8">
+                            <div className="flex-1 space-y-1 min-h-0 overflow-hidden">
+                              {/* Show all tasks with same color, line-through for completed */}
                               {dateTasks.slice(0, 2).map((task) => (
                                 <div
                                   key={task.id}
                                   className={cn(
-                                    "text-xs p-1 rounded truncate",
-                                    task.completed 
-                                      ? "bg-primary/10 text-primary line-through" 
-                                      : "bg-primary/10 text-primary"
+                                    "text-[10px] px-1 py-0.5 rounded truncate bg-primary/10 text-primary",
+                                    task.completed && "line-through opacity-60"
                                   )}
+                                  title={task.title}
                                 >
-                                  {task.title}
+                                  <span className="truncate">{task.title}</span>
                                 </div>
                               ))}
+                              
+                              {/* Show more indicator */}
                               {dateTasks.length > 2 && (
-                                <div className="text-xs text-gray-500">
+                                <div className="text-[9px] text-gray-500 px-1">
                                   +{dateTasks.length - 2} more
                                 </div>
                               )}
                             </div>
                           )}
-
                         </button>
                       )
                     })}
@@ -250,41 +253,41 @@ export function CalendarView(_props: CalendarViewProps) {
       </div>
 
       {/* Sidebar */}
-      <div className="space-y-6">
+      <div className="flex flex-col space-y-4 h-full">
         {/* Today's Progress */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Today's Progress</CardTitle>
-            <CardDescription>
+        <Card className="flex-shrink-0">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm">Today's Progress</CardTitle>
+            <CardDescription className="text-xs">
               {new Date().toLocaleDateString('en-US', { 
-                weekday: 'long', 
-                month: 'long', 
+                weekday: 'short', 
+                month: 'short', 
                 day: 'numeric' 
               })}
             </CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
+          <CardContent className="pt-0">
+            <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Completion Rate</span>
-                <span className="text-lg font-bold text-primary">{todayProgress}%</span>
+                <span className="text-xs text-gray-600">Completion</span>
+                <span className="text-sm font-bold text-primary">{todayProgress}%</span>
               </div>
               
-              <div className="w-full bg-gray-200 rounded-full h-2">
+              <div className="w-full bg-gray-200 rounded-full h-1.5">
                 <div 
-                  className="bg-primary h-2 rounded-full transition-all duration-300"
+                  className="bg-primary h-1.5 rounded-full transition-all duration-300"
                   style={{ width: `${todayProgress}%` }}
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4 text-center">
+              <div className="grid grid-cols-2 gap-2 text-center">
                 <div>
-                  <div className="text-lg font-bold text-primary">{completedToday}</div>
-                  <div className="text-xs text-gray-500">Completed</div>
+                  <div className="text-sm font-bold text-primary">{completedToday}</div>
+                  <div className="text-[10px] text-gray-500">Done</div>
                 </div>
                 <div>
-                  <div className="text-lg font-bold text-gray-600">{totalToday - completedToday}</div>
-                  <div className="text-xs text-gray-500">Remaining</div>
+                  <div className="text-sm font-bold text-gray-600">{totalToday - completedToday}</div>
+                  <div className="text-[10px] text-gray-500">Left</div>
                 </div>
               </div>
             </div>
@@ -293,66 +296,70 @@ export function CalendarView(_props: CalendarViewProps) {
 
         {/* Task Details */}
         {selectedDate ? (
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">
-                {format(parseISO(selectedDate), 'EEEE, MMMM d')}
+          <Card className="flex-1 flex flex-col min-h-0">
+            <CardHeader className="pb-3 flex-shrink-0">
+              <CardTitle className="text-sm">
+                {format(parseISO(selectedDate), 'EEE, MMM d')}
               </CardTitle>
-              <CardDescription>
-                {selectedDateTasks.length} tasks scheduled
+              <CardDescription className="text-xs">
+                {selectedDateTasks.length} task{selectedDateTasks.length !== 1 ? 's' : ''}
               </CardDescription>
             </CardHeader>
-            <CardContent className="max-h-96 overflow-y-auto">
-              {selectedDateTasks.length > 0 ? (
-                <div className="space-y-3">
-                  {selectedDateTasks.map((task) => (
-                    <div
-                      key={task.id}
-                      className={cn(
-                        "p-3 border rounded-lg",
-                        task.completed && "opacity-60 bg-gray-50"
-                      )}
-                    >
-                      <div className="flex items-start gap-2">
-                        {task.completed ? (
-                          <CheckCircle className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                        ) : (
-                          <div className="h-4 w-4 border-2 border-gray-300 rounded mt-0.5 flex-shrink-0" />
+            <CardContent className="flex-1 pt-0 overflow-hidden">
+              <div className="h-full overflow-y-auto">
+                {selectedDateTasks.length > 0 ? (
+                  <div className="space-y-2">
+                    {selectedDateTasks.map((task) => (
+                      <div
+                        key={task.id}
+                        className={cn(
+                          "p-2 border rounded text-xs",
+                          task.completed && "opacity-60 bg-gray-50"
                         )}
-                        <div className="flex-1 min-w-0">
-                          <h4 className={cn(
-                            "font-medium text-sm",
-                            task.completed && "line-through text-gray-500"
-                          )}>
-                            {task.title}
-                          </h4>
-                          <p className="text-xs text-gray-500 mt-1">
-                            {task.roadmaps.goals.title}
-                          </p>
-                          <div className="flex items-center gap-2 mt-2 text-xs text-gray-500">
-                            <Clock className="h-3 w-3" />
-                            {task.estimated_duration} min
+                      >
+                        <div className="flex items-start gap-2">
+                          {task.completed ? (
+                            <CheckCircle className="h-3 w-3 text-primary mt-0.5 flex-shrink-0" />
+                          ) : (
+                            <div className="h-3 w-3 border border-gray-300 rounded mt-0.5 flex-shrink-0" />
+                          )}
+                          <div className="flex-1 min-w-0">
+                            <h4 className={cn(
+                              "font-medium text-xs leading-tight",
+                              task.completed && "line-through text-gray-500"
+                            )}>
+                              {task.title}
+                            </h4>
+                            <p className="text-[10px] text-gray-500 mt-1 truncate">
+                              {task.roadmaps.goals.title}
+                            </p>
+                            <div className="flex items-center gap-1 mt-1 text-[10px] text-gray-500">
+                              <Clock className="h-2 w-2" />
+                              {task.estimated_duration}min
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-sm text-gray-500 text-center py-4">
-                  No tasks scheduled for this date
-                </p>
-              )}
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-xs text-gray-500 text-center py-4">
+                    No tasks scheduled
+                  </p>
+                )}
+              </div>
             </CardContent>
           </Card>
         ) : (
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">Today's Tasks</CardTitle>
-              <CardDescription>Your tasks for today</CardDescription>
+          <Card className="flex-1 flex flex-col min-h-0">
+            <CardHeader className="pb-3 flex-shrink-0">
+              <CardTitle className="text-sm">Today's Tasks</CardTitle>
+              <CardDescription className="text-xs">Current tasks</CardDescription>
             </CardHeader>
-            <CardContent className="max-h-96 overflow-y-auto">
-              <SimpleTaskList tasks={todayTasks} goalId="" />
+            <CardContent className="flex-1 pt-0 overflow-hidden">
+              <div className="h-full overflow-y-auto">
+                <SimpleTaskList tasks={todayTasks} goalId="" />
+              </div>
             </CardContent>
           </Card>
         )}
