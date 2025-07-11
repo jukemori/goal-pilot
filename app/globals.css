@@ -93,7 +93,7 @@
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.60 0.23 25);
   --destructive-foreground: oklch(1 0 0);
-  --border: oklch(1 0 0 / 10%);
+  --border: oklch(0.269 0 0);
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.556 0 0);
   --chart-1: oklch(0.488 0.243 264.376);
@@ -135,6 +135,31 @@
     width: 100vw !important;
     height: 100vh !important;
     min-height: 100vh !important;
+  }
+
+  /* Ensure toast notifications are fully opaque */
+  .toaster [data-sonner-toast] {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    border: 1px solid #e2e8f0 !important;
+    opacity: 1 !important;
+    backdrop-filter: none !important;
+  }
+  
+  /* Dark mode toasts */
+  .dark .toaster [data-sonner-toast] {
+    background: #1e293b !important;
+    color: #f8fafc !important;
+    border: 1px solid #475569 !important;
+  }
+  
+  /* Additional Sonner overrides */
+  .toaster [data-sonner-toast][data-styled="true"] {
+    background: #ffffff !important;
+  }
+  
+  .dark .toaster [data-sonner-toast][data-styled="true"] {
+    background: #1e293b !important;
   }
 }
 
