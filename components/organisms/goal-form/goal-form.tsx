@@ -203,6 +203,7 @@ export function GoalForm({ onSubmit, defaultValues, isEdit = false }: GoalFormPr
                         {...field} 
                       />
                     </FormControl>
+                    <FormDescription>When you want to begin</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
