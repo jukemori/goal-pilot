@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { CheckCircle, Target, Calendar, Brain, Sparkles, ArrowRight, Star } from 'lucide-react'
+import { CheckCircle, Target, Calendar, Brain, Sparkles, ArrowRight } from 'lucide-react'
 
 export default function HomePage() {
   return (
@@ -15,9 +15,6 @@ export default function HomePage() {
             <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-primary/5 rounded-2xl -z-10" />
             <div className="p-4 md:p-8 text-center">
               <div className="flex items-center justify-center gap-2 mb-4">
-                <div className="p-2 bg-primary/10 rounded-lg">
-                  <Target className="h-6 w-6 text-primary" />
-                </div>
                 <Badge variant="secondary" className="bg-primary/10 text-primary">
                   AI-Powered Goal Achievement
                 </Badge>
@@ -230,9 +227,6 @@ export default function HomePage() {
               <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl -z-10" />
               <CardContent className="p-4 md:p-8 text-center">
                 <div className="flex items-center justify-center gap-2 mb-4">
-                  <div className="p-2 bg-primary/10 rounded-lg">
-                    <Star className="h-6 w-6 text-primary" />
-                  </div>
                   <Badge variant="secondary" className="bg-primary/10 text-primary">
                     Join Thousands of Achievers
                   </Badge>

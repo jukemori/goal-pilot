@@ -8,9 +8,8 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Badge } from '@/components/ui/badge'
 import { createClient } from '@/lib/supabase/client'
-import { Eye, EyeOff, Loader2, Target, AlertCircle, CheckCircle } from 'lucide-react'
+import { Eye, EyeOff, Loader2, AlertCircle, CheckCircle } from 'lucide-react'
 import { toast } from 'sonner'
 
 export default function LoginPage() {
@@ -76,16 +75,8 @@ export default function LoginPage() {
 
   return (
     <div className="space-y-6">
-      {/* Goal Pilot Branding */}
+      {/* Header */}
       <div className="text-center">
-        <div className="flex items-center justify-center gap-2 mb-4">
-          <div className="p-2 bg-primary/10 rounded-lg">
-            <Target className="h-6 w-6 text-primary" />
-          </div>
-          <Badge variant="secondary" className="bg-primary/10 text-primary">
-            Goal Pilot
-          </Badge>
-        </div>
         <h1 className="text-2xl font-bold text-gray-900">Welcome Back</h1>
         <p className="text-gray-600">Continue your learning journey</p>
       </div>
@@ -149,7 +140,7 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Enter your password"
-                  className="border-gray-200 focus:border-primary focus:ring-primary/20 pr-10"
+                  className="border-gray-200 focus:border-primary focus:ring-primary/20 pr-12"
                   disabled={isLoading || isSuccess}
                   required
                 />
@@ -157,7 +148,7 @@ export default function LoginPage() {
                   type="button"
                   variant="ghost"
                   size="sm"
-                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                  className="absolute right-1 top-1/2 transform -translate-y-1/2 h-8 w-8 p-0 hover:bg-transparent"
                   onClick={() => setShowPassword(!showPassword)}
                   disabled={isLoading || isSuccess}
                 >
