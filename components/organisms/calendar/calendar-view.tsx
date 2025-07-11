@@ -198,8 +198,6 @@ export function CalendarView(_props: CalendarViewProps) {
                       const dateString = getDateString(date)
                       const dateTasks = getTasksForDate(date)
                       const isSelected = selectedDate === dateString
-                      const completedTasks = dateTasks.filter(task => task.completed)
-                      const pendingTasks = dateTasks.filter(task => !task.completed)
 
                       return (
                         <button

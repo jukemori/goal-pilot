@@ -43,16 +43,20 @@ export default function SettingsPage() {
   useEffect(() => {
     async function fetchUserData() {
       try {
-        // Fetch user profile
-        const profileRes = await fetch('/api/user/profile')
+        // Fetch both profile and preferences in parallel for better performance
+        const [profileRes, prefsRes] = await Promise.all([
+          fetch('/api/user/profile'),
+          fetch('/api/user/preferences')
+        ])
+
+        // Handle profile data
         if (profileRes.ok) {
           const { data } = await profileRes.json()
           setName(data.name || '')
           setEmail(data.email || '')
         }
 
-        // Fetch user preferences
-        const prefsRes = await fetch('/api/user/preferences')
+        // Handle preferences data
         if (prefsRes.ok) {
           const { data } = await prefsRes.json()
           setPushNotifications(data.push_notifications ?? true)

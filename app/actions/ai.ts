@@ -4,7 +4,17 @@ import { createClient } from '@/lib/supabase/server'
 import { openai, AI_MODELS } from '@/lib/ai/openai'
 import { generateRoadmapPrompt, generateRoadmapOverviewPrompt, generateStagesPrompt, ROADMAP_SYSTEM_PROMPT, STAGES_SYSTEM_PROMPT } from '@/lib/ai/prompts'
 import type { RoadmapPlan } from '@/types'
-import { Json } from '@/types/database'
+import { Json, Goal } from '@/types/database'
+
+interface RoadmapOverview {
+  milestones?: unknown
+  [key: string]: unknown
+}
+
+interface StagesData {
+  phases: unknown[]
+  [key: string]: unknown
+}
 
 // This is the old function that generates everything at once - keeping for backwards compatibility
 export async function generateRoadmapLegacy(goalId: string) {
@@ -332,7 +342,7 @@ export async function generateRoadmapOverview(goalId: string) {
     throw lastError || new Error('AI overview generation failed after all retries')
   }
 
-  let roadmapOverview: any
+  let roadmapOverview: RoadmapOverview
   
   try {
     let content = completion.choices[0].message.content!
@@ -400,8 +410,8 @@ export async function generateRoadmapStages(roadmapId: string) {
     throw new Error('Roadmap not found')
   }
 
-  const goal = roadmap.goals as any // Cast to any to fix type issue
-  const roadmapOverview = roadmap.ai_generated_plan as any
+  const goal = roadmap.goals as Goal
+  const roadmapOverview = roadmap.ai_generated_plan as RoadmapOverview
 
   if (!goal) {
     throw new Error('Goal not found in roadmap')
@@ -459,7 +469,7 @@ export async function generateRoadmapStages(roadmapId: string) {
     throw lastError || new Error('AI stages generation failed after all retries')
   }
 
-  let stagesData: any
+  let stagesData: StagesData
   
   try {
     let content = completion.choices[0].message.content!
@@ -520,7 +530,7 @@ export async function generateRoadmapStages(roadmapId: string) {
 
   // Generate tasks for all phases
   if (stagesData.phases && stagesData.phases.length > 0) {
-    await generateAllTasks(roadmapId, stagesData.phases, goal?.start_date, goal?.weekly_schedule as Record<string, boolean>)
+    await generateAllTasks(roadmapId, stagesData.phases as RoadmapPlan['phases'], goal?.start_date, goal?.weekly_schedule as Record<string, boolean>)
   }
 
   return updatedRoadmap
