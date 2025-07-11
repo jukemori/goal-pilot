@@ -528,12 +528,12 @@ JSON format:
 export const generateStagesPrompt = (
   goal: string,
   currentLevel: string,
-  roadmapOverview: any,
-  timeCommitment: number,
-  weeklySchedule: Record<string, boolean>
+  roadmapOverview: Record<string, unknown>,
+  _timeCommitment: number,
+  _weeklySchedule: Record<string, boolean>
 ) => {
-  const totalWeeks = roadmapOverview.total_weeks_required
-  const stageCount = roadmapOverview.stage_count
+  const totalWeeks = Number(roadmapOverview.total_weeks_required) || 12
+  const stageCount = Number(roadmapOverview.stage_count) || 6
   const avgWeeksPerStage = Math.round(totalWeeks / stageCount)
 
   return `Create ${stageCount} detailed learning stages for this goal:
