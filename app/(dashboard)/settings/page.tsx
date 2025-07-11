@@ -25,8 +25,6 @@ import {
 export default function SettingsPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(true)
-  const [profileLoaded, setProfileLoaded] = useState(false)
-  const [preferencesLoaded, setPreferencesLoaded] = useState(false)
   const [saving, setSaving] = useState(false)
   const [deleting, setDeleting] = useState(false)
   
@@ -57,11 +55,9 @@ export default function SettingsPage() {
             const { data } = await profileRes.json()
             setName(data.name || '')
             setEmail(data.email || '')
-            setProfileLoaded(true)
           }
         }).catch((error) => {
           console.error('Error fetching profile:', error)
-          setProfileLoaded(true) // Still set as loaded to show partial content
         })
 
         // Handle preferences data as soon as it loads
@@ -72,11 +68,9 @@ export default function SettingsPage() {
             setEmailNotifications(data.email_notifications ?? false)
             setDailyReminders(data.daily_reminders ?? true)
             setWeeklyReports(data.weekly_reports ?? true)
-            setPreferencesLoaded(true)
           }
         }).catch((error) => {
           console.error('Error fetching preferences:', error)
-          setPreferencesLoaded(true) // Still set as loaded to show partial content
         })
 
         // Wait for both to complete before removing main loading state

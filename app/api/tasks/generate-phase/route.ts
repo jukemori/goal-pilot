@@ -159,18 +159,20 @@ export async function POST(request: NextRequest) {
     }> = []
 
     // Collect all tasks from all patterns
-    taskPatterns.forEach((pattern: any) => {
-      const weeklyTasks = pattern.weekly_tasks || []
-      const patternWeeks = pattern.weeks_duration || 1
+    taskPatterns.forEach((pattern: unknown) => {
+      const patternObj = pattern as { weekly_tasks?: unknown[]; weeks_duration?: number }
+      const weeklyTasks = patternObj.weekly_tasks || []
+      const patternWeeks = patternObj.weeks_duration || 1
       
       // Repeat the pattern for the specified number of weeks
       for (let week = 0; week < patternWeeks; week++) {
-        weeklyTasks.forEach((task: any) => {
+        weeklyTasks.forEach((task: unknown) => {
+          const taskObj = task as { title?: string; description?: string; type?: string; estimated_minutes?: number }
           allTasks.push({
-            title: task.title || 'Practice skills',
-            description: task.description || 'Practice and refine your skills',
-            type: task.type || 'practice',
-            estimated_minutes: task.estimated_minutes || goal.daily_time_commitment || 30
+            title: taskObj.title || 'Practice skills',
+            description: taskObj.description || 'Practice and refine your skills',
+            type: taskObj.type || 'practice',
+            estimated_minutes: taskObj.estimated_minutes || goal.daily_time_commitment || 30
           })
         })
       }
