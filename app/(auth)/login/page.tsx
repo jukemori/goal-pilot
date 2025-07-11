@@ -140,7 +140,7 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Enter your password"
-                  className="border-gray-200 focus:border-primary focus:ring-primary/20 pr-12"
+                  className="border-gray-200 focus:border-primary focus:ring-primary/20 pr-16"
                   disabled={isLoading || isSuccess}
                   required
                 />
@@ -148,7 +148,7 @@ export default function LoginPage() {
                   type="button"
                   variant="ghost"
                   size="sm"
-                  className="absolute right-1 top-1/2 transform -translate-y-1/2 h-8 w-8 p-0 hover:bg-transparent"
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 h-8 w-8 p-0 hover:bg-gray-50"
                   onClick={() => setShowPassword(!showPassword)}
                   disabled={isLoading || isSuccess}
                 >
@@ -196,22 +196,6 @@ export default function LoginPage() {
             </div>
           </CardFooter>
         </form>
-      </Card>
-
-      {/* Demo Account Info */}
-      <Card className="border-blue-200 bg-blue-50">
-        <CardContent className="pt-6">
-          <div className="text-center">
-            <h3 className="font-medium text-blue-900 mb-2">Demo Account</h3>
-            <p className="text-sm text-blue-800 mb-3">
-              Try Goal Pilot with our demo account
-            </p>
-            <div className="space-y-1 text-xs text-blue-700">
-              <p><strong>Email:</strong> demo@goalPilot.com</p>
-              <p><strong>Password:</strong> demo123</p>
-            </div>
-          </div>
-        </CardContent>
       </Card>
     </div>
   )

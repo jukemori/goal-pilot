@@ -165,7 +165,7 @@ export default function RegisterPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Create a secure password"
-                  className="border-gray-200 focus:border-primary focus:ring-primary/20 pr-12"
+                  className="border-gray-200 focus:border-primary focus:ring-primary/20 pr-16"
                   disabled={isLoading || isSuccess}
                   required
                   minLength={6}
@@ -174,7 +174,7 @@ export default function RegisterPage() {
                   type="button"
                   variant="ghost"
                   size="sm"
-                  className="absolute right-1 top-1/2 transform -translate-y-1/2 h-8 w-8 p-0 hover:bg-transparent"
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 h-8 w-8 p-0 hover:bg-gray-50"
                   onClick={() => setShowPassword(!showPassword)}
                   disabled={isLoading || isSuccess}
                 >
