@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Checkbox } from '@/components/ui/checkbox'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { toast } from 'sonner'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -105,32 +106,29 @@ export function GoalForm({ onSubmit, defaultValues, isEdit = false }: GoalFormPr
       />
       
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
+        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
           {/* Goal Details Section */}
-          <div className="space-y-6">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="p-2 bg-primary/10 rounded-xl">
-                <Target className="h-6 w-6 text-primary" />
-              </div>
-              <div>
-                <h2 className="text-xl font-semibold text-gray-900">Goal Details</h2>
-                <p className="text-gray-600 text-sm">Define what you want to achieve and your current starting point</p>
-              </div>
-            </div>
-            
-            <div className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Target className="h-5 w-5 text-primary" />
+                Goal Details
+              </CardTitle>
+              <CardDescription>
+                Define what you want to achieve and your current starting point
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
               <FormField
                 control={form.control}
                 name="title"
                 render={({ field }) => (
                   <FormItem className="space-y-2">
-                    <FormLabel className="text-base font-medium text-gray-900">
-                      What do you want to achieve?
-                    </FormLabel>
+                    <FormLabel>Goal Title</FormLabel>
                     <FormControl>
                       <Input 
                         placeholder="e.g., Learn Spanish, Get Fit, Master Photography" 
-                        className="text-lg py-3 border-gray-200 focus:border-primary focus:ring-primary/20" 
+                        className="border-gray-200 focus:border-primary focus:ring-primary/20" 
                         {...field} 
                       />
                     </FormControl>
@@ -144,9 +142,7 @@ export function GoalForm({ onSubmit, defaultValues, isEdit = false }: GoalFormPr
                 name="description"
                 render={({ field }) => (
                   <FormItem className="space-y-2">
-                    <FormLabel className="text-base font-medium text-gray-900">
-                      Tell us more about your goal <span className="text-gray-500 text-sm font-normal">(optional)</span>
-                    </FormLabel>
+                    <FormLabel>Description (optional)</FormLabel>
                     <FormControl>
                       <Textarea 
                         placeholder="e.g., I want to become conversational in Spanish for my upcoming trip to Mexico..."
@@ -164,9 +160,7 @@ export function GoalForm({ onSubmit, defaultValues, isEdit = false }: GoalFormPr
                 name="current_level"
                 render={({ field }) => (
                   <FormItem className="space-y-2">
-                    <FormLabel className="text-base font-medium text-gray-900">
-                      What's your current skill level?
-                    </FormLabel>
+                    <FormLabel>Current Skill Level</FormLabel>
                     <FormControl>
                       <Textarea 
                         placeholder="e.g., Complete beginner, I can have simple conversations in Spanish, I've been practicing for 6 months..."
@@ -179,20 +173,21 @@ export function GoalForm({ onSubmit, defaultValues, isEdit = false }: GoalFormPr
                   </FormItem>
                 )}
               />
-            </div>
-          </div>
+            </CardContent>
+          </Card>
 
           {/* Schedule Section */}
-          <div className="space-y-6">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="p-2 bg-blue-50 rounded-xl">
-                <Calendar className="h-6 w-6 text-blue-600" />
-              </div>
-              <div>
-                <h2 className="text-xl font-semibold text-gray-900">Schedule & Timeline</h2>
-                <p className="text-gray-600 text-sm">Set your availability and timeline preferences</p>
-              </div>
-            </div>
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Calendar className="h-5 w-5 text-primary" />
+                Schedule & Timeline
+              </CardTitle>
+              <CardDescription>
+                Set your availability and timeline preferences
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
             
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <div className="space-y-6">
@@ -201,13 +196,11 @@ export function GoalForm({ onSubmit, defaultValues, isEdit = false }: GoalFormPr
                   name="start_date"
                   render={({ field }) => (
                     <FormItem className="space-y-2">
-                      <FormLabel className="text-base font-medium text-gray-900">
-                        When do you want to start?
-                      </FormLabel>
+                      <FormLabel>Start Date</FormLabel>
                       <FormControl>
                         <Input 
                           type="date" 
-                          className="py-3 border-gray-200 focus:border-primary focus:ring-primary/20"
+                          className="border-gray-200 focus:border-primary focus:ring-primary/20"
                           {...field} 
                         />
                       </FormControl>
@@ -221,13 +214,11 @@ export function GoalForm({ onSubmit, defaultValues, isEdit = false }: GoalFormPr
                   name="target_date"
                   render={({ field }) => (
                     <FormItem className="space-y-2">
-                      <FormLabel className="text-base font-medium text-gray-900">
-                        Target completion date <span className="text-gray-500 text-sm font-normal">(optional)</span>
-                      </FormLabel>
+                      <FormLabel>Target Date (optional)</FormLabel>
                       <FormControl>
                         <Input 
                           type="date" 
-                          className="py-3 border-gray-200 focus:border-primary focus:ring-primary/20"
+                          className="border-gray-200 focus:border-primary focus:ring-primary/20"
                           {...field} 
                           value={field.value || ''} 
                         />
@@ -243,9 +234,7 @@ export function GoalForm({ onSubmit, defaultValues, isEdit = false }: GoalFormPr
                   name="daily_time_commitment"
                   render={({ field }) => (
                     <FormItem className="space-y-2">
-                      <FormLabel className="text-base font-medium text-gray-900">
-                        Daily time commitment
-                      </FormLabel>
+                      <FormLabel>Daily Time Commitment (minutes)</FormLabel>
                       <FormControl>
                         <div className="relative">
                           <Input 
@@ -284,9 +273,7 @@ export function GoalForm({ onSubmit, defaultValues, isEdit = false }: GoalFormPr
                   name="weekly_schedule"
                   render={() => (
                     <FormItem className="space-y-4">
-                      <FormLabel className="text-base font-medium text-gray-900">
-                        Which days can you work on this goal?
-                      </FormLabel>
+                      <FormLabel>Weekly Schedule</FormLabel>
                       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-1">
                         {weekDays.map((day) => (
                           <FormField
@@ -328,9 +315,10 @@ export function GoalForm({ onSubmit, defaultValues, isEdit = false }: GoalFormPr
                 />
               </div>
             </div>
-          </div>
+            </CardContent>
+          </Card>
 
-          <div className="mt-8">
+          <div className="mt-6">
             <Button 
               type="submit" 
               disabled={isLoading} 
