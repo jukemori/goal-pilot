@@ -11,7 +11,6 @@ import {
   Users, 
   TrendingUp, 
   Star,
-  Quote,
   Zap,
   BookOpen,
   Award
