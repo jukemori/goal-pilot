@@ -115,8 +115,26 @@
   * {
     @apply border-border outline-ring/50;
   }
+  html,
   body {
     @apply bg-background text-foreground;
+    height: 100%;
+    min-height: 100vh;
+  }
+  #__next {
+    height: 100%;
+    min-height: 100vh;
+  }
+  
+  /* Ensure modal overlays cover the full viewport */
+  [data-slot="dialog-overlay"],
+  .modal-overlay {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    min-height: 100vh !important;
   }
 }
 
