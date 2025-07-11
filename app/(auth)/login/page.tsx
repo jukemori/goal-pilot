@@ -162,7 +162,7 @@ export default function LoginPage() {
             </div>
           </CardContent>
 
-          <CardFooter className="flex flex-col space-y-4">
+          <CardFooter className="flex flex-col space-y-6 mt-6">
             <Button 
               type="submit" 
               className="w-full bg-primary hover:bg-primary/90 shadow-sm"
