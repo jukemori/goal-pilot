@@ -63,7 +63,7 @@ export default async function EditGoalPage({ params }: EditGoalPageProps) {
       {/* Header */}
       <div className="relative">
         <div className="absolute inset-0 bg-gradient-to-r from-blue-50 to-blue-25 rounded-2xl -z-10" />
-        <div className="p-8">
+        <div className="p-4 md:p-8">
           <div className="flex items-center gap-3 mb-2">
             <div className="p-2 bg-blue-100 rounded-lg">
               <Edit3 className="h-6 w-6 text-blue-600" />

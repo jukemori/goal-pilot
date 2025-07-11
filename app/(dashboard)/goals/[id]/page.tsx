@@ -69,7 +69,7 @@ export default async function GoalPage({ params }: GoalPageProps) {
     <div className="space-y-6">
       {/* Goal Header */}
       <Card>
-        <CardContent className="p-6">
+        <CardContent className="p-4 md:p-6">
           <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
             <div className="space-y-4 flex-1">
               <div className="flex flex-wrap items-center gap-3">
@@ -258,7 +258,7 @@ export default async function GoalPage({ params }: GoalPageProps) {
                   <RoadmapTimeline roadmapId={roadmap.id} goalId={goal.id} />
                 </div>
               ) : (
-                <div className="bg-card rounded-lg border p-8">
+                <div className="bg-card rounded-lg border p-4 md:p-8">
                   <div className="text-center">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
                     <p className="text-muted-foreground">Generating your roadmap...</p>
@@ -284,7 +284,7 @@ export default async function GoalPage({ params }: GoalPageProps) {
                   <ProgressStages roadmapId={roadmap.id} goalId={goal.id} />
                 </div>
               ) : (
-                <div className="bg-card rounded-lg border p-8">
+                <div className="bg-card rounded-lg border p-4 md:p-8">
                   <div className="text-center">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
                     <p className="text-muted-foreground">Generating your stages...</p>
@@ -301,7 +301,7 @@ export default async function GoalPage({ params }: GoalPageProps) {
                   <h3 className="text-lg font-semibold">Progress Overview</h3>
                   <p className="text-sm text-muted-foreground">Track your completion rate and milestones</p>
                 </div>
-                <div className="bg-card rounded-lg border p-6">
+                <div className="bg-card rounded-lg border p-4 md:p-6">
                   <ProgressChart tasks={tasks as unknown as Parameters<typeof ProgressChart>[0]['tasks']} />
                 </div>
               </div>
@@ -312,7 +312,7 @@ export default async function GoalPage({ params }: GoalPageProps) {
                   <h3 className="text-lg font-semibold">Tasks</h3>
                   <p className="text-sm text-muted-foreground">Your daily action items</p>
                 </div>
-                <div className="bg-card rounded-lg border p-6">
+                <div className="bg-card rounded-lg border p-4 md:p-6">
                   <TaskList tasks={tasks as unknown as Parameters<typeof TaskList>[0]['tasks']} goalId={goal.id} />
                 </div>
               </div>
