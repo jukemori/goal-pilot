@@ -62,7 +62,7 @@ export async function createGoal(formData: FormData) {
     // Don't throw here - let the user see their goal even if AI fails
   }
 
-  revalidatePath("/dashboard");
+  revalidatePath("/overview");
   return { success: true, goalId: goal.id };
 }
 
@@ -111,7 +111,7 @@ export async function updateGoal(goalId: string, formData: FormData) {
     throw new Error("Failed to update goal");
   }
 
-  revalidatePath("/dashboard");
+  revalidatePath("/overview");
   revalidatePath(`/goals/${goalId}`);
   return { success: true, goalId };
 }
@@ -138,7 +138,7 @@ export async function deleteGoal(goalId: string) {
     throw new Error("Failed to delete goal");
   }
 
-  revalidatePath("/dashboard");
+  revalidatePath("/overview");
   revalidatePath("/goals");
   redirect("/goals");
 }

@@ -116,7 +116,7 @@ export default function RegisterPage() {
       const { error: authError } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: `${window.location.origin}/auth/callback?redirectTo=${encodeURIComponent("/dashboard")}`,
+          redirectTo: `${window.location.origin}/auth/callback?redirectTo=${encodeURIComponent("/overview")}`,
         },
       });
 
