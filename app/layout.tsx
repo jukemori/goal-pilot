@@ -17,6 +17,10 @@ export const metadata: Metadata = {
   title: "Goal Pilot - AI-Powered Goal Roadmap & Calendar",
   description:
     "Achieve your goals with personalized AI-generated roadmaps and daily task scheduling",
+  icons: {
+    icon: "/target.svg",
+    apple: "/target.svg",
+  },
 };
 
 export default function RootLayout({
