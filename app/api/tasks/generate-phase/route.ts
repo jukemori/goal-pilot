@@ -5,7 +5,7 @@ import {
   generateTasksForPhasePrompt,
   TASK_GENERATION_SYSTEM_PROMPT,
 } from '@/lib/ai/prompts'
-import { Json } from '@/types/database'
+import { Json, TablesInsert } from '@/types/database'
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,35 +13,39 @@ export async function POST(request: NextRequest) {
 
     const supabase = await createClient()
 
+    // Parallelize user authentication and stage fetch
+    const [userResult, stageResult] = await Promise.all([
+      supabase.auth.getUser(),
+      supabase
+        .from('progress_stages')
+        .select(
+          `
+          *,
+          roadmaps!inner(
+            goal_id,
+            ai_generated_plan,
+            goals!inner(
+              user_id,
+              weekly_schedule,
+              title,
+              daily_time_commitment
+            )
+          )
+        `,
+        )
+        .eq('id', phaseId)
+        .single(),
+    ])
+
     const {
       data: { user },
-    } = await supabase.auth.getUser()
-
+    } = userResult
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Get the stage details
-    const { data: stage, error: stageError } = await supabase
-      .from('progress_stages')
-      .select(
-        `
-        *,
-        roadmaps!inner(
-          goal_id,
-          ai_generated_plan,
-          goals!inner(
-            user_id,
-            weekly_schedule
-          )
-        )
-      `,
-      )
-      .eq('id', phaseId)
-      .eq('roadmaps.goals.user_id', user.id)
-      .single()
-
-    if (stageError || !stage) {
+    const { data: stage, error: stageError } = stageResult
+    if (stageError || !stage || stage.roadmaps.goals.user_id !== user.id) {
       return NextResponse.json({ error: 'Stage not found' }, { status: 404 })
     }
 
@@ -69,15 +73,10 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Get goal details for context
-    const { data: goal, error: goalError } = await supabase
-      .from('goals')
-      .select('title, daily_time_commitment')
-      .eq('id', stage.roadmaps.goal_id || '')
-      .single()
-
-    if (goalError || !goal) {
-      return NextResponse.json({ error: 'Goal not found' }, { status: 404 })
+    // Goal details are now available directly from the stage query
+    const goal = {
+      title: stage.roadmaps.goals.title,
+      daily_time_commitment: stage.roadmaps.goals.daily_time_commitment,
     }
 
     // Generate tasks using AI
@@ -101,47 +100,90 @@ export async function POST(request: NextRequest) {
 
     console.log('Generating tasks with AI for stage:', stage.title)
 
-    const completion = await openai.chat.completions.create({
-      model: AI_MODELS.tasks,
-      messages: [
-        {
-          role: 'system',
-          content: TASK_GENERATION_SYSTEM_PROMPT,
-        },
-        { role: 'user', content: prompt },
-      ],
-      response_format: { type: 'json_object' },
-      temperature: 0.7,
-      max_tokens: 4000, // Maximum supported by the model
-    })
+    // AI generation with retry logic for reliability
+    let completion
+    let lastError
+    const maxRetries = 3
+
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        console.log(`AI task generation attempt ${attempt}/${maxRetries}`)
+
+        completion = await openai.chat.completions.create(
+          {
+            model: AI_MODELS.tasks,
+            messages: [
+              {
+                role: 'system',
+                content: TASK_GENERATION_SYSTEM_PROMPT,
+              },
+              { role: 'user', content: prompt },
+            ],
+            response_format: { type: 'json_object' },
+            temperature: 0.7,
+            max_tokens: 2500, // Optimized for faster generation
+          },
+          {
+            timeout: 45000, // 45 seconds timeout
+          },
+        )
+
+        // If we get here, the request succeeded
+        break
+      } catch (error) {
+        console.error(`AI task generation attempt ${attempt} failed:`, error)
+        lastError = error
+
+        if (attempt < maxRetries) {
+          // Linear backoff for faster retries
+          const waitTime = attempt * 300 // 300ms, 600ms delays
+          console.log(`Retrying in ${waitTime}ms...`)
+          await new Promise((resolve) => setTimeout(resolve, waitTime))
+        }
+      }
+    }
+
+    if (!completion) {
+      console.error('All AI task generation attempts failed')
+      throw (
+        lastError || new Error('AI task generation failed after all retries')
+      )
+    }
 
     let taskData
     try {
       let content = completion.choices[0].message.content!
       console.log('AI task generation response length:', content.length)
 
-      // Clean up JSON response
+      // Optimized JSON cleanup with fast path
       content = content.trim()
-      const jsonStart = content.indexOf('{')
-      if (jsonStart > 0) {
-        content = content.substring(jsonStart)
-      }
-      const jsonEnd = content.lastIndexOf('}')
-      if (jsonEnd > 0 && jsonEnd < content.length - 1) {
-        content = content.substring(0, jsonEnd + 1)
+
+      // Fast path for clean JSON
+      if (content.startsWith('{') && content.endsWith('}')) {
+        taskData = JSON.parse(content)
+      } else {
+        // Fallback cleanup for malformed responses
+        const jsonStart = content.indexOf('{')
+        const jsonEnd = content.lastIndexOf('}')
+        if (jsonStart >= 0 && jsonEnd > jsonStart) {
+          content = content.substring(jsonStart, jsonEnd + 1)
+          taskData = JSON.parse(content)
+        } else {
+          throw new Error('No valid JSON found in AI response')
+        }
       }
 
-      taskData = JSON.parse(content)
       console.log('Successfully parsed AI task data:', taskData)
     } catch (parseError) {
       console.error('Failed to parse AI task generation response:', parseError)
+      console.error('Raw AI content:', completion.choices[0].message.content)
       return NextResponse.json(
         { error: 'Failed to generate tasks' },
         { status: 500 },
       )
     }
 
-    // Schedule the AI-generated tasks
+    // Pre-calculate available days for efficient scheduling
     const availableDays = Object.entries(weeklySchedule)
       .filter(([_, available]) => available)
       .map(([day]) => getDayNumber(day))
@@ -149,24 +191,18 @@ export async function POST(request: NextRequest) {
     console.log('Available days (0=Sun, 1=Mon, etc):', availableDays)
     console.log('Weekly schedule:', weeklySchedule)
 
-    const tasks = []
-    // Create dates consistently to ensure correct weekday calculation
-    const currentDate = createConsistentDate(
+    // Pre-calculate all available dates for the stage period
+    const availableDates = calculateAvailableDates(
       stage.start_date || new Date().toISOString(),
-    )
-    const endDate = createConsistentDate(
       stage.end_date || new Date().toISOString(),
+      availableDays,
     )
 
     console.log(
-      'Stage start date:',
-      stage.start_date,
-      '-> Current date:',
-      currentDate,
-      'Day of week:',
-      currentDate.getUTCDay(),
+      `Pre-calculated ${availableDates.length} available dates for scheduling`,
     )
-    console.log('Stage end date:', stage.end_date, '-> End date:', endDate)
+
+    const tasks: TablesInsert<'tasks'>[] = []
 
     // Extract AI-generated tasks and schedule them
     const taskPatterns = taskData?.task_patterns || []
@@ -244,40 +280,21 @@ export async function POST(request: NextRequest) {
       ]
     }
 
-    let taskIndex = 0
-
-    while (currentDate <= endDate) {
-      // Find next available day using UTC methods
-      while (!availableDays.includes(currentDate.getUTCDay())) {
-        currentDate.setUTCDate(currentDate.getUTCDate() + 1)
-        if (currentDate > endDate) break
-      }
-
-      if (currentDate > endDate) break
-
-      const baseTask = allTasks[taskIndex % allTasks.length]
+    // Efficiently schedule tasks using pre-calculated available dates
+    availableDates.forEach((dateString: string, index: number) => {
+      const baseTask = allTasks[index % allTasks.length]
 
       tasks.push({
         roadmap_id: roadmapId,
         title: baseTask.title,
         description: baseTask.description,
-        scheduled_date: currentDate.toISOString().split('T')[0],
+        scheduled_date: dateString,
         estimated_duration: baseTask.estimated_minutes,
         priority: getPriorityFromType(baseTask.type),
         phase_id: stage.phase_id,
         phase_number: stage.phase_number,
       })
-
-      // Move to next available day using UTC methods
-      do {
-        currentDate.setUTCDate(currentDate.getUTCDate() + 1)
-      } while (
-        !availableDays.includes(currentDate.getUTCDay()) &&
-        currentDate <= endDate
-      )
-
-      taskIndex++
-    }
+    })
 
     console.log(`Generated ${tasks.length} tasks for stage: ${stage.title}`)
     console.log(
@@ -339,4 +356,24 @@ function getPriorityFromType(type: string): number {
     review: 2,
   }
   return priorityMap[type] || 3
+}
+
+// Optimized function to pre-calculate all available dates for the stage period
+function calculateAvailableDates(
+  startDateString: string,
+  endDateString: string,
+  availableDays: number[],
+): string[] {
+  const availableDates: string[] = []
+  const currentDate = createConsistentDate(startDateString)
+  const endDate = createConsistentDate(endDateString)
+
+  while (currentDate <= endDate) {
+    if (availableDays.includes(currentDate.getUTCDay())) {
+      availableDates.push(currentDate.toISOString().split('T')[0])
+    }
+    currentDate.setUTCDate(currentDate.getUTCDate() + 1)
+  }
+
+  return availableDates
 }
