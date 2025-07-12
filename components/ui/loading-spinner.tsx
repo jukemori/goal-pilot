@@ -1,31 +1,31 @@
-"use client";
+'use client'
 
-import { motion } from "framer-motion";
-import { cn } from "@/lib/utils";
+import { motion } from 'framer-motion'
+import { cn } from '@/lib/utils'
 
 interface LoadingSpinnerProps {
-  size?: "sm" | "md" | "lg";
-  className?: string;
+  size?: 'sm' | 'md' | 'lg'
+  className?: string
 }
 
 export function LoadingSpinner({
-  size = "md",
+  size = 'md',
   className,
 }: LoadingSpinnerProps) {
   const sizeClasses = {
-    sm: "h-4 w-4",
-    md: "h-6 w-6",
-    lg: "h-8 w-8",
-  };
+    sm: 'h-4 w-4',
+    md: 'h-6 w-6',
+    lg: 'h-8 w-8',
+  }
 
   return (
     <motion.div
-      className={cn("inline-block", sizeClasses[size], className)}
+      className={cn('inline-block', sizeClasses[size], className)}
       animate={{ rotate: 360 }}
       transition={{
         duration: 1,
         repeat: Infinity,
-        ease: "linear",
+        ease: 'linear',
       }}
     >
       <svg
@@ -57,16 +57,16 @@ export function LoadingSpinner({
         />
       </svg>
     </motion.div>
-  );
+  )
 }
 
 export function PulsingDots({ className }: { className?: string }) {
   return (
-    <div className={cn("flex space-x-1", className)}>
+    <div className={cn('flex space-x-1', className)}>
       {[0, 1, 2].map((i) => (
         <motion.div
           key={i}
-          className="h-2 w-2 bg-current rounded-full"
+          className="h-2 w-2 rounded-full bg-current"
           animate={{
             scale: [1, 1.2, 1],
             opacity: [0.5, 1, 0.5],
@@ -75,12 +75,12 @@ export function PulsingDots({ className }: { className?: string }) {
             duration: 1.5,
             repeat: Infinity,
             delay: i * 0.2,
-            ease: "easeInOut",
+            ease: 'easeInOut',
           }}
         />
       ))}
     </div>
-  );
+  )
 }
 
 export function ProgressBar({
@@ -88,23 +88,23 @@ export function ProgressBar({
   className,
   showText = false,
 }: {
-  progress: number;
-  className?: string;
-  showText?: boolean;
+  progress: number
+  className?: string
+  showText?: boolean
 }) {
   return (
-    <div className={cn("w-full", className)}>
-      <div className="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
+    <div className={cn('w-full', className)}>
+      <div className="h-2 w-full rounded-full bg-gray-200 dark:bg-gray-700">
         <motion.div
           className="bg-primary h-2 rounded-full"
           initial={{ width: 0 }}
           animate={{ width: `${progress}%` }}
-          transition={{ duration: 0.5, ease: "easeOut" }}
+          transition={{ duration: 0.5, ease: 'easeOut' }}
         />
       </div>
       {showText && (
         <motion.p
-          className="text-sm text-gray-600 mt-1 text-center"
+          className="mt-1 text-center text-sm text-gray-600"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
@@ -113,5 +113,5 @@ export function ProgressBar({
         </motion.p>
       )}
     </div>
-  );
+  )
 }

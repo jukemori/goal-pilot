@@ -108,10 +108,10 @@ const RoadmapView = dynamic(() => import('@/components/organisms/roadmap-view/ro
 
    ```typescript
    // Use performance monitoring for heavy components
-   import { usePerformanceMonitor } from "@/lib/utils/performance-monitor";
+   import { usePerformanceMonitor } from '@/lib/utils/performance-monitor'
 
    function HeavyComponent() {
-     const metrics = usePerformanceMonitor("HeavyComponent");
+     const metrics = usePerformanceMonitor('HeavyComponent')
      // Component logic...
    }
    ```

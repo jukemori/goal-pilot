@@ -1,11 +1,11 @@
-"use client";
+'use client'
 
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { goalFormSchema, type GoalFormData } from "@/lib/validations/goal";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { goalFormSchema, type GoalFormData } from '@/lib/validations/goal'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
 import {
   Form,
   FormControl,
@@ -14,67 +14,67 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Checkbox } from "@/components/ui/checkbox";
+} from '@/components/ui/form'
+import { Checkbox } from '@/components/ui/checkbox'
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { toast } from "sonner";
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
-import { LoadingSpinner, PulsingDots } from "@/components/ui/loading-spinner";
-import { AIGenerationOverlay } from "@/components/molecules/ai-generation-overlay";
-import { Target, Calendar } from "lucide-react";
+} from '@/components/ui/card'
+import { toast } from 'sonner'
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import { motion, AnimatePresence } from 'framer-motion'
+import { LoadingSpinner, PulsingDots } from '@/components/ui/loading-spinner'
+import { AIGenerationOverlay } from '@/components/molecules/ai-generation-overlay'
+import { Target, Calendar } from 'lucide-react'
 
 interface GoalFormProps {
-  onSubmit: (data: FormData) => Promise<{ success: boolean; goalId?: string }>;
-  defaultValues?: Partial<GoalFormData>;
-  isEdit?: boolean;
+  onSubmit: (data: FormData) => Promise<{ success: boolean; goalId?: string }>
+  defaultValues?: Partial<GoalFormData>
+  isEdit?: boolean
 }
 
 const weekDays = [
-  { id: "monday", label: "Monday" },
-  { id: "tuesday", label: "Tuesday" },
-  { id: "wednesday", label: "Wednesday" },
-  { id: "thursday", label: "Thursday" },
-  { id: "friday", label: "Friday" },
-  { id: "saturday", label: "Saturday" },
-  { id: "sunday", label: "Sunday" },
-];
+  { id: 'monday', label: 'Monday' },
+  { id: 'tuesday', label: 'Tuesday' },
+  { id: 'wednesday', label: 'Wednesday' },
+  { id: 'thursday', label: 'Thursday' },
+  { id: 'friday', label: 'Friday' },
+  { id: 'saturday', label: 'Saturday' },
+  { id: 'sunday', label: 'Sunday' },
+]
 
 export function GoalForm({
   onSubmit,
   defaultValues,
   isEdit = false,
 }: GoalFormProps) {
-  const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false)
+  const router = useRouter()
 
   // Use a stable default date in local timezone to avoid hydration mismatches
   const today =
-    typeof window !== "undefined"
+    typeof window !== 'undefined'
       ? (() => {
-          const now = new Date();
-          const year = now.getFullYear();
-          const month = String(now.getMonth() + 1).padStart(2, "0");
-          const day = String(now.getDate()).padStart(2, "0");
-          return `${year}-${month}-${day}`;
+          const now = new Date()
+          const year = now.getFullYear()
+          const month = String(now.getMonth() + 1).padStart(2, '0')
+          const day = String(now.getDate()).padStart(2, '0')
+          return `${year}-${month}-${day}`
         })()
-      : "";
+      : ''
 
   const form = useForm<GoalFormData>({
     resolver: zodResolver(goalFormSchema),
     defaultValues: {
-      title: "",
-      description: "",
-      current_level: "",
+      title: '',
+      description: '',
+      current_level: '',
       start_date: today,
-      target_date: "",
+      target_date: '',
       daily_time_commitment: 30,
       weekly_schedule: {
         monday: true,
@@ -87,17 +87,17 @@ export function GoalForm({
       },
       ...defaultValues,
     },
-  });
+  })
 
   // Update form values when defaultValues change (e.g., when template is loaded)
   useEffect(() => {
     if (defaultValues) {
       const formDefaults = {
-        title: defaultValues.title || "",
-        description: defaultValues.description || "",
-        current_level: defaultValues.current_level || "",
+        title: defaultValues.title || '',
+        description: defaultValues.description || '',
+        current_level: defaultValues.current_level || '',
         start_date: defaultValues.start_date || today,
-        target_date: defaultValues.target_date || "",
+        target_date: defaultValues.target_date || '',
         daily_time_commitment: defaultValues.daily_time_commitment || 30,
         weekly_schedule: defaultValues.weekly_schedule || {
           monday: true,
@@ -108,45 +108,42 @@ export function GoalForm({
           saturday: false,
           sunday: false,
         },
-      };
+      }
 
       // Reset form with new values
-      form.reset(formDefaults);
+      form.reset(formDefaults)
     }
-  }, [defaultValues, form, today]);
+  }, [defaultValues, form, today])
 
   async function handleSubmit(values: GoalFormData) {
-    setIsLoading(true);
+    setIsLoading(true)
 
     try {
-      const formData = new FormData();
-      formData.append("title", values.title);
-      formData.append("description", values.description || "");
-      formData.append("current_level", values.current_level);
-      formData.append("start_date", values.start_date);
-      formData.append("target_date", values.target_date || "");
+      const formData = new FormData()
+      formData.append('title', values.title)
+      formData.append('description', values.description || '')
+      formData.append('current_level', values.current_level)
+      formData.append('start_date', values.start_date)
+      formData.append('target_date', values.target_date || '')
       formData.append(
-        "daily_time_commitment",
+        'daily_time_commitment',
         values.daily_time_commitment.toString(),
-      );
-      formData.append(
-        "weekly_schedule",
-        JSON.stringify(values.weekly_schedule),
-      );
+      )
+      formData.append('weekly_schedule', JSON.stringify(values.weekly_schedule))
 
-      const result = await onSubmit(formData);
+      const result = await onSubmit(formData)
 
       if (result.success) {
         if (result.goalId) {
-          router.push(`/goals/${result.goalId}`);
+          router.push(`/goals/${result.goalId}`)
         }
       } else {
-        toast.error(isEdit ? "Failed to update goal" : "Failed to create goal");
+        toast.error(isEdit ? 'Failed to update goal' : 'Failed to create goal')
       }
     } catch {
-      toast.error(isEdit ? "Failed to update goal" : "Failed to create goal");
+      toast.error(isEdit ? 'Failed to update goal' : 'Failed to create goal')
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
   }
 
@@ -164,7 +161,7 @@ export function GoalForm({
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Target className="h-5 w-5 text-primary" />
+                <Target className="text-primary h-5 w-5" />
                 Goal Details
               </CardTitle>
               <CardDescription>
@@ -181,7 +178,7 @@ export function GoalForm({
                     <FormControl>
                       <Input
                         placeholder="e.g., Learn Spanish, Get Fit, Master Photography"
-                        className="border-gray-200 focus:border-primary focus:ring-primary/20"
+                        className="focus:border-primary focus:ring-primary/20 border-gray-200"
                         {...field}
                       />
                     </FormControl>
@@ -199,7 +196,7 @@ export function GoalForm({
                     <FormControl>
                       <Textarea
                         placeholder="e.g., I want to become conversational in Spanish for my upcoming trip to Mexico..."
-                        className="min-h-[100px] border-gray-200 focus:border-primary focus:ring-primary/20 resize-none"
+                        className="focus:border-primary focus:ring-primary/20 min-h-[100px] resize-none border-gray-200"
                         {...field}
                       />
                     </FormControl>
@@ -217,7 +214,7 @@ export function GoalForm({
                     <FormControl>
                       <Textarea
                         placeholder="e.g., Complete beginner, I can have simple conversations in Spanish, I've been practicing for 6 months..."
-                        className="min-h-[80px] border-gray-200 focus:border-primary focus:ring-primary/20 resize-none"
+                        className="focus:border-primary focus:ring-primary/20 min-h-[80px] resize-none border-gray-200"
                         {...field}
                       />
                     </FormControl>
@@ -236,7 +233,7 @@ export function GoalForm({
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Calendar className="h-5 w-5 text-primary" />
+                <Calendar className="text-primary h-5 w-5" />
                 Schedule & Timeline
               </CardTitle>
               <CardDescription>
@@ -244,7 +241,7 @@ export function GoalForm({
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                 <FormField
                   control={form.control}
                   name="start_date"
@@ -254,7 +251,7 @@ export function GoalForm({
                       <FormControl>
                         <Input
                           type="date"
-                          className="border-gray-200 focus:border-primary focus:ring-primary/20"
+                          className="focus:border-primary focus:ring-primary/20 border-gray-200"
                           {...field}
                         />
                       </FormControl>
@@ -273,9 +270,9 @@ export function GoalForm({
                       <FormControl>
                         <Input
                           type="date"
-                          className="border-gray-200 focus:border-primary focus:ring-primary/20"
+                          className="focus:border-primary focus:ring-primary/20 border-gray-200"
                           {...field}
-                          value={field.value || ""}
+                          value={field.value || ''}
                         />
                       </FormControl>
                       <FormDescription>
@@ -299,22 +296,22 @@ export function GoalForm({
                             min={15}
                             max={480}
                             {...field}
-                            className="pr-16 border-gray-200 focus:border-primary focus:ring-primary/20"
+                            className="focus:border-primary focus:ring-primary/20 border-gray-200 pr-16"
                             placeholder="30"
                             onChange={(e) => {
-                              const value = e.target.value;
+                              const value = e.target.value
                               field.onChange(
-                                value === "" ? 0 : parseInt(value) || 0,
-                              );
+                                value === '' ? 0 : parseInt(value) || 0,
+                              )
                             }}
                             onBlur={(e) => {
-                              const value = parseInt(e.target.value) || 0;
+                              const value = parseInt(e.target.value) || 0
                               if (value < 15) {
-                                field.onChange(15);
+                                field.onChange(15)
                               }
                             }}
                           />
-                          <div className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-500">
+                          <div className="absolute top-1/2 right-3 -translate-y-1/2 text-sm text-gray-500">
                             min
                           </div>
                         </div>
@@ -340,20 +337,17 @@ export function GoalForm({
                             key={day.id}
                             control={form.control}
                             name={
-                              `weekly_schedule.${day.id}` as `weekly_schedule.${keyof GoalFormData["weekly_schedule"]}`
+                              `weekly_schedule.${day.id}` as `weekly_schedule.${keyof GoalFormData['weekly_schedule']}`
                             }
                             render={({ field }) => (
                               <FormItem className="flex items-center space-x-0">
                                 <FormControl>
                                   <div
-                                    className={`
-                                    relative flex items-center justify-center py-1.5 px-3 rounded-md border-2 transition-all cursor-pointer
-                                    ${
+                                    className={`relative flex cursor-pointer items-center justify-center rounded-md border-2 px-3 py-1.5 transition-all ${
                                       field.value
-                                        ? "border-primary bg-primary text-white shadow-sm"
-                                        : "border-gray-200 bg-gray-50 hover:border-gray-300 hover:bg-gray-100"
-                                    }
-                                  `}
+                                        ? 'border-primary bg-primary text-white shadow-sm'
+                                        : 'border-gray-200 bg-gray-50 hover:border-gray-300 hover:bg-gray-100'
+                                    } `}
                                     onClick={() => field.onChange(!field.value)}
                                   >
                                     <Checkbox
@@ -387,7 +381,7 @@ export function GoalForm({
               type="submit"
               disabled={isLoading}
               size="lg"
-              className="w-full relative overflow-hidden bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary shadow-lg"
+              className="from-primary to-primary/90 hover:from-primary/90 hover:to-primary relative w-full overflow-hidden bg-gradient-to-r shadow-lg"
             >
               <AnimatePresence mode="wait">
                 {isLoading ? (
@@ -400,7 +394,7 @@ export function GoalForm({
                   >
                     <LoadingSpinner size="sm" className="mr-2" />
                     <span>
-                      {isEdit ? "Updating Goal..." : "Creating Goal & Roadmap"}
+                      {isEdit ? 'Updating Goal...' : 'Creating Goal & Roadmap'}
                     </span>
                     <PulsingDots className="ml-2" />
                   </motion.div>
@@ -429,7 +423,7 @@ export function GoalForm({
             </Button>
 
             {!isEdit && (
-              <p className="text-center text-sm text-gray-500 mt-3">
+              <p className="mt-3 text-center text-sm text-gray-500">
                 This will take about 30 seconds to generate your personalized
                 roadmap
               </p>
@@ -438,5 +432,5 @@ export function GoalForm({
         </form>
       </Form>
     </>
-  );
+  )
 }

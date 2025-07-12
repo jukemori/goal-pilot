@@ -1,18 +1,18 @@
-import { Sidebar } from "@/components/organisms/sidebar/sidebar";
-import { redirect } from "next/navigation";
-import { ensureUserProfile } from "@/app/actions/auth";
+import { Sidebar } from '@/components/organisms/sidebar/sidebar'
+import { redirect } from 'next/navigation'
+import { ensureUserProfile } from '@/app/actions/auth'
 
 export default async function DashboardLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
   try {
     // This will check auth and ensure user profile exists
-    await ensureUserProfile();
+    await ensureUserProfile()
   } catch (error) {
-    console.error("Auth error:", error);
-    redirect("/login");
+    console.error('Auth error:', error)
+    redirect('/login')
   }
 
   return (
@@ -24,5 +24,5 @@ export default async function DashboardLayout({
         <main className="p-3 pb-8 md:p-4 lg:p-8">{children}</main>
       </div>
     </div>
-  );
+  )
 }

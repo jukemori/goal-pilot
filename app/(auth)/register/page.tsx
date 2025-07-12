@@ -1,11 +1,11 @@
-"use client";
+'use client'
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import Link from 'next/link'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import {
   Card,
   CardContent,
@@ -13,9 +13,9 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { createClient } from "@/lib/supabase/client";
+} from '@/components/ui/card'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { createClient } from '@/lib/supabase/client'
 import {
   Eye,
   EyeOff,
@@ -24,35 +24,35 @@ import {
   CheckCircle,
   User,
   Mail,
-} from "lucide-react";
-import { toast } from "sonner";
+} from 'lucide-react'
+import { toast } from 'sonner'
 
 export default function RegisterPage() {
-  const router = useRouter();
+  const router = useRouter()
 
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [isSuccess, setIsSuccess] = useState(false);
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false)
+  const [error, setError] = useState('')
+  const [isSuccess, setIsSuccess] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError("");
+    e.preventDefault()
+    setIsLoading(true)
+    setError('')
 
     // Basic validation
     if (password.length < 6) {
-      setError("Password must be at least 6 characters long.");
-      setIsLoading(false);
-      return;
+      setError('Password must be at least 6 characters long.')
+      setIsLoading(false)
+      return
     }
 
     try {
-      const supabase = createClient();
+      const supabase = createClient()
 
       const { data, error: authError } = await supabase.auth.signUp({
         email: email.trim(),
@@ -62,77 +62,77 @@ export default function RegisterPage() {
             name: name.trim(),
           },
         },
-      });
+      })
 
       if (authError) {
         // Handle specific auth errors with user-friendly messages
         switch (authError.message) {
-          case "User already registered":
+          case 'User already registered':
             setError(
-              "An account with this email already exists. Please sign in instead.",
-            );
-            break;
-          case "Password should be at least 6 characters":
-            setError("Password must be at least 6 characters long.");
-            break;
-          case "Invalid email":
-            setError("Please enter a valid email address.");
-            break;
+              'An account with this email already exists. Please sign in instead.',
+            )
+            break
+          case 'Password should be at least 6 characters':
+            setError('Password must be at least 6 characters long.')
+            break
+          case 'Invalid email':
+            setError('Please enter a valid email address.')
+            break
           default:
             setError(
               authError.message ||
-                "An error occurred during registration. Please try again.",
-            );
+                'An error occurred during registration. Please try again.',
+            )
         }
-        return;
+        return
       }
 
       if (data?.user) {
-        setIsSuccess(true);
+        setIsSuccess(true)
         toast.success(
-          "Account created! Please check your email to verify your account.",
-        );
+          'Account created! Please check your email to verify your account.',
+        )
 
         // Redirect after showing success message
         setTimeout(() => {
-          router.push("/login");
-        }, 2000);
+          router.push('/login')
+        }, 2000)
       }
     } catch (err) {
-      setError("Network error. Please check your connection and try again.");
-      console.error("Registration error:", err);
+      setError('Network error. Please check your connection and try again.')
+      console.error('Registration error:', err)
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   const handleGoogleSignIn = async () => {
-    setIsGoogleLoading(true);
-    setError("");
+    setIsGoogleLoading(true)
+    setError('')
 
     try {
-      const supabase = createClient();
+      const supabase = createClient()
 
       const { error: authError } = await supabase.auth.signInWithOAuth({
-        provider: "google",
+        provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/auth/callback?redirectTo=${encodeURIComponent("/dashboard")}`,
+          redirectTo: `${window.location.origin}/auth/callback?redirectTo=${encodeURIComponent('/dashboard')}`,
         },
-      });
+      })
 
       if (authError) {
-        setError("Failed to sign in with Google. Please try again.");
-        console.error("Google sign in error:", authError);
+        setError('Failed to sign in with Google. Please try again.')
+        console.error('Google sign in error:', authError)
       }
 
       // Note: For OAuth, the redirect happens automatically, so we don't handle success here
     } catch (err) {
-      setError("Network error. Please check your connection and try again.");
-      console.error("Google sign in error:", err);
+      setError('Network error. Please check your connection and try again.')
+      console.error('Google sign in error:', err)
     } finally {
-      setIsGoogleLoading(false);
+      setIsGoogleLoading(false)
     }
-  };
+  }
 
   return (
     <div className="space-y-6">
@@ -144,7 +144,7 @@ export default function RegisterPage() {
 
       <Card className="border-gray-200 shadow-sm">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-xl text-center">Create Account</CardTitle>
+          <CardTitle className="text-center text-xl">Create Account</CardTitle>
           <CardDescription className="text-center">
             Enter your details to get started
           </CardDescription>
@@ -231,11 +231,11 @@ export default function RegisterPage() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Enter your full name"
-                  className="border-gray-200 focus:border-primary focus:ring-primary/20 pl-10"
+                  className="focus:border-primary focus:ring-primary/20 border-gray-200 pl-10"
                   disabled={isLoading || isSuccess}
                   required
                 />
-                <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <User className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
               </div>
             </div>
 
@@ -249,11 +249,11 @@ export default function RegisterPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter your email"
-                  className="border-gray-200 focus:border-primary focus:ring-primary/20 pl-10"
+                  className="focus:border-primary focus:ring-primary/20 border-gray-200 pl-10"
                   disabled={isLoading || isSuccess}
                   required
                 />
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Mail className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
               </div>
             </div>
 
@@ -263,11 +263,11 @@ export default function RegisterPage() {
               <div className="relative">
                 <Input
                   id="password"
-                  type={showPassword ? "text" : "password"}
+                  type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Create a secure password"
-                  className="border-gray-200 focus:border-primary focus:ring-primary/20 pr-16"
+                  className="focus:border-primary focus:ring-primary/20 border-gray-200 pr-16"
                   disabled={isLoading || isSuccess}
                   required
                   minLength={6}
@@ -276,7 +276,7 @@ export default function RegisterPage() {
                   type="button"
                   variant="ghost"
                   size="sm"
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 h-8 w-8 p-0 hover:bg-gray-50"
+                  className="absolute top-1/2 right-2 h-8 w-8 -translate-y-1/2 transform p-0 hover:bg-gray-50"
                   onClick={() => setShowPassword(!showPassword)}
                   disabled={isLoading || isSuccess}
                 >
@@ -293,10 +293,10 @@ export default function RegisterPage() {
             </div>
           </CardContent>
 
-          <CardFooter className="flex flex-col space-y-6 mt-6">
+          <CardFooter className="mt-6 flex flex-col space-y-6">
             <Button
               type="submit"
-              className="w-full bg-primary hover:bg-primary/90 shadow-sm"
+              className="bg-primary hover:bg-primary/90 w-full shadow-sm"
               disabled={isLoading || isSuccess || !name || !email || !password}
             >
               {isLoading ? (
@@ -310,16 +310,16 @@ export default function RegisterPage() {
                   Account Created!
                 </>
               ) : (
-                "Create Account"
+                'Create Account'
               )}
             </Button>
 
             <div className="text-center">
               <p className="text-sm text-gray-600">
-                Already have an account?{" "}
+                Already have an account?{' '}
                 <Link
                   href="/login"
-                  className="text-primary hover:underline font-medium"
+                  className="text-primary font-medium hover:underline"
                 >
                   Sign In
                 </Link>
@@ -332,12 +332,12 @@ export default function RegisterPage() {
       {/* Terms Notice */}
       <Card className="border-gray-200 bg-gray-50">
         <CardContent className="pt-6">
-          <p className="text-xs text-gray-600 text-center">
-            By creating an account, you agree to our{" "}
+          <p className="text-center text-xs text-gray-600">
+            By creating an account, you agree to our{' '}
             <Link href="/terms" className="text-primary hover:underline">
               Terms of Service
-            </Link>{" "}
-            and{" "}
+            </Link>{' '}
+            and{' '}
             <Link href="/privacy" className="text-primary hover:underline">
               Privacy Policy
             </Link>
@@ -345,5 +345,5 @@ export default function RegisterPage() {
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }

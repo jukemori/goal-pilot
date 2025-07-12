@@ -1,11 +1,11 @@
-"use client";
+'use client'
 
-import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import Link from 'next/link'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import {
   Card,
   CardContent,
@@ -13,112 +13,112 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { createClient } from "@/lib/supabase/client";
-import { Eye, EyeOff, Loader2, AlertCircle, CheckCircle } from "lucide-react";
-import { toast } from "sonner";
+} from '@/components/ui/card'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { createClient } from '@/lib/supabase/client'
+import { Eye, EyeOff, Loader2, AlertCircle, CheckCircle } from 'lucide-react'
+import { toast } from 'sonner'
 
 export default function LoginPage() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const redirectTo = searchParams.get("redirectTo") || "/dashboard";
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const redirectTo = searchParams.get('redirectTo') || '/dashboard'
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [isSuccess, setIsSuccess] = useState(false);
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false)
+  const [error, setError] = useState('')
+  const [isSuccess, setIsSuccess] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError("");
+    e.preventDefault()
+    setIsLoading(true)
+    setError('')
 
     try {
-      const supabase = createClient();
+      const supabase = createClient()
 
       const { data, error: authError } = await supabase.auth.signInWithPassword(
         {
           email: email.trim(),
           password,
         },
-      );
+      )
 
       if (authError) {
         // Handle specific auth errors with user-friendly messages
         switch (authError.message) {
-          case "Invalid login credentials":
+          case 'Invalid login credentials':
             setError(
-              "Invalid email or password. Please check your credentials and try again.",
-            );
-            break;
-          case "Email not confirmed":
+              'Invalid email or password. Please check your credentials and try again.',
+            )
+            break
+          case 'Email not confirmed':
             setError(
-              "Please check your email and click the confirmation link before signing in.",
-            );
-            break;
-          case "Too many requests":
+              'Please check your email and click the confirmation link before signing in.',
+            )
+            break
+          case 'Too many requests':
             setError(
-              "Too many login attempts. Please wait a few minutes before trying again.",
-            );
-            break;
+              'Too many login attempts. Please wait a few minutes before trying again.',
+            )
+            break
           default:
             setError(
               authError.message ||
-                "An error occurred during sign in. Please try again.",
-            );
+                'An error occurred during sign in. Please try again.',
+            )
         }
-        return;
+        return
       }
 
       if (data?.user) {
-        setIsSuccess(true);
-        toast.success("Welcome back! Redirecting to your dashboard...");
+        setIsSuccess(true)
+        toast.success('Welcome back! Redirecting to your dashboard...')
 
         // Small delay to show success state
         setTimeout(() => {
-          router.push(redirectTo);
-          router.refresh();
-        }, 1000);
+          router.push(redirectTo)
+          router.refresh()
+        }, 1000)
       }
     } catch (err) {
-      setError("Network error. Please check your connection and try again.");
-      console.error("Login error:", err);
+      setError('Network error. Please check your connection and try again.')
+      console.error('Login error:', err)
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   const handleGoogleSignIn = async () => {
-    setIsGoogleLoading(true);
-    setError("");
+    setIsGoogleLoading(true)
+    setError('')
 
     try {
-      const supabase = createClient();
+      const supabase = createClient()
 
       const { error: authError } = await supabase.auth.signInWithOAuth({
-        provider: "google",
+        provider: 'google',
         options: {
           redirectTo: `${window.location.origin}/auth/callback?redirectTo=${encodeURIComponent(redirectTo)}`,
         },
-      });
+      })
 
       if (authError) {
-        setError("Failed to sign in with Google. Please try again.");
-        console.error("Google sign in error:", authError);
+        setError('Failed to sign in with Google. Please try again.')
+        console.error('Google sign in error:', authError)
       }
 
       // Note: For OAuth, the redirect happens automatically, so we don't handle success here
     } catch (err) {
-      setError("Network error. Please check your connection and try again.");
-      console.error("Google sign in error:", err);
+      setError('Network error. Please check your connection and try again.')
+      console.error('Google sign in error:', err)
     } finally {
-      setIsGoogleLoading(false);
+      setIsGoogleLoading(false)
     }
-  };
+  }
 
   return (
     <div className="space-y-6">
@@ -130,7 +130,7 @@ export default function LoginPage() {
 
       <Card className="border-gray-200 shadow-sm">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-xl text-center">Sign In</CardTitle>
+          <CardTitle className="text-center text-xl">Sign In</CardTitle>
           <CardDescription className="text-center">
             Enter your credentials to access your account
           </CardDescription>
@@ -215,7 +215,7 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email"
-                className="border-gray-200 focus:border-primary focus:ring-primary/20"
+                className="focus:border-primary focus:ring-primary/20 border-gray-200"
                 disabled={isLoading || isSuccess}
                 required
               />
@@ -227,7 +227,7 @@ export default function LoginPage() {
                 <Label htmlFor="password">Password</Label>
                 <Link
                   href="/forgot-password"
-                  className="text-sm text-primary hover:underline"
+                  className="text-primary text-sm hover:underline"
                 >
                   Forgot password?
                 </Link>
@@ -235,11 +235,11 @@ export default function LoginPage() {
               <div className="relative">
                 <Input
                   id="password"
-                  type={showPassword ? "text" : "password"}
+                  type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Enter your password"
-                  className="border-gray-200 focus:border-primary focus:ring-primary/20 pr-16"
+                  className="focus:border-primary focus:ring-primary/20 border-gray-200 pr-16"
                   disabled={isLoading || isSuccess}
                   required
                 />
@@ -247,7 +247,7 @@ export default function LoginPage() {
                   type="button"
                   variant="ghost"
                   size="sm"
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 h-8 w-8 p-0 hover:bg-gray-50"
+                  className="absolute top-1/2 right-2 h-8 w-8 -translate-y-1/2 transform p-0 hover:bg-gray-50"
                   onClick={() => setShowPassword(!showPassword)}
                   disabled={isLoading || isSuccess}
                 >
@@ -261,10 +261,10 @@ export default function LoginPage() {
             </div>
           </CardContent>
 
-          <CardFooter className="flex flex-col space-y-6 mt-6">
+          <CardFooter className="mt-6 flex flex-col space-y-6">
             <Button
               type="submit"
-              className="w-full bg-primary hover:bg-primary/90 shadow-sm"
+              className="bg-primary hover:bg-primary/90 w-full shadow-sm"
               disabled={isLoading || isSuccess || !email || !password}
             >
               {isLoading ? (
@@ -278,16 +278,16 @@ export default function LoginPage() {
                   Success!
                 </>
               ) : (
-                "Sign In"
+                'Sign In'
               )}
             </Button>
 
             <div className="text-center">
               <p className="text-sm text-gray-600">
-                Don't have an account?{" "}
+                Don't have an account?{' '}
                 <Link
                   href="/register"
-                  className="text-primary hover:underline font-medium"
+                  className="text-primary font-medium hover:underline"
                 >
                   Create Account
                 </Link>
@@ -297,5 +297,5 @@ export default function LoginPage() {
         </form>
       </Card>
     </div>
-  );
+  )
 }

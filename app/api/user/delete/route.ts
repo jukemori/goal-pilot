@@ -1,29 +1,29 @@
-import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { NextResponse } from 'next/server'
+import { createClient } from '@/lib/supabase/server'
 
 export async function DELETE() {
-  const supabase = await createClient();
+  const supabase = await createClient()
 
   const {
     data: { user },
-  } = await supabase.auth.getUser();
+  } = await supabase.auth.getUser()
   if (!user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
   try {
     // Delete all user data (cascades through foreign keys)
     const { error: deleteError } = await supabase
-      .from("users")
+      .from('users')
       .delete()
-      .eq("id", user.id);
+      .eq('id', user.id)
 
     if (deleteError) {
-      throw deleteError;
+      throw deleteError
     }
 
     // Sign out the user first
-    await supabase.auth.signOut();
+    await supabase.auth.signOut()
 
     // Note: Deleting the auth user requires admin privileges
     // In production, you would typically:
@@ -31,15 +31,15 @@ export async function DELETE() {
     // 2. Schedule deletion via a backend service with admin privileges
     // 3. Or use Supabase Edge Functions with service role key
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true })
   } catch (error) {
-    console.error("Error deleting user:", error);
+    console.error('Error deleting user:', error)
     return NextResponse.json(
       {
         error:
-          error instanceof Error ? error.message : "Failed to delete account",
+          error instanceof Error ? error.message : 'Failed to delete account',
       },
       { status: 500 },
-    );
+    )
   }
 }

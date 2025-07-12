@@ -1,15 +1,15 @@
-import { Badge } from "@/components/ui/badge";
-import { TaskItem } from "./task-item";
-import { Tables } from "@/types/database";
-import { format, parseISO } from "date-fns";
+import { Badge } from '@/components/ui/badge'
+import { TaskItem } from './task-item'
+import { Tables } from '@/types/database'
+import { format, parseISO } from 'date-fns'
 
-type Task = Tables<"tasks">;
+type Task = Tables<'tasks'>
 
 interface TaskGroupProps {
-  date: string;
-  tasks: Task[];
-  loadingTaskId?: string | null;
-  onToggleComplete?: (task: Task) => void;
+  date: string
+  tasks: Task[]
+  loadingTaskId?: string | null
+  onToggleComplete?: (task: Task) => void
 }
 
 export function TaskGroup({
@@ -18,18 +18,18 @@ export function TaskGroup({
   loadingTaskId,
   onToggleComplete,
 }: TaskGroupProps) {
-  const completedCount = tasks.filter((t) => t.completed).length;
+  const completedCount = tasks.filter((t) => t.completed).length
 
   return (
     <div>
-      <div className="flex items-center gap-3 mb-4">
+      <div className="mb-4 flex items-center gap-3">
         <div className="flex items-center gap-2">
-          <div className="w-2 h-2 bg-primary rounded-full"></div>
+          <div className="bg-primary h-2 w-2 rounded-full"></div>
           <h3 className="font-semibold text-gray-800">
-            {format(parseISO(date), "EEEE, MMMM d")}
+            {format(parseISO(date), 'EEEE, MMMM d')}
           </h3>
         </div>
-        <Badge variant="outline" className="text-xs bg-gray-50">
+        <Badge variant="outline" className="bg-gray-50 text-xs">
           {completedCount}/{tasks.length}
         </Badge>
       </div>
@@ -45,5 +45,5 @@ export function TaskGroup({
         ))}
       </div>
     </div>
-  );
+  )
 }

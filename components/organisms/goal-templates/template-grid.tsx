@@ -1,21 +1,21 @@
-"use client";
+'use client'
 
-import { useState } from "react";
-import { TemplateCard } from "./template-card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { useState } from 'react'
+import { TemplateCard } from './template-card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
 import {
   GoalTemplate,
   GOAL_TEMPLATES,
   TEMPLATE_CATEGORIES,
-} from "@/lib/templates/goal-templates";
-import { ChevronDown, ChevronUp, Filter } from "lucide-react";
-import { cn } from "@/lib/utils";
+} from '@/lib/templates/goal-templates'
+import { ChevronDown, ChevronUp, Filter } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 interface TemplateGridProps {
-  limit?: number;
-  showMore?: boolean;
-  onUseTemplate: (template: GoalTemplate) => void;
+  limit?: number
+  showMore?: boolean
+  onUseTemplate: (template: GoalTemplate) => void
 }
 
 export function TemplateGrid({
@@ -23,31 +23,30 @@ export function TemplateGrid({
   showMore = true,
   onUseTemplate,
 }: TemplateGridProps) {
-  const [showAll, setShowAll] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [showAll, setShowAll] = useState(false)
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [selectedDifficulty, setSelectedDifficulty] = useState<string | null>(
     null,
-  );
+  )
 
   // Filter templates based on selected filters
   const filteredTemplates = GOAL_TEMPLATES.filter((template) => {
-    if (selectedCategory && template.category !== selectedCategory)
-      return false;
+    if (selectedCategory && template.category !== selectedCategory) return false
     if (selectedDifficulty && template.difficulty !== selectedDifficulty)
-      return false;
-    return true;
-  });
+      return false
+    return true
+  })
 
   // Apply limit if not showing all
   const templatesToShow = showAll
     ? filteredTemplates
-    : filteredTemplates.slice(0, limit);
-  const hasMoreTemplates = filteredTemplates.length > limit;
+    : filteredTemplates.slice(0, limit)
+  const hasMoreTemplates = filteredTemplates.length > limit
 
   const clearFilters = () => {
-    setSelectedCategory(null);
-    setSelectedDifficulty(null);
-  };
+    setSelectedCategory(null)
+    setSelectedDifficulty(null)
+  }
 
   return (
     <div className="space-y-6 pb-8 md:pb-6">
@@ -61,14 +60,14 @@ export function TemplateGrid({
         {/* Category Filter */}
         <div className="flex flex-wrap gap-2">
           {Object.entries(TEMPLATE_CATEGORIES).map(([key, category]) => {
-            const isActive = selectedCategory === key;
+            const isActive = selectedCategory === key
             return (
               <Badge
                 key={key}
-                variant={isActive ? "default" : "outline"}
+                variant={isActive ? 'default' : 'outline'}
                 className={cn(
-                  "cursor-pointer transition-colors",
-                  isActive ? "hover:bg-primary/90" : "hover:bg-primary/10",
+                  'cursor-pointer transition-colors',
+                  isActive ? 'hover:bg-primary/90' : 'hover:bg-primary/10',
                 )}
                 onClick={() =>
                   setSelectedCategory(selectedCategory === key ? null : key)
@@ -76,21 +75,21 @@ export function TemplateGrid({
               >
                 {category.label}
               </Badge>
-            );
+            )
           })}
         </div>
 
         {/* Difficulty Filter */}
         <div className="flex flex-wrap gap-2">
-          {["beginner", "intermediate", "advanced"].map((difficulty) => {
-            const isActive = selectedDifficulty === difficulty;
+          {['beginner', 'intermediate', 'advanced'].map((difficulty) => {
+            const isActive = selectedDifficulty === difficulty
             return (
               <Badge
                 key={difficulty}
-                variant={isActive ? "default" : "outline"}
+                variant={isActive ? 'default' : 'outline'}
                 className={cn(
-                  "cursor-pointer transition-colors capitalize",
-                  isActive ? "hover:bg-primary/90" : "hover:bg-primary/10",
+                  'cursor-pointer capitalize transition-colors',
+                  isActive ? 'hover:bg-primary/90' : 'hover:bg-primary/10',
                 )}
                 onClick={() =>
                   setSelectedDifficulty(
@@ -100,7 +99,7 @@ export function TemplateGrid({
               >
                 {difficulty}
               </Badge>
-            );
+            )
           })}
         </div>
 
@@ -126,7 +125,7 @@ export function TemplateGrid({
 
       {/* Templates Grid */}
       {templatesToShow.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {templatesToShow.map((template) => (
             <TemplateCard
               key={template.id}
@@ -136,10 +135,10 @@ export function TemplateGrid({
           ))}
         </div>
       ) : (
-        <div className="text-center py-12">
-          <div className="text-gray-500 mb-4">
-            <Filter className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
+        <div className="py-12 text-center">
+          <div className="mb-4 text-gray-500">
+            <Filter className="mx-auto mb-4 h-12 w-12 text-gray-300" />
+            <h3 className="mb-2 text-lg font-medium text-gray-900">
               No templates found
             </h3>
             <p className="text-gray-600">
@@ -154,7 +153,7 @@ export function TemplateGrid({
 
       {/* Show More/Less Button */}
       {showMore && hasMoreTemplates && !showAll && (
-        <div className="text-center pt-4">
+        <div className="pt-4 text-center">
           <Button
             variant="outline"
             onClick={() => setShowAll(true)}
@@ -167,7 +166,7 @@ export function TemplateGrid({
       )}
 
       {showMore && showAll && (
-        <div className="text-center pt-4">
+        <div className="pt-4 text-center">
           <Button
             variant="outline"
             onClick={() => setShowAll(false)}
@@ -179,5 +178,5 @@ export function TemplateGrid({
         </div>
       )}
     </div>
-  );
+  )
 }

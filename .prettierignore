@@ -1,0 +1,52 @@
+# Dependencies
+node_modules/
+bun.lockb
+bun.lock
+package-lock.json
+yarn.lock
+
+# Build outputs
+.next/
+out/
+dist/
+build/
+
+# Generated files - don't format these
+types/database.ts
+
+# Environment files
+.env*
+
+# Logs
+*.log
+
+# Supabase
+.supabase/
+
+#eslint
+eslint.config.mjs
+
+#tailwind
+tailwind.config.ts
+
+#next
+next.config.ts
+
+# Vercel
+.vercel/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Coverage
+coverage/
+
+# Cache
+.eslintcache 

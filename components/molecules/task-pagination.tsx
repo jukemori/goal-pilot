@@ -1,13 +1,13 @@
-import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Button } from '@/components/ui/button'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 interface TaskPaginationProps {
-  currentPage: number;
-  totalPages: number;
-  startIndex: number;
-  endIndex: number;
-  totalItems: number;
-  onPageChange: (page: number) => void;
+  currentPage: number
+  totalPages: number
+  startIndex: number
+  endIndex: number
+  totalItems: number
+  onPageChange: (page: number) => void
 }
 
 export function TaskPagination({
@@ -19,13 +19,13 @@ export function TaskPagination({
   onPageChange,
 }: TaskPaginationProps) {
   if (totalPages <= 1) {
-    return null;
+    return null
   }
 
   return (
     <div className="flex items-center justify-between pt-4">
       <div className="text-sm text-gray-700">
-        Showing {startIndex + 1}-{Math.min(endIndex, totalItems)} of{" "}
+        Showing {startIndex + 1}-{Math.min(endIndex, totalItems)} of{' '}
         {totalItems} date groups
       </div>
 
@@ -48,21 +48,21 @@ export function TaskPagination({
                 ? i + 1
                 : currentPage + i - 2 <= totalPages
                   ? currentPage + i - 2
-                  : totalPages - 4 + i;
+                  : totalPages - 4 + i
 
-            if (pageNumber > totalPages) return null;
+            if (pageNumber > totalPages) return null
 
             return (
               <Button
                 key={pageNumber}
-                variant={pageNumber === currentPage ? "default" : "outline"}
+                variant={pageNumber === currentPage ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => onPageChange(pageNumber)}
-                className="w-8 h-8 p-0"
+                className="h-8 w-8 p-0"
               >
                 {pageNumber}
               </Button>
-            );
+            )
           })}
         </div>
 
@@ -78,5 +78,5 @@ export function TaskPagination({
         </Button>
       </div>
     </div>
-  );
+  )
 }

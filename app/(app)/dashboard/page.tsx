@@ -1,14 +1,14 @@
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from '@/lib/supabase/server'
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import Link from "next/link";
+} from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import Link from 'next/link'
 import {
   Plus,
   Target,
@@ -20,66 +20,66 @@ import {
   Zap,
   Star,
   ArrowRight,
-} from "lucide-react";
-import { StatsCard } from "@/components/molecules/stats-card";
-import dynamic from "next/dynamic";
-import { ClickableTaskItemSkeleton } from "@/components/molecules/clickable-task-item";
+} from 'lucide-react'
+import { StatsCard } from '@/components/molecules/stats-card'
+import dynamic from 'next/dynamic'
+import { ClickableTaskItemSkeleton } from '@/components/molecules/clickable-task-item'
 
 // Lazy load the ClickableTaskItem component for better performance
 const ClickableTaskItem = dynamic(
   () =>
-    import("@/components/molecules/clickable-task-item").then((mod) => ({
+    import('@/components/molecules/clickable-task-item').then((mod) => ({
       default: mod.ClickableTaskItem,
     })),
   {
     loading: () => <ClickableTaskItemSkeleton />,
   },
-);
+)
 
 export default async function DashboardPage() {
-  const supabase = await createClient();
+  const supabase = await createClient()
 
   // Get user's goals
   const { data: goals } = await supabase
-    .from("goals")
-    .select("*, roadmaps(id)")
-    .order("created_at", { ascending: false })
-    .limit(3);
+    .from('goals')
+    .select('*, roadmaps(id)')
+    .order('created_at', { ascending: false })
+    .limit(3)
 
   // Get today's tasks
-  const today = new Date().toISOString().split("T")[0];
+  const today = new Date().toISOString().split('T')[0]
   const { data: todayTasks } = await supabase
-    .from("tasks")
-    .select("*")
-    .eq("scheduled_date", today);
+    .from('tasks')
+    .select('*')
+    .eq('scheduled_date', today)
 
   const completedTasks =
-    todayTasks?.filter((task) => task.completed).length || 0;
-  const totalTasks = todayTasks?.length || 0;
+    todayTasks?.filter((task) => task.completed).length || 0
+  const totalTasks = todayTasks?.length || 0
 
   return (
     <div className="space-y-8">
       {/* Header */}
       <div className="relative">
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-primary/5 rounded-2xl -z-10" />
+        <div className="from-primary/10 to-primary/5 absolute inset-0 -z-10 rounded-2xl bg-gradient-to-r" />
         <div className="p-4 md:p-8">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="p-2 bg-primary/10 rounded-lg">
-              <Zap className="h-6 w-6 text-primary" />
+          <div className="mb-2 flex items-center gap-3">
+            <div className="bg-primary/10 rounded-lg p-2">
+              <Zap className="text-primary h-6 w-6" />
             </div>
             <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
           </div>
-          <p className="text-gray-600 text-lg">
+          <p className="text-lg text-gray-600">
             Track your progress and manage your learning journey
           </p>
         </div>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid gap-3 grid-cols-2 md:gap-6 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-2 md:gap-6 lg:grid-cols-4">
         <StatsCard
           title="Active Goals"
-          value={goals?.filter((g) => g.status === "active").length || 0}
+          value={goals?.filter((g) => g.status === 'active').length || 0}
           icon={<Target className="h-4 w-4 md:h-5 md:w-5" />}
           color="blue"
         />
@@ -100,7 +100,7 @@ export default async function DashboardPage() {
           value={
             totalTasks > 0
               ? `${Math.round((completedTasks / totalTasks) * 100)}%`
-              : "0%"
+              : '0%'
           }
           icon={<TrendingUp className="h-4 w-4 md:h-5 md:w-5" />}
           color="orange"
@@ -112,12 +112,12 @@ export default async function DashboardPage() {
         <CardHeader className="flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
           <div>
             <CardTitle className="flex items-center gap-2 text-gray-800">
-              <div className="p-2 bg-gradient-to-br from-primary/10 to-primary/20 rounded-lg">
-                <Target className="h-5 w-5 text-primary" />
+              <div className="from-primary/10 to-primary/20 rounded-lg bg-gradient-to-br p-2">
+                <Target className="text-primary h-5 w-5" />
               </div>
               Recent Goals
             </CardTitle>
-            <CardDescription className="text-gray-600 mt-1">
+            <CardDescription className="mt-1 text-gray-600">
               Your latest goals and their progress
             </CardDescription>
           </div>
@@ -126,7 +126,7 @@ export default async function DashboardPage() {
               size="sm"
               className="bg-primary hover:bg-primary/90 shadow-md"
             >
-              <Plus className="h-4 w-4 mr-2" />
+              <Plus className="mr-2 h-4 w-4" />
               New Goal
             </Button>
           </Link>
@@ -138,24 +138,24 @@ export default async function DashboardPage() {
                 <Link
                   key={goal.id}
                   href={`/goals/${goal.id}`}
-                  className="block group"
+                  className="group block"
                 >
-                  <div className="p-4 border rounded-xl hover:bg-gradient-to-r hover:from-primary/5 hover:to-primary/10 hover:border-primary/20 transition-all duration-300 hover:shadow-md">
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                      <div className="flex-1 min-w-0">
-                        <div className="flex flex-wrap items-center gap-2 mb-2">
-                          <h3 className="font-semibold text-gray-900 group-hover:text-primary transition-colors truncate">
+                  <div className="hover:from-primary/5 hover:to-primary/10 hover:border-primary/20 rounded-xl border p-4 transition-all duration-300 hover:bg-gradient-to-r hover:shadow-md">
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                      <div className="min-w-0 flex-1">
+                        <div className="mb-2 flex flex-wrap items-center gap-2">
+                          <h3 className="group-hover:text-primary truncate font-semibold text-gray-900 transition-colors">
                             {goal.title}
                           </h3>
                           <Badge
                             variant="secondary"
-                            className="text-xs flex-shrink-0"
+                            className="flex-shrink-0 text-xs"
                           >
                             {goal.status}
                           </Badge>
                         </div>
                         <div className="flex flex-col gap-1 text-sm text-gray-600 sm:flex-row sm:items-center sm:gap-3">
-                          <div className="flex items-center gap-1 min-w-0">
+                          <div className="flex min-w-0 items-center gap-1">
                             <Star className="h-3 w-3 flex-shrink-0" />
                             <span className="truncate">
                               {goal.current_level}
@@ -169,25 +169,25 @@ export default async function DashboardPage() {
                           </div>
                         </div>
                       </div>
-                      <div className="flex items-center gap-2 flex-shrink-0">
+                      <div className="flex flex-shrink-0 items-center gap-2">
                         <div className="flex items-center gap-1">
                           {goal.roadmaps.length > 0 ? (
                             <>
-                              <div className="w-2 h-2 bg-primary rounded-full"></div>
-                              <span className="text-sm text-primary font-medium">
+                              <div className="bg-primary h-2 w-2 rounded-full"></div>
+                              <span className="text-primary text-sm font-medium">
                                 Ready
                               </span>
                             </>
                           ) : (
                             <>
-                              <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></div>
-                              <span className="text-sm text-orange-600 font-medium">
+                              <div className="h-2 w-2 animate-pulse rounded-full bg-orange-500"></div>
+                              <span className="text-sm font-medium text-orange-600">
                                 Generating...
                               </span>
                             </>
                           )}
                         </div>
-                        <ArrowRight className="h-4 w-4 text-gray-400 group-hover:text-primary transition-colors" />
+                        <ArrowRight className="group-hover:text-primary h-4 w-4 text-gray-400 transition-colors" />
                       </div>
                     </div>
                   </div>
@@ -196,30 +196,30 @@ export default async function DashboardPage() {
               <div className="pt-2">
                 <Link href="/goals">
                   <Button variant="outline" className="w-full">
-                    <BookOpen className="h-4 w-4 mr-2" />
+                    <BookOpen className="mr-2 h-4 w-4" />
                     View All Goals
                   </Button>
                 </Link>
               </div>
             </div>
           ) : (
-            <div className="text-center py-12">
+            <div className="py-12 text-center">
               <div className="relative">
-                <div className="mx-auto w-16 h-16 bg-gradient-to-br from-primary/10 to-primary/20 rounded-full flex items-center justify-center mb-4">
-                  <Target className="h-8 w-8 text-primary" />
+                <div className="from-primary/10 to-primary/20 mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br">
+                  <Target className="text-primary h-8 w-8" />
                 </div>
-                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-20 h-20 bg-primary/5 rounded-full -z-10"></div>
+                <div className="bg-primary/5 absolute top-0 left-1/2 -z-10 h-20 w-20 -translate-x-1/2 transform rounded-full"></div>
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              <h3 className="mb-2 text-lg font-semibold text-gray-900">
                 No goals yet
               </h3>
-              <p className="text-gray-600 mb-6 max-w-md mx-auto">
+              <p className="mx-auto mb-6 max-w-md text-gray-600">
                 Start your learning journey by creating your first goal. Set
                 your target and let AI generate a personalized roadmap.
               </p>
               <Link href="/goals/new">
                 <Button className="bg-primary hover:bg-primary/90 shadow-md">
-                  <Plus className="h-4 w-4 mr-2" />
+                  <Plus className="mr-2 h-4 w-4" />
                   Create Your First Goal
                 </Button>
               </Link>
@@ -232,17 +232,17 @@ export default async function DashboardPage() {
       <Card className="border-gray-200 shadow-sm">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-gray-800">
-            <div className="p-2 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg">
+            <div className="rounded-lg bg-gradient-to-br from-blue-50 to-blue-100 p-2">
               <Calendar className="h-5 w-5 text-blue-600" />
             </div>
             Today's Tasks
           </CardTitle>
-          <CardDescription className="text-gray-600 mt-1">
-            Tasks scheduled for{" "}
-            {new Date().toLocaleDateString("en-US", {
-              weekday: "long",
-              month: "long",
-              day: "numeric",
+          <CardDescription className="mt-1 text-gray-600">
+            Tasks scheduled for{' '}
+            {new Date().toLocaleDateString('en-US', {
+              weekday: 'long',
+              month: 'long',
+              day: 'numeric',
             })}
           </CardDescription>
         </CardHeader>
@@ -254,23 +254,23 @@ export default async function DashboardPage() {
               ))}
             </div>
           ) : (
-            <div className="text-center py-12">
+            <div className="py-12 text-center">
               <div className="relative">
-                <div className="mx-auto w-16 h-16 bg-gradient-to-br from-blue-50 to-blue-100 rounded-full flex items-center justify-center mb-4">
+                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-blue-50 to-blue-100">
                   <Calendar className="h-8 w-8 text-blue-600" />
                 </div>
-                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-20 h-20 bg-blue-50 rounded-full -z-10"></div>
+                <div className="absolute top-0 left-1/2 -z-10 h-20 w-20 -translate-x-1/2 transform rounded-full bg-blue-50"></div>
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              <h3 className="mb-2 text-lg font-semibold text-gray-900">
                 No tasks for today
               </h3>
-              <p className="text-gray-600 mb-6 max-w-md mx-auto">
+              <p className="mx-auto mb-6 max-w-md text-gray-600">
                 You're all caught up! Tasks will appear here when you generate
                 them from your learning phases.
               </p>
               <Link href="/goals">
                 <Button variant="outline">
-                  <BookOpen className="h-4 w-4 mr-2" />
+                  <BookOpen className="mr-2 h-4 w-4" />
                   Explore Your Goals
                 </Button>
               </Link>
@@ -279,5 +279,5 @@ export default async function DashboardPage() {
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }

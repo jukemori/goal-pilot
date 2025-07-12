@@ -1,19 +1,19 @@
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import Link from 'next/link'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from '@/components/ui/card'
 
 export default function AuthErrorPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
+    <div className="bg-background flex min-h-screen items-center justify-center">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold text-destructive">
+          <CardTitle className="text-destructive text-2xl font-bold">
             Authentication Error
           </CardTitle>
           <CardDescription>
@@ -21,7 +21,7 @@ export default function AuthErrorPage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="text-center text-sm text-muted-foreground">
+          <div className="text-muted-foreground text-center text-sm">
             <p>This could happen if:</p>
             <ul className="mt-2 space-y-1 text-left">
               <li>• The confirmation link has expired</li>
@@ -42,5 +42,5 @@ export default function AuthErrorPage() {
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }

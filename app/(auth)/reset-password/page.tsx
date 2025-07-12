@@ -1,11 +1,11 @@
-"use client";
+'use client'
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import Link from 'next/link'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import {
   Card,
   CardContent,
@@ -13,9 +13,9 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { createClient } from "@/lib/supabase/client";
+} from '@/components/ui/card'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { createClient } from '@/lib/supabase/client'
 import {
   ArrowLeft,
   Loader2,
@@ -24,118 +24,118 @@ import {
   Eye,
   EyeOff,
   Lock,
-} from "lucide-react";
-import { toast } from "sonner";
+} from 'lucide-react'
+import { toast } from 'sonner'
 
 export default function ResetPasswordPage() {
-  const router = useRouter();
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [isValidSession, setIsValidSession] = useState(false);
-  const [checkingSession, setCheckingSession] = useState(true);
+  const router = useRouter()
+  const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState('')
+  const [isSuccess, setIsSuccess] = useState(false)
+  const [isValidSession, setIsValidSession] = useState(false)
+  const [checkingSession, setCheckingSession] = useState(true)
 
   // Listen for PASSWORD_RECOVERY auth event from email link
   useEffect(() => {
-    const supabase = createClient();
+    const supabase = createClient()
 
     // Check current session first
     const checkInitialSession = async () => {
       const {
         data: { session },
-      } = await supabase.auth.getSession();
+      } = await supabase.auth.getSession()
       if (session && session.user) {
-        setIsValidSession(true);
+        setIsValidSession(true)
       }
-      setCheckingSession(false);
-    };
+      setCheckingSession(false)
+    }
 
     // Listen for auth state changes
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === "PASSWORD_RECOVERY" && session) {
-        setIsValidSession(true);
-        setCheckingSession(false);
-      } else if (event === "SIGNED_IN" && session) {
-        setIsValidSession(true);
-        setCheckingSession(false);
+      if (event === 'PASSWORD_RECOVERY' && session) {
+        setIsValidSession(true)
+        setCheckingSession(false)
+      } else if (event === 'SIGNED_IN' && session) {
+        setIsValidSession(true)
+        setCheckingSession(false)
       } else if (!session) {
-        setIsValidSession(false);
+        setIsValidSession(false)
         setError(
-          "Invalid or expired reset link. Please request a new password reset.",
-        );
-        setCheckingSession(false);
+          'Invalid or expired reset link. Please request a new password reset.',
+        )
+        setCheckingSession(false)
       }
-    });
+    })
 
-    checkInitialSession();
+    checkInitialSession()
 
     return () => {
-      subscription.unsubscribe();
-    };
-  }, []);
+      subscription.unsubscribe()
+    }
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError("");
+    e.preventDefault()
+    setIsLoading(true)
+    setError('')
 
     // Validation
     if (password.length < 6) {
-      setError("Password must be at least 6 characters long.");
-      setIsLoading(false);
-      return;
+      setError('Password must be at least 6 characters long.')
+      setIsLoading(false)
+      return
     }
 
     if (password !== confirmPassword) {
-      setError("Passwords do not match.");
-      setIsLoading(false);
-      return;
+      setError('Passwords do not match.')
+      setIsLoading(false)
+      return
     }
 
     try {
-      const supabase = createClient();
+      const supabase = createClient()
 
       const { error: updateError } = await supabase.auth.updateUser({
         password: password,
-      });
+      })
 
       if (updateError) {
         setError(
-          updateError.message || "Failed to update password. Please try again.",
-        );
-        return;
+          updateError.message || 'Failed to update password. Please try again.',
+        )
+        return
       }
 
-      setIsSuccess(true);
-      toast.success("Password updated successfully!");
+      setIsSuccess(true)
+      toast.success('Password updated successfully!')
 
       // Redirect to dashboard after success
       setTimeout(() => {
-        router.push("/dashboard");
-      }, 2000);
+        router.push('/dashboard')
+      }, 2000)
     } catch (err) {
-      setError("Network error. Please check your connection and try again.");
-      console.error("Password reset error:", err);
+      setError('Network error. Please check your connection and try again.')
+      console.error('Password reset error:', err)
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   if (checkingSession) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
+      <div className="flex min-h-[400px] items-center justify-center">
         <div className="text-center">
-          <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto mb-4" />
+          <Loader2 className="text-primary mx-auto mb-4 h-8 w-8 animate-spin" />
           <p className="text-gray-600">Verifying reset link...</p>
         </div>
       </div>
-    );
+    )
   }
 
   if (!isValidSession) {
@@ -150,7 +150,7 @@ export default function ResetPasswordPage() {
 
         <Card className="border-red-200 shadow-sm">
           <CardHeader className="text-center">
-            <div className="mx-auto w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mb-4">
+            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
               <AlertCircle className="h-6 w-6 text-red-600" />
             </div>
             <CardTitle className="text-xl text-red-600">
@@ -161,20 +161,20 @@ export default function ResetPasswordPage() {
               a new one.
             </CardDescription>
           </CardHeader>
-          <CardContent className="text-center space-y-4">
+          <CardContent className="space-y-4 text-center">
             <Link href="/forgot-password">
               <Button className="w-full">Request New Reset Link</Button>
             </Link>
             <Link href="/login">
               <Button variant="outline" className="w-full">
-                <ArrowLeft className="h-4 w-4 mr-2" />
+                <ArrowLeft className="mr-2 h-4 w-4" />
                 Back to Login
               </Button>
             </Link>
           </CardContent>
         </Card>
       </div>
-    );
+    )
   }
 
   return (
@@ -187,10 +187,10 @@ export default function ResetPasswordPage() {
 
       <Card className="border-gray-200 shadow-sm">
         <CardHeader className="space-y-1">
-          <div className="mx-auto w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
-            <Lock className="h-6 w-6 text-primary" />
+          <div className="bg-primary/10 mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full">
+            <Lock className="text-primary h-6 w-6" />
           </div>
-          <CardTitle className="text-xl text-center">Reset Password</CardTitle>
+          <CardTitle className="text-center text-xl">Reset Password</CardTitle>
           <CardDescription className="text-center">
             Choose a strong password for your account
           </CardDescription>
@@ -222,11 +222,11 @@ export default function ResetPasswordPage() {
               <div className="relative">
                 <Input
                   id="password"
-                  type={showPassword ? "text" : "password"}
+                  type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Enter your new password"
-                  className="border-gray-200 focus:border-primary focus:ring-primary/20 pr-16"
+                  className="focus:border-primary focus:ring-primary/20 border-gray-200 pr-16"
                   disabled={isLoading || isSuccess}
                   required
                   minLength={6}
@@ -235,7 +235,7 @@ export default function ResetPasswordPage() {
                   type="button"
                   variant="ghost"
                   size="sm"
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 h-8 w-8 p-0 hover:bg-gray-50"
+                  className="absolute top-1/2 right-2 h-8 w-8 -translate-y-1/2 transform p-0 hover:bg-gray-50"
                   onClick={() => setShowPassword(!showPassword)}
                   disabled={isLoading || isSuccess}
                 >
@@ -257,11 +257,11 @@ export default function ResetPasswordPage() {
               <div className="relative">
                 <Input
                   id="confirmPassword"
-                  type={showConfirmPassword ? "text" : "password"}
+                  type={showConfirmPassword ? 'text' : 'password'}
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="Confirm your new password"
-                  className="border-gray-200 focus:border-primary focus:ring-primary/20 pr-16"
+                  className="focus:border-primary focus:ring-primary/20 border-gray-200 pr-16"
                   disabled={isLoading || isSuccess}
                   required
                   minLength={6}
@@ -270,7 +270,7 @@ export default function ResetPasswordPage() {
                   type="button"
                   variant="ghost"
                   size="sm"
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 h-8 w-8 p-0 hover:bg-gray-50"
+                  className="absolute top-1/2 right-2 h-8 w-8 -translate-y-1/2 transform p-0 hover:bg-gray-50"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   disabled={isLoading || isSuccess}
                 >
@@ -284,10 +284,10 @@ export default function ResetPasswordPage() {
             </div>
           </CardContent>
 
-          <CardFooter className="flex flex-col space-y-6 mt-6">
+          <CardFooter className="mt-6 flex flex-col space-y-6">
             <Button
               type="submit"
-              className="w-full bg-primary hover:bg-primary/90 shadow-sm"
+              className="bg-primary hover:bg-primary/90 w-full shadow-sm"
               disabled={isLoading || isSuccess || !password || !confirmPassword}
             >
               {isLoading ? (
@@ -301,14 +301,14 @@ export default function ResetPasswordPage() {
                   Password Updated!
                 </>
               ) : (
-                "Update Password"
+                'Update Password'
               )}
             </Button>
 
             <div className="text-center">
               <Link
                 href="/login"
-                className="inline-flex items-center gap-2 text-sm text-primary hover:underline font-medium"
+                className="text-primary inline-flex items-center gap-2 text-sm font-medium hover:underline"
               >
                 <ArrowLeft className="h-4 w-4" />
                 Back to Sign In
@@ -318,5 +318,5 @@ export default function ResetPasswordPage() {
         </form>
       </Card>
     </div>
-  );
+  )
 }

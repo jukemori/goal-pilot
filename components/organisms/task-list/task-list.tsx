@@ -1,22 +1,22 @@
-"use client";
+'use client'
 
-import { useState } from "react";
-import { Calendar, Filter } from "lucide-react";
-import { completeTask, uncompleteTask } from "@/app/actions/tasks";
-import { toast } from "sonner";
-import { Tables } from "@/types/database";
-import { useTaskFilters } from "@/lib/hooks/use-task-filters";
-import { TaskStatistics } from "@/components/molecules/task-statistics";
-import { TaskFilters } from "@/components/molecules/task-filters";
-import { TaskGroup } from "@/components/molecules/task-group";
-import { TaskPagination } from "@/components/molecules/task-pagination";
+import { useState } from 'react'
+import { Calendar, Filter } from 'lucide-react'
+import { completeTask, uncompleteTask } from '@/app/actions/tasks'
+import { toast } from 'sonner'
+import { Tables } from '@/types/database'
+import { useTaskFilters } from '@/lib/hooks/use-task-filters'
+import { TaskStatistics } from '@/components/molecules/task-statistics'
+import { TaskFilters } from '@/components/molecules/task-filters'
+import { TaskGroup } from '@/components/molecules/task-group'
+import { TaskPagination } from '@/components/molecules/task-pagination'
 
-type Task = Tables<"tasks">;
+type Task = Tables<'tasks'>
 
 interface TaskListProps {
-  tasks: Task[];
-  goalId: string;
-  pageSize?: number;
+  tasks: Task[]
+  goalId: string
+  pageSize?: number
 }
 
 export function TaskList({
@@ -24,7 +24,7 @@ export function TaskList({
   goalId: _goalId,
   pageSize = 20,
 }: TaskListProps) {
-  const [loadingTaskId, setLoadingTaskId] = useState<string | null>(null);
+  const [loadingTaskId, setLoadingTaskId] = useState<string | null>(null)
   const {
     searchQuery,
     statusFilter,
@@ -44,35 +44,35 @@ export function TaskList({
     startIndex,
     endIndex,
     sortedDates,
-  } = useTaskFilters(tasks, pageSize);
+  } = useTaskFilters(tasks, pageSize)
 
   async function handleToggleComplete(task: Task) {
-    setLoadingTaskId(task.id);
+    setLoadingTaskId(task.id)
     try {
       if (task.completed) {
-        await uncompleteTask(task.id);
-        toast.success("Task marked as incomplete");
+        await uncompleteTask(task.id)
+        toast.success('Task marked as incomplete')
       } else {
-        await completeTask(task.id);
-        toast.success("Task completed!");
+        await completeTask(task.id)
+        toast.success('Task completed!')
       }
     } catch {
-      toast.error("Failed to update task");
+      toast.error('Failed to update task')
     } finally {
-      setLoadingTaskId(null);
+      setLoadingTaskId(null)
     }
   }
 
   if (tasks.length === 0) {
     return (
-      <div className="text-center py-8">
-        <Calendar className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-        <p className="text-gray-500 mb-2">No tasks yet</p>
+      <div className="py-8 text-center">
+        <Calendar className="mx-auto mb-4 h-12 w-12 text-gray-400" />
+        <p className="mb-2 text-gray-500">No tasks yet</p>
         <p className="text-sm text-gray-400">
           Tasks will appear here once your roadmap is generated
         </p>
       </div>
-    );
+    )
   }
 
   return (
@@ -108,9 +108,9 @@ export function TaskList({
 
       {/* No results message */}
       {filteredTasks.length === 0 && (
-        <div className="text-center py-8">
-          <Filter className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-          <p className="text-gray-500 mb-2">No tasks found</p>
+        <div className="py-8 text-center">
+          <Filter className="mx-auto mb-4 h-12 w-12 text-gray-400" />
+          <p className="mb-2 text-gray-500">No tasks found</p>
           <p className="text-sm text-gray-400">
             Try adjusting your filters or search query
           </p>
@@ -127,5 +127,5 @@ export function TaskList({
         onPageChange={setCurrentPage}
       />
     </div>
-  );
+  )
 }

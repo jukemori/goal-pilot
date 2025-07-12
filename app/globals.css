@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -127,7 +127,7 @@
   }
 
   /* Ensure modal overlays cover the full viewport */
-  [data-slot="dialog-overlay"],
+  [data-slot='dialog-overlay'],
   .modal-overlay {
     position: fixed !important;
     top: 0 !important;
@@ -154,11 +154,11 @@
   }
 
   /* Additional Sonner overrides */
-  .toaster [data-sonner-toast][data-styled="true"] {
+  .toaster [data-sonner-toast][data-styled='true'] {
     background: #ffffff !important;
   }
 
-  .dark .toaster [data-sonner-toast][data-styled="true"] {
+  .dark .toaster [data-sonner-toast][data-styled='true'] {
     background: #1e293b !important;
   }
 }

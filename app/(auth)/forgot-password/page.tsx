@@ -1,10 +1,10 @@
-"use client";
+'use client'
 
-import { useState } from "react";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { useState } from 'react'
+import Link from 'next/link'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import {
   Card,
   CardContent,
@@ -12,53 +12,53 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { createClient } from "@/lib/supabase/client";
+} from '@/components/ui/card'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { createClient } from '@/lib/supabase/client'
 import {
   ArrowLeft,
   Loader2,
   AlertCircle,
   CheckCircle,
   Mail,
-} from "lucide-react";
-import { toast } from "sonner";
+} from 'lucide-react'
+import { toast } from 'sonner'
 
 export default function ForgotPasswordPage() {
-  const [email, setEmail] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [isSuccess, setIsSuccess] = useState(false);
+  const [email, setEmail] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState('')
+  const [isSuccess, setIsSuccess] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError("");
+    e.preventDefault()
+    setIsLoading(true)
+    setError('')
 
     try {
-      const supabase = createClient();
+      const supabase = createClient()
 
       const { error: resetError } = await supabase.auth.resetPasswordForEmail(
         email.trim(),
         {
           redirectTo: `${window.location.origin}/reset-password`,
         },
-      );
+      )
 
       if (resetError) {
-        setError(resetError.message || "An error occurred. Please try again.");
-        return;
+        setError(resetError.message || 'An error occurred. Please try again.')
+        return
       }
 
-      setIsSuccess(true);
-      toast.success("Password reset email sent!");
+      setIsSuccess(true)
+      toast.success('Password reset email sent!')
     } catch (err) {
-      setError("Network error. Please check your connection and try again.");
-      console.error("Password reset error:", err);
+      setError('Network error. Please check your connection and try again.')
+      console.error('Password reset error:', err)
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   return (
     <div className="space-y-6">
@@ -70,7 +70,7 @@ export default function ForgotPasswordPage() {
 
       <Card className="border-gray-200 shadow-sm">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-xl text-center">
+          <CardTitle className="text-center text-xl">
             Forgot Your Password?
           </CardTitle>
           <CardDescription className="text-center">
@@ -109,19 +109,19 @@ export default function ForgotPasswordPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter your email"
-                  className="border-gray-200 focus:border-primary focus:ring-primary/20 pl-10"
+                  className="focus:border-primary focus:ring-primary/20 border-gray-200 pl-10"
                   disabled={isLoading || isSuccess}
                   required
                 />
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Mail className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
               </div>
             </div>
           </CardContent>
 
-          <CardFooter className="flex flex-col space-y-6 mt-6">
+          <CardFooter className="mt-6 flex flex-col space-y-6">
             <Button
               type="submit"
-              className="w-full bg-primary hover:bg-primary/90 shadow-sm"
+              className="bg-primary hover:bg-primary/90 w-full shadow-sm"
               disabled={isLoading || isSuccess || !email}
             >
               {isLoading ? (
@@ -135,14 +135,14 @@ export default function ForgotPasswordPage() {
                   Email Sent!
                 </>
               ) : (
-                "Send Reset Link"
+                'Send Reset Link'
               )}
             </Button>
 
             <div className="text-center">
               <Link
                 href="/login"
-                className="inline-flex items-center gap-2 text-sm text-primary hover:underline font-medium"
+                className="text-primary inline-flex items-center gap-2 text-sm font-medium hover:underline"
               >
                 <ArrowLeft className="h-4 w-4" />
                 Back to Sign In
@@ -152,5 +152,5 @@ export default function ForgotPasswordPage() {
         </form>
       </Card>
     </div>
-  );
+  )
 }

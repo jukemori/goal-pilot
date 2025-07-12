@@ -1,32 +1,32 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-import { Providers } from "@/components/providers/providers";
+import type { Metadata } from 'next'
+import { Geist, Geist_Mono } from 'next/font/google'
+import './globals.css'
+import { Providers } from '@/components/providers/providers'
 
 const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+  variable: '--font-geist-sans',
+  subsets: ['latin'],
+})
 
 const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+  variable: '--font-geist-mono',
+  subsets: ['latin'],
+})
 
 export const metadata: Metadata = {
-  title: "Goal Pilot - AI-Powered Goal Roadmap & Calendar",
+  title: 'Goal Pilot - AI-Powered Goal Roadmap & Calendar',
   description:
-    "Achieve your goals with personalized AI-generated roadmaps and daily task scheduling",
+    'Achieve your goals with personalized AI-generated roadmaps and daily task scheduling',
   icons: {
-    icon: "/target.svg",
-    apple: "/target.svg",
+    icon: '/target.svg',
+    apple: '/target.svg',
   },
-};
+}
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: React.ReactNode
 }>) {
   return (
     <html lang="en">
@@ -36,5 +36,5 @@ export default function RootLayout({
         <Providers>{children}</Providers>
       </body>
     </html>
-  );
+  )
 }
