@@ -6,7 +6,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { TemplateGrid } from './template-grid'
 import { GoalTemplate } from '@/lib/templates/goal-templates'
-import { Sparkles, ChevronDown, ChevronUp } from 'lucide-react'
+import { Sparkles, ChevronDown } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
 
 interface TemplatesSectionProps {
   hasActiveGoals: boolean
@@ -44,30 +45,47 @@ export function TemplatesSection({ hasActiveGoals }: TemplatesSectionProps) {
             onClick={() => setIsExpanded(!isExpanded)}
             className="gap-2 self-start md:self-auto"
           >
-            {isExpanded ? (
-              <>
-                Hide
-                <ChevronUp className="h-4 w-4" />
-              </>
-            ) : (
-              <>
-                Browse Templates
-                <ChevronDown className="h-4 w-4" />
-              </>
-            )}
+            <span>{isExpanded ? 'Hide' : 'Browse Templates'}</span>
+            <motion.div
+              animate={{ rotate: isExpanded ? 180 : 0 }}
+              transition={{ duration: 0.2, ease: "easeInOut" }}
+            >
+              <ChevronDown className="h-4 w-4" />
+            </motion.div>
           </Button>
         </div>
       </CardHeader>
       
-      {isExpanded && (
-        <CardContent>
-          <TemplateGrid
-            limit={hasActiveGoals ? 6 : 9} // Show more if no active goals
-            showMore={true}
-            onUseTemplate={handleUseTemplate}
-          />
-        </CardContent>
-      )}
+      <AnimatePresence>
+        {isExpanded && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ 
+              duration: 0.3, 
+              ease: "easeInOut",
+              opacity: { duration: 0.2 }
+            }}
+            style={{ overflow: "hidden" }}
+          >
+            <CardContent>
+              <motion.div
+                initial={{ y: -10 }}
+                animate={{ y: 0 }}
+                exit={{ y: -10 }}
+                transition={{ duration: 0.2, delay: 0.1 }}
+              >
+                <TemplateGrid
+                  limit={hasActiveGoals ? 6 : 9} // Show more if no active goals
+                  showMore={true}
+                  onUseTemplate={handleUseTemplate}
+                />
+              </motion.div>
+            </CardContent>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </Card>
   )
 }
