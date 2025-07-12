@@ -13,7 +13,7 @@ import {
   Menu,
   X
 } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
@@ -28,8 +28,13 @@ const navigation = [
 export function Sidebar() {
   const pathname = usePathname()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isHydrated, setIsHydrated] = useState(false)
   const router = useRouter()
   const supabase = createClient()
+
+  useEffect(() => {
+    setIsHydrated(true)
+  }, [])
 
   async function handleSignOut() {
     const { error } = await supabase.auth.signOut()
@@ -49,7 +54,7 @@ export function Sidebar() {
           size="icon"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         >
-          {isMobileMenuOpen ? <X /> : <Menu />}
+          {isHydrated && isMobileMenuOpen ? <X /> : <Menu />}
         </Button>
         <h2 className="text-lg font-semibold text-primary">Goal Pilot</h2>
         <div className="w-10" /> {/* Spacer for centering */}
@@ -58,7 +63,7 @@ export function Sidebar() {
       {/* Sidebar */}
       <div className={cn(
         "fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 transform transition-transform duration-200 ease-in-out",
-        isMobileMenuOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+        isHydrated && isMobileMenuOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
       )}>
         <div className="flex flex-col h-full">
           <div className="hidden lg:flex items-center justify-center h-16 border-b">
@@ -103,7 +108,7 @@ export function Sidebar() {
       </div>
 
       {/* Mobile overlay */}
-      {isMobileMenuOpen && (
+      {isHydrated && isMobileMenuOpen && (
         <div
           className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 lg:hidden cursor-pointer"
           onClick={() => setIsMobileMenuOpen(false)}
