@@ -191,9 +191,9 @@ export function CalendarView(_props: CalendarViewProps) {
               </div>
 
               {/* Calendar grid */}
-              <div className="grid grid-rows-6 gap-1 flex-1">
+              <div className="grid grid-rows-6 gap-0.5 md:gap-1 flex-1 min-w-0">
                 {weeks.map((week, weekIndex) => (
-                  <div key={weekIndex} className="grid grid-cols-7 gap-1">
+                  <div key={weekIndex} className="grid grid-cols-7 gap-0.5 md:gap-1 min-w-0">
                     {week.map((date) => {
                       const dateString = getDateString(date)
                       const dateTasks = getTasksForDate(date)
@@ -204,53 +204,55 @@ export function CalendarView(_props: CalendarViewProps) {
                           key={dateString}
                           onClick={() => setSelectedDate(isSelected ? null : dateString)}
                           className={cn(
-                            "p-1 md:p-2 text-left border rounded-lg transition-colors relative cursor-pointer flex flex-col h-full min-w-0",
+                            "p-0.5 md:p-2 text-left border rounded-lg transition-colors relative cursor-pointer flex flex-col h-full min-w-0 w-full",
                             isToday(date) && "border-primary bg-primary/5",
                             !isCurrentMonth(date) && "text-gray-400 bg-gray-50",
                             isSelected && "border-primary bg-primary/10",
                             dateTasks.length > 0 && "hover:bg-gray-50"
                           )}
                         >
-                          <div className="text-xs md:text-sm font-medium mb-1 flex-shrink-0">
+                          <div className="text-[10px] md:text-sm font-medium mb-0.5 md:mb-1 flex-shrink-0">
                             {date.getDate()}
                           </div>
                           
                           {dateTasks.length > 0 && (
-                            <div className="flex-1 space-y-0.5 md:space-y-1 min-h-0 overflow-hidden">
+                            <div className="flex-1 space-y-0.5 md:space-y-1 min-h-0 overflow-hidden w-full">
                               {/* Show only first task on mobile, first 2 on desktop */}
                               {dateTasks.slice(0, 1).map((task) => (
                                 <div
                                   key={task.id}
                                   className={cn(
-                                    "text-[8px] md:text-[10px] px-0.5 md:px-1 py-0.5 rounded bg-primary/10 text-primary overflow-hidden",
+                                    "text-[7px] md:text-[10px] px-0.5 md:px-1 py-0.5 rounded bg-primary/10 text-primary overflow-hidden w-full break-words",
                                     task.completed && "line-through opacity-60"
                                   )}
                                   title={task.title}
+                                  style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}
                                 >
-                                  <div className="truncate max-w-full">{task.title}</div>
+                                  <div className="truncate w-full leading-tight">{task.title}</div>
                                 </div>
                               ))}
                               
                               {/* Show second task only on medium screens and up */}
-                              <div className="hidden md:block">
+                              <div className="hidden md:block w-full">
                                 {dateTasks.slice(1, 2).map((task) => (
                                   <div
                                     key={task.id}
                                     className={cn(
-                                      "text-[10px] px-1 py-0.5 rounded bg-primary/10 text-primary overflow-hidden",
+                                      "text-[10px] px-1 py-0.5 rounded bg-primary/10 text-primary overflow-hidden w-full break-words",
                                       task.completed && "line-through opacity-60"
                                     )}
                                     title={task.title}
+                                    style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}
                                   >
-                                    <div className="truncate max-w-full">{task.title}</div>
+                                    <div className="truncate w-full">{task.title}</div>
                                   </div>
                                 ))}
                               </div>
                               
                               {/* More indicator - different count for mobile vs desktop */}
                               {dateTasks.length > 1 && (
-                                <div className="text-[8px] md:text-[9px] text-gray-500 px-0.5 md:px-1">
-                                  <span className="md:hidden">+{dateTasks.length - 1} more</span>
+                                <div className="text-[7px] md:text-[9px] text-gray-500 px-0.5 md:px-1 overflow-hidden">
+                                  <span className="md:hidden truncate">+{dateTasks.length - 1}</span>
                                   <span className="hidden md:inline">{dateTasks.length > 2 ? `+${dateTasks.length - 2} more` : ''}</span>
                                 </div>
                               )}

@@ -41,10 +41,10 @@ function GoalTabsInner({ children }: GoalTabsProps) {
         </TabsTrigger>
       </TabsList>
 
-      <TabsContent value="overview">{children.overview}</TabsContent>
-      <TabsContent value="roadmap">{children.roadmap}</TabsContent>
-      <TabsContent value="stages">{children.stages}</TabsContent>
-      <TabsContent value="progress">{children.progress}</TabsContent>
+      <TabsContent value="overview" className="mt-6">{children.overview}</TabsContent>
+      <TabsContent value="roadmap" className="mt-6">{children.roadmap}</TabsContent>
+      <TabsContent value="stages" className="mt-6">{children.stages}</TabsContent>
+      <TabsContent value="progress" className="mt-6">{children.progress}</TabsContent>
     </Tabs>
   )
 }
