@@ -118,91 +118,39 @@ export default async function GoalPage({ params }: GoalPageProps) {
             <div className="space-y-8">
           {/* Stats Grid */}
           <div className="grid gap-3 grid-cols-2 md:gap-6 md:grid-cols-2 lg:grid-cols-4">
-            <Card className="relative overflow-hidden bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 px-3 pt-3 md:pb-3 md:px-6">
-                <CardTitle className="text-xs md:text-sm font-medium text-gray-700">Total Progress</CardTitle>
-                <div className="p-1.5 md:p-2 bg-primary/10 rounded-full">
-                  <CheckCircle className="h-4 w-4 md:h-5 md:w-5 text-primary" />
-                </div>
-              </CardHeader>
-              <CardContent className="px-3 pb-3 md:px-6">
-                <div className="text-2xl md:text-3xl font-bold text-primary mb-1">{progressPercentage}%</div>
-                <p className="text-xs text-gray-600 hidden md:block">
-                  {completedTasks.length} of {totalTasks} tasks completed
-                </p>
-                <p className="text-xs text-gray-600 md:hidden">
-                  {completedTasks.length}/{totalTasks} tasks
-                </p>
-                <div className="mt-2 md:mt-3 w-full bg-gray-200 rounded-full h-1.5 md:h-2">
-                  <div 
-                    className="bg-primary h-1.5 md:h-2 rounded-full transition-all duration-500"
-                    style={{ width: `${progressPercentage}%` }}
-                  />
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card className="relative overflow-hidden bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 px-3 pt-3 md:pb-3 md:px-6">
-                <CardTitle className="text-xs md:text-sm font-medium text-gray-700">Days Active</CardTitle>
-                <div className="p-1.5 md:p-2 bg-blue-100 rounded-full">
-                  <Calendar className="h-4 w-4 md:h-5 md:w-5 text-blue-600" />
-                </div>
-              </CardHeader>
-              <CardContent className="px-3 pb-3 md:px-6">
-                <div className="text-2xl md:text-3xl font-bold text-blue-600 mb-1">{daysActive}</div>
-                <p className="text-xs text-gray-600">Since start</p>
-                <div className="mt-2 md:mt-3 flex items-center text-xs text-blue-600">
-                  <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-blue-600 rounded-full mr-1 md:mr-2"></div>
-                  <span className="hidden md:inline">Learning streak</span>
-                  <span className="md:hidden">Streak</span>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="relative overflow-hidden bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 px-3 pt-3 md:pb-3 md:px-6">
-                <CardTitle className="text-xs md:text-sm font-medium text-gray-700">Time Invested</CardTitle>
-                <div className="p-1.5 md:p-2 bg-purple-100 rounded-full">
-                  <Clock className="h-4 w-4 md:h-5 md:w-5 text-purple-600" />
-                </div>
-              </CardHeader>
-              <CardContent className="px-3 pb-3 md:px-6">
-                <div className="text-2xl md:text-3xl font-bold text-purple-600 mb-1">
-                  {Math.round((completedTasks.reduce((acc: number, task) => 
-                    acc + (task.estimated_duration || 0), 0)) / 60)}h
-                </div>
-                <p className="text-xs text-gray-600">Total hours</p>
-                <div className="mt-2 md:mt-3 flex items-center text-xs text-purple-600">
-                  <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-purple-600 rounded-full mr-1 md:mr-2"></div>
-                  <span className="hidden md:inline">Study time</span>
-                  <span className="md:hidden">Study</span>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="relative overflow-hidden bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 px-3 pt-3 md:pb-3 md:px-6">
-                <CardTitle className="text-xs md:text-sm font-medium text-gray-700">Tasks Today</CardTitle>
-                <div className="p-1.5 md:p-2 bg-orange-100 rounded-full">
-                  <Activity className="h-4 w-4 md:h-5 md:w-5 text-orange-600" />
-                </div>
-              </CardHeader>
-              <CardContent className="px-3 pb-3 md:px-6">
-                <div className="text-2xl md:text-3xl font-bold text-orange-600 mb-1">
-                  {tasks.filter((task) => {
-                    const today = new Date().toISOString().split('T')[0]
-                    return task.scheduled_date === today
-                  }).length}
-                </div>
-                <p className="text-xs text-gray-600">Scheduled</p>
-                <div className="mt-2 md:mt-3 flex items-center text-xs text-orange-600">
-                  <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-orange-600 rounded-full mr-1 md:mr-2"></div>
-                  <span className="hidden md:inline">Daily focus</span>
-                  <span className="md:hidden">Focus</span>
-                </div>
-              </CardContent>
-            </Card>
+            <StatsCard
+              title="Total Progress"
+              value={`${progressPercentage}%`}
+              icon={<CheckCircle className="h-4 w-4 md:h-5 md:w-5" />}
+              color="green"
+              subtitle={`${completedTasks.length} of ${totalTasks} tasks completed`}
+              progress={progressPercentage}
+            />
+            <StatsCard
+              title="Days Active"
+              value={daysActive}
+              icon={<Calendar className="h-4 w-4 md:h-5 md:w-5" />}
+              color="blue"
+              subtitle="Since start"
+            />
+            <StatsCard
+              title="Time Invested"
+              value={`${Math.round((completedTasks.reduce((acc: number, task) => 
+                acc + (task.estimated_duration || 0), 0)) / 60)}h`}
+              icon={<Clock className="h-4 w-4 md:h-5 md:w-5" />}
+              color="purple"
+              subtitle="Total hours"
+            />
+            <StatsCard
+              title="Tasks Today"
+              value={tasks.filter((task) => {
+                const today = new Date().toISOString().split('T')[0]
+                return task.scheduled_date === today
+              }).length}
+              icon={<Activity className="h-4 w-4 md:h-5 md:w-5" />}
+              color="orange"
+              subtitle="Scheduled"
+            />
           </div>
 
           {/* Roadmap Summary */}
@@ -313,5 +261,98 @@ export default async function GoalPage({ params }: GoalPageProps) {
         }}
       </GoalTabs>
     </div>
+  )
+}
+
+function StatsCard({
+  title,
+  value,
+  icon,
+  color,
+  subtitle,
+  progress,
+}: {
+  title: string
+  value: string | number
+  icon: React.ReactNode
+  color: 'blue' | 'purple' | 'green' | 'orange'
+  subtitle?: string
+  progress?: number
+}) {
+  const cardStyles = {
+    blue: 'bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200',
+    purple: 'bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200',
+    green: 'bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20',
+    orange: 'bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200',
+  }
+
+  const iconStyles = {
+    blue: 'bg-blue-100 text-blue-600',
+    purple: 'bg-purple-100 text-purple-600',
+    green: 'bg-primary/10 text-primary',
+    orange: 'bg-orange-100 text-orange-600',
+  }
+
+  const progressBarStyles = {
+    blue: 'bg-blue-600',
+    purple: 'bg-purple-600', 
+    green: 'bg-primary',
+    orange: 'bg-orange-600',
+  }
+
+  return (
+    <Card className={cn(
+      "relative overflow-hidden",
+      cardStyles[color]
+    )}>
+      <CardContent className="p-3 md:p-6">
+        <div className="flex items-center justify-between">
+          <div className="flex-1">
+            <p className="text-xs md:text-sm font-medium text-gray-700">{title}</p>
+            <p className="text-2xl md:text-3xl font-bold mt-0.5 md:mt-1 text-gray-900">{value}</p>
+            {subtitle && (
+              <p className="text-xs text-gray-600 mt-1">{subtitle}</p>
+            )}
+          </div>
+          <div className={cn(
+            "p-2 md:p-3 rounded-full ml-2 flex-shrink-0",
+            iconStyles[color]
+          )}>
+            {icon}
+          </div>
+        </div>
+        
+        {progress !== undefined ? (
+          <div className="mt-3">
+            <div className="flex items-center justify-between text-xs text-gray-600 mb-1">
+              <span>Progress</span>
+              <span>{progress}%</span>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-1.5">
+              <div 
+                className={cn("h-1.5 rounded-full transition-all duration-300", progressBarStyles[color])}
+                style={{ width: `${progress}%` }}
+              ></div>
+            </div>
+          </div>
+        ) : (
+          <div className="mt-2 md:mt-3 flex items-center text-xs text-gray-600">
+            <div className={cn(
+              "w-1.5 h-1.5 md:w-2 md:h-2 rounded-full mr-1 md:mr-2",
+              color === 'blue' && "bg-blue-600",
+              color === 'purple' && "bg-purple-600", 
+              color === 'green' && "bg-primary",
+              color === 'orange' && "bg-orange-600"
+            )}></div>
+            <span className="truncate">
+              {color === 'blue' && 'Learning streak'}
+              {color === 'purple' && 'Study time'}
+              {color === 'green' && 'Achievement rate'}
+              {color === 'orange' && 'Daily focus'}
+            </span>
+          </div>
+        )}
+      </CardContent>
+    </Card>
   )
 }

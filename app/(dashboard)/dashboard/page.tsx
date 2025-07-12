@@ -71,7 +71,7 @@ export default async function DashboardPage() {
 
       {/* Recent Goals */}
       <Card className="border-gray-200 shadow-sm">
-        <CardHeader className="flex flex-row items-center justify-between">
+        <CardHeader className="flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
           <div>
             <CardTitle className="flex items-center gap-2 text-gray-800">
               <div className="p-2 bg-gradient-to-br from-primary/10 to-primary/20 rounded-lg">
@@ -83,7 +83,7 @@ export default async function DashboardPage() {
               Your latest goals and their progress
             </CardDescription>
           </div>
-          <Link href="/goals/new">
+          <Link href="/goals/new" className="self-start sm:self-auto">
             <Button size="sm" className="bg-primary hover:bg-primary/90 shadow-md">
               <Plus className="h-4 w-4 mr-2" />
               New Goal
@@ -100,28 +100,28 @@ export default async function DashboardPage() {
                   className="block group"
                 >
                   <div className="p-4 border rounded-xl hover:bg-gradient-to-r hover:from-primary/5 hover:to-primary/10 hover:border-primary/20 transition-all duration-300 hover:shadow-md">
-                    <div className="flex items-center justify-between">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
-                          <h3 className="font-semibold text-gray-900 group-hover:text-primary transition-colors">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex flex-wrap items-center gap-2 mb-2">
+                          <h3 className="font-semibold text-gray-900 group-hover:text-primary transition-colors truncate">
                             {goal.title}
                           </h3>
-                          <Badge variant="secondary" className="text-xs">
+                          <Badge variant="secondary" className="text-xs flex-shrink-0">
                             {goal.status}
                           </Badge>
                         </div>
-                        <div className="flex items-center gap-4 text-sm text-gray-600">
-                          <div className="flex items-center gap-1">
-                            <Star className="h-3 w-3" />
-                            {goal.current_level} level
+                        <div className="flex flex-col gap-1 text-sm text-gray-600 sm:flex-row sm:items-center sm:gap-3">
+                          <div className="flex items-center gap-1 min-w-0">
+                            <Star className="h-3 w-3 flex-shrink-0" />
+                            <span className="truncate">{goal.current_level}</span>
                           </div>
                           <div className="flex items-center gap-1">
-                            <Clock className="h-3 w-3" />
-                            {goal.daily_time_commitment} min/day
+                            <Clock className="h-3 w-3 flex-shrink-0" />
+                            <span className="whitespace-nowrap">{goal.daily_time_commitment} min/day</span>
                           </div>
                         </div>
                       </div>
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 flex-shrink-0">
                         <div className="flex items-center gap-1">
                           {goal.roadmaps.length > 0 ? (
                             <>
