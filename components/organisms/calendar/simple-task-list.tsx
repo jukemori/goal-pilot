@@ -50,7 +50,9 @@ export function SimpleTaskList({
           ],
         })
         // Also invalidate any other task-related queries
-        queryClient.invalidateQueries({ queryKey: ['tasks'] })
+        queryClient.invalidateQueries({
+          queryKey: ['tasks'],
+        })
       } catch {
         toast.error('Failed to update task')
       } finally {

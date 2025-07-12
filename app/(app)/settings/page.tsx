@@ -61,7 +61,9 @@ export default function SettingsPage() {
         // Fetch both profile and preferences in parallel for better performance
         const [profilePromise, prefsPromise] = [
           fetch('/api/user/profile', { cache: 'default' }),
-          fetch('/api/user/preferences', { cache: 'default' }),
+          fetch('/api/user/preferences', {
+            cache: 'default',
+          }),
         ]
 
         // Handle profile data as soon as it loads

@@ -20,5 +20,8 @@ export const completedGoalsAtom = atom((get) =>
 export const goalFiltersAtom = atomWithStorage('goal-filters', {
   level: 'all',
   status: 'all',
-  dateRange: null as { start: string; end: string } | null,
+  dateRange: null as {
+    start: string
+    end: string
+  } | null,
 })

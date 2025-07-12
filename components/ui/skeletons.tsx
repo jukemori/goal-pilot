@@ -80,7 +80,9 @@ export function ProgressChartSkeleton() {
           <div key={i} className="flex flex-1 flex-col items-center gap-2">
             <Skeleton
               className="w-full rounded-t"
-              style={{ height: `${Math.random() * 150 + 50}px` }}
+              style={{
+                height: `${Math.random() * 150 + 50}px`,
+              }}
             />
             <Skeleton className="h-3 w-8" />
           </div>

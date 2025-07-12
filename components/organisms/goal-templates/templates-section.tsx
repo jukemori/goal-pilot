@@ -54,7 +54,10 @@ export function TemplatesSection({ hasActiveGoals }: TemplatesSectionProps) {
             <span>{isExpanded ? 'Hide' : 'Browse Templates'}</span>
             <motion.div
               animate={{ rotate: isExpanded ? 180 : 0 }}
-              transition={{ duration: 0.2, ease: 'easeInOut' }}
+              transition={{
+                duration: 0.2,
+                ease: 'easeInOut',
+              }}
             >
               <ChevronDown className="h-4 w-4" />
             </motion.div>

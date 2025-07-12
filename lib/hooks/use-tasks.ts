@@ -77,7 +77,9 @@ export function useCompleteTask() {
     mutationFn: completeTask,
     onMutate: async (taskId: string) => {
       // Cancel outgoing refetches
-      await queryClient.cancelQueries({ queryKey: ['tasks'] })
+      await queryClient.cancelQueries({
+        queryKey: ['tasks'],
+      })
 
       // Snapshot previous value
       const previousTasks = queryClient.getQueryData(['tasks'])
@@ -120,7 +122,9 @@ export function useUncompleteTask() {
   return useMutation({
     mutationFn: uncompleteTask,
     onMutate: async (taskId: string) => {
-      await queryClient.cancelQueries({ queryKey: ['tasks'] })
+      await queryClient.cancelQueries({
+        queryKey: ['tasks'],
+      })
 
       const previousTasks = queryClient.getQueryData(['tasks'])
 
@@ -130,7 +134,11 @@ export function useUncompleteTask() {
           if (!old) return old
           return old.map((task) =>
             task.id === taskId
-              ? { ...task, completed: false, completed_at: null }
+              ? {
+                  ...task,
+                  completed: false,
+                  completed_at: null,
+                }
               : task,
           )
         },

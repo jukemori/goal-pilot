@@ -101,7 +101,9 @@ export function useUpdateGoalStatus() {
     },
     onSuccess: (_, { goalId }) => {
       queryClient.invalidateQueries({ queryKey: ['goals'] })
-      queryClient.invalidateQueries({ queryKey: ['goals', goalId] })
+      queryClient.invalidateQueries({
+        queryKey: ['goals', goalId],
+      })
       toast.success('Goal status updated')
     },
     onError: () => {

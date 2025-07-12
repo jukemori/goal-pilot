@@ -61,7 +61,10 @@ export async function generateRoadmapLegacy(goalId: string) {
           {
             model: AI_MODELS.roadmap,
             messages: [
-              { role: 'system', content: ROADMAP_SYSTEM_PROMPT },
+              {
+                role: 'system',
+                content: ROADMAP_SYSTEM_PROMPT,
+              },
               { role: 'user', content: prompt },
             ],
             response_format: { type: 'json_object' },
@@ -339,7 +342,10 @@ export async function generateRoadmapOverview(goalId: string) {
         {
           model: AI_MODELS.roadmap,
           messages: [
-            { role: 'system', content: ROADMAP_SYSTEM_PROMPT },
+            {
+              role: 'system',
+              content: ROADMAP_SYSTEM_PROMPT,
+            },
             { role: 'user', content: prompt },
           ],
           response_format: { type: 'json_object' },
@@ -476,7 +482,10 @@ export async function generateRoadmapStages(roadmapId: string) {
         {
           model: AI_MODELS.stages,
           messages: [
-            { role: 'system', content: STAGES_SYSTEM_PROMPT },
+            {
+              role: 'system',
+              content: STAGES_SYSTEM_PROMPT,
+            },
             { role: 'user', content: prompt },
           ],
           response_format: { type: 'json_object' },

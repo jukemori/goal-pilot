@@ -133,7 +133,11 @@ export function RoadmapTimeline({
       }
 
       if (!roadmap?.ai_generated_plan) {
-        return { roadmapPhases: [], milestones: [], goal: roadmap.goals }
+        return {
+          roadmapPhases: [],
+          milestones: [],
+          goal: roadmap.goals,
+        }
       }
 
       const aiPlan = roadmap.ai_generated_plan as {

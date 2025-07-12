@@ -143,7 +143,10 @@ export function ProgressStages({
       const response = await fetch('/api/tasks/generate-phase', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phaseId: stage.id, roadmapId }),
+        body: JSON.stringify({
+          phaseId: stage.id,
+          roadmapId,
+        }),
       })
 
       if (!response.ok) {
@@ -168,8 +171,12 @@ export function ProgressStages({
         queryClient.invalidateQueries({
           queryKey: ['progress-stages', roadmapId],
         })
-        queryClient.invalidateQueries({ queryKey: ['tasks', roadmapId] })
-        queryClient.invalidateQueries({ queryKey: ['goals'] })
+        queryClient.invalidateQueries({
+          queryKey: ['tasks', roadmapId],
+        })
+        queryClient.invalidateQueries({
+          queryKey: ['goals'],
+        })
       }, 100)
     },
     onError: (error: Error) => {
@@ -476,7 +483,10 @@ export function ProgressStages({
                       {generatingPhase === stage.id ? (
                         <motion.div
                           key="generating"
-                          initial={{ opacity: 0, scale: 0.8 }}
+                          initial={{
+                            opacity: 0,
+                            scale: 0.8,
+                          }}
                           animate={{ opacity: 1, scale: 1 }}
                           exit={{ opacity: 0, scale: 0.8 }}
                           className="flex items-center gap-2"

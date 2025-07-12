@@ -19,7 +19,11 @@ import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 
 const navigation = [
-  { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+  {
+    name: 'Dashboard',
+    href: '/dashboard',
+    icon: LayoutDashboard,
+  },
   { name: 'Goals', href: '/goals', icon: Target },
   { name: 'Calendar', href: '/calendar', icon: Calendar },
   { name: 'Settings', href: '/settings', icon: Settings },

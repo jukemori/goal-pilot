@@ -11,7 +11,10 @@ interface ErrorBoundaryState {
 }
 
 interface ErrorBoundaryProps extends PropsWithChildren {
-  fallback?: React.ComponentType<{ error?: Error; resetError: () => void }>
+  fallback?: React.ComponentType<{
+    error?: Error
+    resetError: () => void
+  }>
   onError?: (error: Error, errorInfo: ErrorInfo) => void
 }
 

@@ -53,7 +53,10 @@ export async function POST(request: NextRequest) {
           {
             model: AI_MODELS.roadmap,
             messages: [
-              { role: 'system', content: ROADMAP_SYSTEM_PROMPT },
+              {
+                role: 'system',
+                content: ROADMAP_SYSTEM_PROMPT,
+              },
               { role: 'user', content: prompt },
             ],
             response_format: { type: 'json_object' },

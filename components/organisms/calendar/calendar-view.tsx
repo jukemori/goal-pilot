@@ -63,7 +63,10 @@ const CalendarTaskItem = memo(function CalendarTaskItem({
         className,
       )}
       title={task.title}
-      style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}
+      style={{
+        wordBreak: 'break-word',
+        overflowWrap: 'break-word',
+      }}
     >
       <div className="w-full truncate leading-tight">{task.title}</div>
     </div>
@@ -84,7 +87,10 @@ const CalendarTaskItemDesktop = memo(function CalendarTaskItemDesktop({
         task.completed === true && 'line-through opacity-60',
       )}
       title={task.title}
-      style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}
+      style={{
+        wordBreak: 'break-word',
+        overflowWrap: 'break-word',
+      }}
     >
       <div className="w-full truncate">{task.title}</div>
     </div>
@@ -453,7 +459,8 @@ export function CalendarView(_props: CalendarViewProps) {
                             </h4>
                             <div className="mt-1 flex items-center gap-1 text-[10px] text-gray-500">
                               <Clock className="h-2 w-2" />
-                              {task.estimated_duration || 0}min
+                              {task.estimated_duration || 0}
+                              min
                             </div>
                           </div>
                         </div>

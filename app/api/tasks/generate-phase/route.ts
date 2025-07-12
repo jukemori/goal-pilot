@@ -119,7 +119,10 @@ export async function POST(request: NextRequest) {
     const completion = await openai.chat.completions.create({
       model: AI_MODELS.tasks,
       messages: [
-        { role: 'system', content: TASK_GENERATION_SYSTEM_PROMPT },
+        {
+          role: 'system',
+          content: TASK_GENERATION_SYSTEM_PROMPT,
+        },
         { role: 'user', content: prompt },
       ],
       response_format: { type: 'json_object' },

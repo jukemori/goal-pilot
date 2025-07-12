@@ -37,7 +37,10 @@ export async function createGoal(formData: FormData) {
         : null,
   }
 
-  console.log('Creating goal with data:', { user_id: user.id, ...goalData })
+  console.log('Creating goal with data:', {
+    user_id: user.id,
+    ...goalData,
+  })
 
   // Create the goal
   const { data: goal, error } = await supabase

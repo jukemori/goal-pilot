@@ -44,7 +44,9 @@ export async function POST(request: NextRequest) {
       .limit(1)
 
     if (existingPhases && existingPhases.length > 0) {
-      return NextResponse.json({ message: 'Progress stages already exist' })
+      return NextResponse.json({
+        message: 'Progress stages already exist',
+      })
     }
 
     // Extract phases from roadmap

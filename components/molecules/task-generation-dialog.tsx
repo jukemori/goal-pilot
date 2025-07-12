@@ -35,7 +35,11 @@ export function TaskGenerationDialog({
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
-            transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+            transition={{
+              type: 'spring',
+              stiffness: 500,
+              damping: 30,
+            }}
             className="mb-4 flex justify-center"
           >
             <div className="bg-primary/10 rounded-full p-3">
