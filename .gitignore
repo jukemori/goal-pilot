@@ -42,7 +42,13 @@ yarn-error.log*
 **/*secret*
 **/*key*
 **/*token*
-**/*password*
+# Ignore password files but not password-related pages/components
+**/*password*.env
+**/*password*.key
+**/*password*.txt
+**/*password*.json
+!**/forgot-password/**
+!**/reset-password/**
 
 # vercel
 .vercel
