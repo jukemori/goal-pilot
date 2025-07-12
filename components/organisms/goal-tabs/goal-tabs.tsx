@@ -24,20 +24,28 @@ function GoalTabsInner({ children }: GoalTabsProps) {
     <Tabs value={tab} onValueChange={setTab} className="w-full">
       <TabsList className="grid w-full grid-cols-4 sm:flex sm:w-auto sm:justify-start h-auto">
         <TabsTrigger value="overview" className="flex flex-col sm:flex-row items-center justify-center px-1 py-2 sm:px-2 sm:py-1.5 text-xs sm:text-sm">
-          <BarChart3 className="h-4 w-4 sm:mr-2 mb-0.5 sm:mb-0" />
-          <span>Overview</span>
+          <span className="flex flex-col sm:flex-row items-center relative group-data-[state=active]:after:absolute group-data-[state=active]:after:bottom-[-6px] group-data-[state=active]:after:left-0 group-data-[state=active]:after:right-0 group-data-[state=active]:after:h-0.5 group-data-[state=active]:after:bg-primary">
+            <BarChart3 className="h-4 w-4 sm:mr-2 mb-0.5 sm:mb-0" />
+            <span>Overview</span>
+          </span>
         </TabsTrigger>
         <TabsTrigger value="roadmap" className="flex flex-col sm:flex-row items-center justify-center px-1 py-2 sm:px-2 sm:py-1.5 text-xs sm:text-sm">
-          <BookOpen className="h-4 w-4 sm:mr-2 mb-0.5 sm:mb-0" />
-          <span>Roadmap</span>
+          <span className="flex flex-col sm:flex-row items-center relative group-data-[state=active]:after:absolute group-data-[state=active]:after:bottom-[-6px] group-data-[state=active]:after:left-0 group-data-[state=active]:after:right-0 group-data-[state=active]:after:h-0.5 group-data-[state=active]:after:bg-primary">
+            <BookOpen className="h-4 w-4 sm:mr-2 mb-0.5 sm:mb-0" />
+            <span>Roadmap</span>
+          </span>
         </TabsTrigger>
         <TabsTrigger value="stages" className="flex flex-col sm:flex-row items-center justify-center px-1 py-2 sm:px-2 sm:py-1.5 text-xs sm:text-sm">
-          <Target className="h-4 w-4 sm:mr-2 mb-0.5 sm:mb-0" />
-          <span>Stages</span>
+          <span className="flex flex-col sm:flex-row items-center relative group-data-[state=active]:after:absolute group-data-[state=active]:after:bottom-[-6px] group-data-[state=active]:after:left-0 group-data-[state=active]:after:right-0 group-data-[state=active]:after:h-0.5 group-data-[state=active]:after:bg-primary">
+            <Target className="h-4 w-4 sm:mr-2 mb-0.5 sm:mb-0" />
+            <span>Stages</span>
+          </span>
         </TabsTrigger>
         <TabsTrigger value="progress" className="flex flex-col sm:flex-row items-center justify-center px-1 py-2 sm:px-2 sm:py-1.5 text-xs sm:text-sm">
-          <TrendingUp className="h-4 w-4 sm:mr-2 mb-0.5 sm:mb-0" />
-          <span>Progress</span>
+          <span className="flex flex-col sm:flex-row items-center relative group-data-[state=active]:after:absolute group-data-[state=active]:after:bottom-[-6px] group-data-[state=active]:after:left-0 group-data-[state=active]:after:right-0 group-data-[state=active]:after:h-0.5 group-data-[state=active]:after:bg-primary">
+            <TrendingUp className="h-4 w-4 sm:mr-2 mb-0.5 sm:mb-0" />
+            <span>Progress</span>
+          </span>
         </TabsTrigger>
       </TabsList>
 
