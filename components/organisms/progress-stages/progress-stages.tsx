@@ -367,7 +367,7 @@ export function ProgressStages({
                 {/* Show objectives if available */}
                 {stage.learning_objectives &&
                   stage.learning_objectives.length > 0 && (
-                    <div className="p-4">
+                    <div className="p-4 border border-gray-200 rounded-lg">
                       <p className="text-sm font-semibold mb-3 text-gray-900 flex items-center gap-2">
                         <span className="w-2 h-2 bg-green-600 rounded-full"></span>
                         Objectives:
@@ -387,7 +387,7 @@ export function ProgressStages({
 
                 {/* Show resources if available */}
                 {stage.resources && (
-                  <div className="p-4">
+                  <div className="p-4 border border-gray-200 rounded-lg">
                     <p className="text-sm font-semibold mb-3 text-gray-900 flex items-center gap-2">
                       <span className="w-2 h-2 bg-green-600 rounded-full"></span>
                       Resources & Tools:
