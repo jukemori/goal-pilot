@@ -68,8 +68,14 @@ export function SimpleTaskList({ tasks, goalId: _goalId }: SimpleTaskListProps) 
   if (tasks.length === 0) {
     return (
       <div className="text-center py-8">
-        <p className="text-gray-500 mb-2">No tasks for today</p>
-        <p className="text-sm text-gray-400">Enjoy your free time!</p>
+        <div className="relative mb-4">
+          <div className="mx-auto w-12 h-12 bg-gradient-to-br from-green-50 to-green-100 rounded-full flex items-center justify-center">
+            <CheckCircle className="h-6 w-6 text-green-600" />
+          </div>
+          <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-16 h-16 bg-green-50 rounded-full -z-10"></div>
+        </div>
+        <h3 className="text-sm font-semibold text-gray-900 mb-1">No tasks for today</h3>
+        <p className="text-xs text-gray-500">Enjoy your free time!</p>
       </div>
     )
   }
