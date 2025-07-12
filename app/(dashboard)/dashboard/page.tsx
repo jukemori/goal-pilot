@@ -293,10 +293,10 @@ function StatsCard({
   color: 'blue' | 'purple' | 'green' | 'orange'
 }) {
   const cardStyles = {
-    blue: 'bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200 hover:shadow-lg hover:shadow-blue-100',
-    purple: 'bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200 hover:shadow-lg hover:shadow-purple-100',
-    green: 'bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20 hover:shadow-lg hover:shadow-primary/10',
-    orange: 'bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200 hover:shadow-lg hover:shadow-orange-100',
+    blue: 'bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200',
+    purple: 'bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200',
+    green: 'bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20',
+    orange: 'bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200',
   }
 
   const iconStyles = {
@@ -308,34 +308,36 @@ function StatsCard({
 
   return (
     <Card className={cn(
-      "relative overflow-hidden transition-all duration-300 hover:scale-105",
+      "relative overflow-hidden",
       cardStyles[color]
     )}>
-      <CardContent className="p-6">
+      <CardContent className="p-3 md:p-6">
         <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm font-medium text-gray-700">{title}</p>
-            <p className="text-3xl font-bold mt-1 text-gray-900">{value}</p>
+          <div className="flex-1">
+            <p className="text-xs md:text-sm font-medium text-gray-700">{title}</p>
+            <p className="text-2xl md:text-3xl font-bold mt-0.5 md:mt-1 text-gray-900">{value}</p>
           </div>
           <div className={cn(
-            "p-3 rounded-full transition-transform duration-300 hover:scale-110",
+            "p-2 md:p-3 rounded-full ml-2 flex-shrink-0",
             iconStyles[color]
           )}>
             {icon}
           </div>
         </div>
-        <div className="mt-3 flex items-center text-xs text-gray-600">
+        <div className="mt-2 md:mt-3 flex items-center text-xs text-gray-600">
           <div className={cn(
-            "w-2 h-2 rounded-full mr-2",
+            "w-1.5 h-1.5 md:w-2 md:h-2 rounded-full mr-1 md:mr-2",
             color === 'blue' && "bg-blue-600",
             color === 'purple' && "bg-purple-600", 
             color === 'green' && "bg-primary",
             color === 'orange' && "bg-orange-600"
           )}></div>
-          {color === 'blue' && 'Active learning'}
-          {color === 'purple' && 'Daily focus'}
-          {color === 'green' && 'Achievement rate'}
-          {color === 'orange' && 'Success metric'}
+          <span className="truncate">
+            {color === 'blue' && 'Active learning'}
+            {color === 'purple' && 'Daily focus'}
+            {color === 'green' && 'Achievement rate'}
+            {color === 'orange' && 'Success metric'}
+          </span>
         </div>
       </CardContent>
     </Card>

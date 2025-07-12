@@ -117,83 +117,89 @@ export default async function GoalPage({ params }: GoalPageProps) {
           overview: (
             <div className="space-y-8">
           {/* Stats Grid */}
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-            <Card className="relative overflow-hidden bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20 hover:shadow-lg hover:shadow-primary/10 transition-all duration-300">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-                <CardTitle className="text-sm font-medium text-gray-700">Total Progress</CardTitle>
-                <div className="p-2 bg-primary/10 rounded-full">
-                  <CheckCircle className="h-5 w-5 text-primary" />
+          <div className="grid gap-3 grid-cols-2 md:gap-6 md:grid-cols-2 lg:grid-cols-4">
+            <Card className="relative overflow-hidden bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 px-3 pt-3 md:pb-3 md:px-6">
+                <CardTitle className="text-xs md:text-sm font-medium text-gray-700">Total Progress</CardTitle>
+                <div className="p-1.5 md:p-2 bg-primary/10 rounded-full">
+                  <CheckCircle className="h-4 w-4 md:h-5 md:w-5 text-primary" />
                 </div>
               </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold text-primary mb-1">{progressPercentage}%</div>
-                <p className="text-xs text-gray-600">
+              <CardContent className="px-3 pb-3 md:px-6">
+                <div className="text-2xl md:text-3xl font-bold text-primary mb-1">{progressPercentage}%</div>
+                <p className="text-xs text-gray-600 hidden md:block">
                   {completedTasks.length} of {totalTasks} tasks completed
                 </p>
-                <div className="mt-3 w-full bg-gray-200 rounded-full h-2">
+                <p className="text-xs text-gray-600 md:hidden">
+                  {completedTasks.length}/{totalTasks} tasks
+                </p>
+                <div className="mt-2 md:mt-3 w-full bg-gray-200 rounded-full h-1.5 md:h-2">
                   <div 
-                    className="bg-primary h-2 rounded-full transition-all duration-500"
+                    className="bg-primary h-1.5 md:h-2 rounded-full transition-all duration-500"
                     style={{ width: `${progressPercentage}%` }}
                   />
                 </div>
               </CardContent>
             </Card>
             
-            <Card className="relative overflow-hidden bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200 hover:shadow-lg hover:shadow-blue-100 transition-all duration-300">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-                <CardTitle className="text-sm font-medium text-gray-700">Days Active</CardTitle>
-                <div className="p-2 bg-blue-100 rounded-full">
-                  <Calendar className="h-5 w-5 text-blue-600" />
+            <Card className="relative overflow-hidden bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 px-3 pt-3 md:pb-3 md:px-6">
+                <CardTitle className="text-xs md:text-sm font-medium text-gray-700">Days Active</CardTitle>
+                <div className="p-1.5 md:p-2 bg-blue-100 rounded-full">
+                  <Calendar className="h-4 w-4 md:h-5 md:w-5 text-blue-600" />
                 </div>
               </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold text-blue-600 mb-1">{daysActive}</div>
-                <p className="text-xs text-gray-600">Since start date</p>
-                <div className="mt-3 flex items-center text-xs text-blue-600">
-                  <div className="w-2 h-2 bg-blue-600 rounded-full mr-2"></div>
-                  Learning streak
+              <CardContent className="px-3 pb-3 md:px-6">
+                <div className="text-2xl md:text-3xl font-bold text-blue-600 mb-1">{daysActive}</div>
+                <p className="text-xs text-gray-600">Since start</p>
+                <div className="mt-2 md:mt-3 flex items-center text-xs text-blue-600">
+                  <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-blue-600 rounded-full mr-1 md:mr-2"></div>
+                  <span className="hidden md:inline">Learning streak</span>
+                  <span className="md:hidden">Streak</span>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="relative overflow-hidden bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200 hover:shadow-lg hover:shadow-purple-100 transition-all duration-300">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-                <CardTitle className="text-sm font-medium text-gray-700">Time Invested</CardTitle>
-                <div className="p-2 bg-purple-100 rounded-full">
-                  <Clock className="h-5 w-5 text-purple-600" />
+            <Card className="relative overflow-hidden bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 px-3 pt-3 md:pb-3 md:px-6">
+                <CardTitle className="text-xs md:text-sm font-medium text-gray-700">Time Invested</CardTitle>
+                <div className="p-1.5 md:p-2 bg-purple-100 rounded-full">
+                  <Clock className="h-4 w-4 md:h-5 md:w-5 text-purple-600" />
                 </div>
               </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold text-purple-600 mb-1">
+              <CardContent className="px-3 pb-3 md:px-6">
+                <div className="text-2xl md:text-3xl font-bold text-purple-600 mb-1">
                   {Math.round((completedTasks.reduce((acc: number, task) => 
                     acc + (task.estimated_duration || 0), 0)) / 60)}h
                 </div>
                 <p className="text-xs text-gray-600">Total hours</p>
-                <div className="mt-3 flex items-center text-xs text-purple-600">
-                  <div className="w-2 h-2 bg-purple-600 rounded-full mr-2"></div>
-                  Study time
+                <div className="mt-2 md:mt-3 flex items-center text-xs text-purple-600">
+                  <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-purple-600 rounded-full mr-1 md:mr-2"></div>
+                  <span className="hidden md:inline">Study time</span>
+                  <span className="md:hidden">Study</span>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="relative overflow-hidden bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200 hover:shadow-lg hover:shadow-orange-100 transition-all duration-300">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-                <CardTitle className="text-sm font-medium text-gray-700">Tasks Today</CardTitle>
-                <div className="p-2 bg-orange-100 rounded-full">
-                  <Activity className="h-5 w-5 text-orange-600" />
+            <Card className="relative overflow-hidden bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 px-3 pt-3 md:pb-3 md:px-6">
+                <CardTitle className="text-xs md:text-sm font-medium text-gray-700">Tasks Today</CardTitle>
+                <div className="p-1.5 md:p-2 bg-orange-100 rounded-full">
+                  <Activity className="h-4 w-4 md:h-5 md:w-5 text-orange-600" />
                 </div>
               </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold text-orange-600 mb-1">
+              <CardContent className="px-3 pb-3 md:px-6">
+                <div className="text-2xl md:text-3xl font-bold text-orange-600 mb-1">
                   {tasks.filter((task) => {
                     const today = new Date().toISOString().split('T')[0]
                     return task.scheduled_date === today
                   }).length}
                 </div>
-                <p className="text-xs text-gray-600">Scheduled for today</p>
-                <div className="mt-3 flex items-center text-xs text-orange-600">
-                  <div className="w-2 h-2 bg-orange-600 rounded-full mr-2"></div>
-                  Daily focus
+                <p className="text-xs text-gray-600">Scheduled</p>
+                <div className="mt-2 md:mt-3 flex items-center text-xs text-orange-600">
+                  <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-orange-600 rounded-full mr-1 md:mr-2"></div>
+                  <span className="hidden md:inline">Daily focus</span>
+                  <span className="md:hidden">Focus</span>
                 </div>
               </CardContent>
             </Card>

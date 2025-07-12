@@ -110,27 +110,36 @@ export function ProgressChart({ tasks }: ProgressChartProps) {
   return (
     <div className="space-y-8">
         {/* Key Stats */}
-        <div className="grid grid-cols-3 gap-4">
-          <div className="text-center p-4 rounded-xl bg-gradient-to-br from-primary/5 to-primary/10 border border-primary/20 hover:shadow-lg hover:shadow-primary/10 transition-all duration-300">
-            <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-2">
-              <Trophy className="h-6 w-6 text-primary" />
+        <div className="grid grid-cols-3 gap-2 md:gap-4">
+          <div className="text-center p-2 md:p-4 rounded-xl bg-gradient-to-br from-primary/5 to-primary/10 border border-primary/20">
+            <div className="w-8 h-8 md:w-12 md:h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-1 md:mb-2">
+              <Trophy className="h-4 w-4 md:h-6 md:w-6 text-primary" />
             </div>
-            <div className="text-2xl font-bold text-primary">{overallProgress}%</div>
-            <div className="text-xs text-gray-500">Overall Progress</div>
+            <div className="text-lg md:text-2xl font-bold text-primary">{overallProgress}%</div>
+            <div className="text-xs text-gray-500">
+              <span className="hidden md:inline">Overall Progress</span>
+              <span className="md:hidden">Progress</span>
+            </div>
           </div>
-          <div className="text-center p-4 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 hover:shadow-lg hover:shadow-blue-100 transition-all duration-300">
-            <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2">
-              <CheckCircle2 className="h-6 w-6 text-blue-600" />
+          <div className="text-center p-2 md:p-4 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200">
+            <div className="w-8 h-8 md:w-12 md:h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-1 md:mb-2">
+              <CheckCircle2 className="h-4 w-4 md:h-6 md:w-6 text-blue-600" />
             </div>
-            <div className="text-2xl font-bold text-blue-600">{completedTasks}</div>
-            <div className="text-xs text-gray-500">Tasks Done</div>
+            <div className="text-lg md:text-2xl font-bold text-blue-600">{completedTasks}</div>
+            <div className="text-xs text-gray-500">
+              <span className="hidden md:inline">Tasks Done</span>
+              <span className="md:hidden">Done</span>
+            </div>
           </div>
-          <div className="text-center p-4 rounded-xl bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 hover:shadow-lg hover:shadow-purple-100 transition-all duration-300">
-            <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-2">
-              <Flame className="h-6 w-6 text-purple-600" />
+          <div className="text-center p-2 md:p-4 rounded-xl bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200">
+            <div className="w-8 h-8 md:w-12 md:h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-1 md:mb-2">
+              <Flame className="h-4 w-4 md:h-6 md:w-6 text-purple-600" />
             </div>
-            <div className="text-2xl font-bold text-purple-600">{currentStreak}</div>
-            <div className="text-xs text-gray-500">Day Streak</div>
+            <div className="text-lg md:text-2xl font-bold text-purple-600">{currentStreak}</div>
+            <div className="text-xs text-gray-500">
+              <span className="hidden md:inline">Day Streak</span>
+              <span className="md:hidden">Streak</span>
+            </div>
           </div>
         </div>
 
