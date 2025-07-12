@@ -21,7 +21,7 @@ export default async function DashboardLayout({
       <div className="lg:pl-64">
         {/* Mobile header spacing */}
         <div className="h-16 lg:hidden" />
-        <main className="p-3 md:p-4 lg:p-8">
+        <main className="p-3 pb-8 md:p-4 lg:p-8">
           {children}
         </main>
       </div>

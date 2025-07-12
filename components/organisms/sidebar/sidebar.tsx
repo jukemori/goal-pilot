@@ -43,7 +43,7 @@ export function Sidebar() {
   return (
     <>
       {/* Mobile header */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-white border-b border-gray-200 z-50 flex items-center justify-between px-4">
+      <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-white border-b border-gray-200 z-30 flex items-center justify-between px-4">
         <Button
           variant="ghost"
           size="icon"
@@ -65,7 +65,7 @@ export function Sidebar() {
             <h2 className="text-xl font-bold text-primary">Goal Pilot</h2>
           </div>
           
-          <nav className="flex-1 px-4 py-4 space-y-1">
+          <nav className="flex-1 px-4 pt-8 pb-4 lg:pt-4 space-y-1">
             {navigation.map((item) => {
               const isActive = item.href === '/goals' 
                 ? pathname.startsWith('/goals')
@@ -105,7 +105,7 @@ export function Sidebar() {
       {/* Mobile overlay */}
       {isMobileMenuOpen && (
         <div
-          className="fixed inset-0 bg-white/1 backdrop-blur-sm z-30 lg:hidden cursor-pointer"
+          className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 lg:hidden cursor-pointer"
           onClick={() => setIsMobileMenuOpen(false)}
         />
       )}
