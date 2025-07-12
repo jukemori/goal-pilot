@@ -133,7 +133,7 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "learning_phases_roadmap_id_fkey"
+            foreignKeyName: "progress_stages_roadmap_id_fkey"
             columns: ["roadmap_id"]
             isOneToOne: false
             referencedRelation: "roadmaps"
