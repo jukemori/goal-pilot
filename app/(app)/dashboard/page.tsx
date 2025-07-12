@@ -22,7 +22,19 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { StatsCard } from "@/components/molecules/stats-card";
-import { cn } from "@/lib/utils";
+import dynamic from "next/dynamic";
+import { ClickableTaskItemSkeleton } from "@/components/molecules/clickable-task-item";
+
+// Lazy load the ClickableTaskItem component for better performance
+const ClickableTaskItem = dynamic(
+  () =>
+    import("@/components/molecules/clickable-task-item").then((mod) => ({
+      default: mod.ClickableTaskItem,
+    })),
+  {
+    loading: () => <ClickableTaskItemSkeleton />,
+  },
+);
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -238,79 +250,8 @@ export default async function DashboardPage() {
           {todayTasks && todayTasks.length > 0 ? (
             <div className="space-y-3">
               {todayTasks.map((task) => (
-                <div
-                  key={task.id}
-                  className={cn(
-                    "group flex items-center gap-3 p-4 border rounded-xl transition-all duration-300 hover:shadow-md",
-                    task.completed
-                      ? "bg-gradient-to-r from-green-50 to-green-100 border-green-200 opacity-75"
-                      : "hover:bg-gradient-to-r hover:from-blue-50 hover:to-blue-100 hover:border-blue-200",
-                  )}
-                >
-                  <div
-                    className={cn(
-                      "w-4 h-4 rounded-full border-2 flex items-center justify-center",
-                      task.completed
-                        ? "bg-primary border-primary"
-                        : "border-gray-300 group-hover:border-blue-500",
-                    )}
-                  >
-                    {task.completed && (
-                      <CheckCircle className="h-3 w-3 text-white" />
-                    )}
-                  </div>
-                  <div className="flex-1">
-                    <p
-                      className={cn(
-                        "font-medium text-gray-900",
-                        task.completed && "line-through text-gray-600",
-                      )}
-                    >
-                      {task.title}
-                    </p>
-                    <div className="flex items-center gap-3 mt-1">
-                      <div className="flex items-center gap-1 text-sm text-gray-600">
-                        <Clock className="h-3 w-3" />
-                        {task.estimated_duration} min
-                      </div>
-                      {task.priority && (
-                        <Badge
-                          variant="outline"
-                          className={cn(
-                            "text-xs",
-                            task.priority <= 2 && "border-red-200 text-red-600",
-                            task.priority === 3 &&
-                              "border-orange-200 text-orange-600",
-                            task.priority >= 4 &&
-                              "border-green-200 text-green-600",
-                          )}
-                        >
-                          {task.priority <= 2
-                            ? "High"
-                            : task.priority === 3
-                              ? "Medium"
-                              : "Low"}{" "}
-                          Priority
-                        </Badge>
-                      )}
-                    </div>
-                  </div>
-                  {task.completed && (
-                    <div className="flex items-center gap-1 text-sm text-primary font-medium">
-                      <CheckCircle className="h-4 w-4" />
-                      Done
-                    </div>
-                  )}
-                </div>
+                <ClickableTaskItem key={task.id} task={task} />
               ))}
-              <div className="pt-2">
-                <Link href="/dashboard?tab=progress#tasks-section">
-                  <Button variant="outline" className="w-full">
-                    <CheckCircle className="h-4 w-4 mr-2" />
-                    View All Tasks
-                  </Button>
-                </Link>
-              </div>
             </div>
           ) : (
             <div className="text-center py-12">
