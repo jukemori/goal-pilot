@@ -24,10 +24,10 @@ export default function NotFound() {
               Go back
             </Button>
           </Link>
-          <Link href="/overview">
+          <Link href="/dashboard">
             <Button>
               <Home className="h-4 w-4 mr-2" />
-              Go to overview
+              Go to dashboard
             </Button>
           </Link>
         </div>

@@ -115,9 +115,9 @@ export default function ResetPasswordPage() {
       setIsSuccess(true);
       toast.success("Password updated successfully!");
 
-      // Redirect to overview after success
+      // Redirect to dashboard after success
       setTimeout(() => {
-        router.push("/overview");
+        router.push("/dashboard");
       }, 2000);
     } catch (err) {
       setError("Network error. Please check your connection and try again.");
@@ -211,7 +211,7 @@ export default function ResetPasswordPage() {
               <Alert className="border-green-200 bg-green-50 text-green-800">
                 <CheckCircle className="h-4 w-4" />
                 <AlertDescription>
-                  Password updated successfully! Redirecting to overview...
+                  Password updated successfully! Redirecting to dashboard...
                 </AlertDescription>
               </Alert>
             )}

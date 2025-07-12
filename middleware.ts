@@ -44,8 +44,8 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Protect overview routes
-  if (request.nextUrl.pathname.startsWith("/overview")) {
+  // Protect dashboard routes
+  if (request.nextUrl.pathname.startsWith("/dashboard")) {
     if (!user) {
       const url = request.nextUrl.clone();
       url.pathname = "/login";
@@ -60,7 +60,7 @@ export async function middleware(request: NextRequest) {
       request.nextUrl.pathname === "/register")
   ) {
     const url = request.nextUrl.clone();
-    url.pathname = "/overview";
+    url.pathname = "/dashboard";
     return NextResponse.redirect(url);
   }
 

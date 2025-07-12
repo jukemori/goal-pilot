@@ -304,7 +304,7 @@ export default async function DashboardPage() {
                 </div>
               ))}
               <div className="pt-2">
-                <Link href="/overview?tab=progress#tasks-section">
+                <Link href="/dashboard?tab=progress#tasks-section">
                   <Button variant="outline" className="w-full">
                     <CheckCircle className="h-4 w-4 mr-2" />
                     View All Tasks

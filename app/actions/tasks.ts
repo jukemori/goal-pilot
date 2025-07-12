@@ -28,7 +28,7 @@ export async function completeTask(taskId: string) {
   }
 
   revalidatePath("/calendar");
-  revalidatePath("/overview");
+  revalidatePath("/dashboard");
 }
 
 export async function uncompleteTask(taskId: string) {
@@ -56,7 +56,7 @@ export async function uncompleteTask(taskId: string) {
   }
 
   revalidatePath("/calendar");
-  revalidatePath("/overview");
+  revalidatePath("/dashboard");
 }
 
 export async function rescheduleTask(taskId: string, newDate: string) {
@@ -124,5 +124,5 @@ export async function updateTaskDuration(
   }
 
   revalidatePath("/calendar");
-  revalidatePath("/overview");
+  revalidatePath("/dashboard");
 }

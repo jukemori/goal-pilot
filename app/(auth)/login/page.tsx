@@ -22,7 +22,7 @@ import { toast } from "sonner";
 export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirectTo = searchParams.get("redirectTo") || "/overview";
+  const redirectTo = searchParams.get("redirectTo") || "/dashboard";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -76,7 +76,7 @@ export default function LoginPage() {
 
       if (data?.user) {
         setIsSuccess(true);
-        toast.success("Welcome back! Redirecting to your overview...");
+        toast.success("Welcome back! Redirecting to your dashboard...");
 
         // Small delay to show success state
         setTimeout(() => {

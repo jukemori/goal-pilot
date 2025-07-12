@@ -159,7 +159,7 @@ goal-pilot/
 ├── .claude/                 # Claude Code configuration
 ├── app/                     # Next.js App Router
 │   ├── (auth)/             # Authentication pages (login, register, reset)
-│   ├── (dashboard)/        # Protected dashboard pages
+│   ├── (app)/             # Protected app pages
 │   ├── actions/            # Server Actions for data mutations
 │   ├── api/                # API routes for external integrations
 │   └── auth/               # Auth callback and error handlers
