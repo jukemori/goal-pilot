@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import Link from 'next/link'
 import { Plus, Target, CheckCircle, Clock, TrendingUp, Calendar, BookOpen, Zap, Star, ArrowRight } from 'lucide-react'
+import { StatsCard } from '@/components/molecules/stats-card'
+import { cn } from '@/lib/utils'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -280,68 +282,3 @@ export default async function DashboardPage() {
     </div>
   )
 }
-
-function StatsCard({
-  title,
-  value,
-  icon,
-  color,
-}: {
-  title: string
-  value: string | number
-  icon: React.ReactNode
-  color: 'blue' | 'purple' | 'green' | 'orange'
-}) {
-  const cardStyles = {
-    blue: 'bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200',
-    purple: 'bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200',
-    green: 'bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20',
-    orange: 'bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200',
-  }
-
-  const iconStyles = {
-    blue: 'bg-blue-100 text-blue-600',
-    purple: 'bg-purple-100 text-purple-600',
-    green: 'bg-primary/10 text-primary',
-    orange: 'bg-orange-100 text-orange-600',
-  }
-
-  return (
-    <Card className={cn(
-      "relative overflow-hidden",
-      cardStyles[color]
-    )}>
-      <CardContent className="p-3 md:p-6">
-        <div className="flex items-center justify-between">
-          <div className="flex-1">
-            <p className="text-xs md:text-sm font-medium text-gray-700">{title}</p>
-            <p className="text-2xl md:text-3xl font-bold mt-0.5 md:mt-1 text-gray-900">{value}</p>
-          </div>
-          <div className={cn(
-            "p-2 md:p-3 rounded-full ml-2 flex-shrink-0",
-            iconStyles[color]
-          )}>
-            {icon}
-          </div>
-        </div>
-        <div className="mt-2 md:mt-3 flex items-center text-xs text-gray-600">
-          <div className={cn(
-            "w-1.5 h-1.5 md:w-2 md:h-2 rounded-full mr-1 md:mr-2",
-            color === 'blue' && "bg-blue-600",
-            color === 'purple' && "bg-purple-600", 
-            color === 'green' && "bg-primary",
-            color === 'orange' && "bg-orange-600"
-          )}></div>
-          <span className="truncate">
-            {color === 'blue' && 'Active learning'}
-            {color === 'purple' && 'Daily focus'}
-            {color === 'green' && 'Achievement rate'}
-            {color === 'orange' && 'Success metric'}
-          </span>
-        </div>
-      </CardContent>
-    </Card>
-  )
-}
-
-import { cn } from '@/lib/utils'
