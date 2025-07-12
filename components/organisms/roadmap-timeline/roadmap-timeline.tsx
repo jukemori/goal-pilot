@@ -9,7 +9,6 @@ import {
   MapPin,
   BookOpen,
   Zap,
-  Rocket,
   Award,
 } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
@@ -20,51 +19,30 @@ interface RoadmapTimelineProps {
   goalId: string
 }
 
-// Generate phase name based on stage content and phase type
-const generatePhaseName = (
-  stageTitle: string,
-  phaseType: string,
-  goalTitle: string,
+// Generate AI-powered phase name based on grouped stages
+const generateAIPhaseName = (
+  stages: Array<{ title: string }>,
+  phaseIndex: number,
 ) => {
-  // Extract key words from goal title to understand the domain
-  const goalWords = goalTitle.toLowerCase().split(' ')
+  // Use the first stage title as the primary theme for this phase
+  const primaryStage = stages[0]?.title || `Learning Phase ${phaseIndex + 1}`
 
-  // Find the main subject/domain from goal title (usually the main noun)
-  const domain =
-    goalWords.find(
-      (word) =>
-        word.length > 3 &&
-        ![
-          'learn',
-          'master',
-          'become',
-          'achieve',
-          'improve',
-          'develop',
-          'build',
-          'get',
-          'start',
-        ].includes(word),
-    ) ||
-    goalWords[goalWords.length - 1] ||
-    'skill'
+  // Extract the core concept from the stage title to create a meaningful phase name
+  // Remove common stage prefixes/suffixes to get the core concept
+  const coreTheme = primaryStage
+    .replace(
+      /^(Learn|Master|Build|Develop|Practice|Study|Understand|Explore)\s+/i,
+      '',
+    )
+    .replace(/\s+(Basics?|Fundamentals?|Foundation|Skills?|Techniques?)$/i, '')
+    .trim()
 
-  // Capitalize domain for display
-  const capitalizedDomain = domain.charAt(0).toUpperCase() + domain.slice(1)
-
-  // Generate appropriate phase names based on type
-  switch (phaseType) {
-    case 'foundation':
-      return `Build ${capitalizedDomain} Foundation`
-    case 'building':
-      return `Develop Core ${capitalizedDomain} Skills`
-    case 'advanced':
-      return `Master Advanced ${capitalizedDomain}`
-    case 'mastery':
-      return `Achieve ${capitalizedDomain} Excellence`
-    default:
-      return `${capitalizedDomain} Progress`
+  // If we have multiple stages, create a comprehensive phase name
+  if (stages.length > 1) {
+    return `${coreTheme} & Progressive Skills`
   }
+
+  return coreTheme || `Learning Phase ${phaseIndex + 1}`
 }
 
 // Create phase description
@@ -183,39 +161,21 @@ export function RoadmapTimeline({
           0,
         )
 
-        // Generate phase name based on position and content
-        let phaseName = ''
+        // Generate AI-powered phase name based on actual stage content
         let phaseIconComponent = BookOpen // Default icon
-        const firstStage = phaseStages[0]
 
+        // Use AI-generated stage titles to create meaningful phase names
+        const phaseName = generateAIPhaseName(phaseStages, i)
+
+        // Set appropriate icon based on phase position
         if (i === 0) {
-          phaseName = generatePhaseName(
-            firstStage.title,
-            'foundation',
-            roadmap.goals.title,
-          )
           phaseIconComponent = BookOpen
         } else if (i === 3 || i === Math.floor(4 * 0.75)) {
-          phaseName = generatePhaseName(
-            firstStage.title,
-            'mastery',
-            roadmap.goals.title,
-          )
           phaseIconComponent = Award
         } else if (i === 1) {
-          phaseName = generatePhaseName(
-            firstStage.title,
-            'building',
-            roadmap.goals.title,
-          )
           phaseIconComponent = Zap
         } else {
-          phaseName = generatePhaseName(
-            firstStage.title,
-            'advanced',
-            roadmap.goals.title,
-          )
-          phaseIconComponent = Rocket
+          phaseIconComponent = Target
         }
 
         // Extract key activities from stages

@@ -320,22 +320,29 @@ STAGE REQUIREMENTS:
 - Each stage should have detailed descriptions explaining what will be accomplished
 - Design stages to take someone from their current level to true professional competency
 
-CRITICAL: MAKE STAGES EXTREMELY SPECIFIC AND DETAILED:
-Instead of abstract titles like "Spanish Grammar Foundations", use specific topics:
-- "Basic Spanish Greetings & Present Tense Conjugation (-ar verbs)"
-- "Expressing Likes/Dislikes (me gusta) & Describing People/Places"
-- "Past Tense (Preterite) & Time Expressions (ayer, la semana pasada)"
+CRITICAL: CREATE ENGAGING, SPECIFIC STAGE TITLES THAT INSPIRE ACTION:
+Instead of abstract titles like "Spanish Grammar Foundations", use engaging, specific topics:
+- "Master Daily Conversations: Greetings, Introductions & Present Tense Magic"
+- "Express Your World: Likes, Dislikes & Describing Everything Around You"
+- "Unlock Your Past: Storytelling with Preterite Tense & Time Travel Words"
+- "Navigate Your Day: Directions, Transportation & Location Mastery"
+
+TITLE FORMULA: [Action Verb] + [Specific Skill] + [Exciting Context/Benefit]
+Examples:
+- "Conquer Basic Conversations" not "Basic Communication"
+- "Build Your First Interactive Website" not "Web Development Basics"  
+- "Transform Your Body with Foundation Movements" not "Fitness Fundamentals"
 
 EXAMPLES OF SPECIFIC STAGE CONTENT BY DOMAIN:
 
 LANGUAGE LEARNING - Each stage should specify exact grammar topics and vocabulary:
-STAGE TITLES: "Present Tense -ar Verbs & Basic Introductions", "Expressing Preferences (me gusta/no me gusta) & Adjectives", "Past Tense Preterite & Time Expressions"
+STAGE TITLES: "Launch Your Spanish Journey: First Conversations & Verb Power", "Express Yourself Confidently: Preferences, Opinions & Descriptions", "Master Storytelling: Past Adventures & Time Navigation"
 SKILLS: ["Conjugate regular -ar verbs (hablar, estudiar, caminar)", "Use 'me gusta/no me gusta' with nouns and infinitives", "Form basic yes/no questions with ¿Te gusta...?"]
 OBJECTIVES: ["Master present tense conjugation of 20 common -ar verbs", "Express personal preferences about food, activities, and people", "Ask and answer questions about likes and dislikes"]
 KEY CONCEPTS: ["Subject pronouns (yo, tú, él/ella)", "Verb endings: -o, -as, -a, -amos, -áis, -an", "Agreement with 'gusta' vs 'gustan'"]
 
 PROGRAMMING - Each stage should specify exact technologies, concepts, and projects:
-STAGE TITLES: "HTML Structure & CSS Box Model", "JavaScript Variables, Functions & DOM Manipulation", "React Components & State Management"
+STAGE TITLES: "Craft Beautiful Web Pages: HTML Mastery & CSS Styling Superpowers", "Bring Websites to Life: JavaScript Magic & Interactive Elements", "Build Modern Apps: React Components & Dynamic User Experiences"
 SKILLS: ["Create semantic HTML with proper tags (header, nav, main, footer)", "Style layouts using Flexbox and CSS Grid", "Write JavaScript functions that manipulate DOM elements"]
 OBJECTIVES: ["Build 3 responsive web pages with semantic HTML", "Create interactive forms with JavaScript validation", "Deploy a functional React app with 5+ components"]
 KEY CONCEPTS: ["HTML5 semantic elements", "CSS selectors and specificity", "Event listeners and callbacks"]

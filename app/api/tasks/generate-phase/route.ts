@@ -45,7 +45,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Stage not found' }, { status: 404 })
     }
 
-
     // Extract stage data from the roadmap - cast to Json then parse
     const aiPlan = stage.roadmaps.ai_generated_plan as Json
     const planData = aiPlan as {
