@@ -203,18 +203,36 @@ export function ProgressChart({ tasks }: ProgressChartProps) {
             <TrendingUp className="h-5 w-5 text-primary" />
             Recent Activity
           </h4>
-          <div className="space-y-2">
+          <div className="space-y-3">
             {tasks
               .filter(task => task.completed && task.completed_at)
               .sort((a, b) => new Date(b.completed_at!).getTime() - new Date(a.completed_at!).getTime())
               .slice(0, 3)
-              .map((task) => (
-                <div key={task.id} className="flex items-center gap-2 text-sm">
-                  <div className="h-2 w-2 bg-primary rounded-full flex-shrink-0" />
-                  <span className="text-gray-600 truncate flex-1">{task.title}</span>
-                  <span className="text-xs text-gray-400">
-                    {isClient ? new Date(task.completed_at!).toLocaleDateString() : new Date(task.completed_at!).toISOString().split('T')[0]}
-                  </span>
+              .map((task, index) => (
+                <div 
+                  key={task.id} 
+                  className="flex items-center gap-3 p-3 rounded-lg bg-gradient-to-r from-gray-50 to-primary/5 border border-gray-100"
+                >
+                  <div className="flex items-center justify-center w-8 h-8 bg-primary/10 rounded-full flex-shrink-0">
+                    <CheckCircle2 className="h-4 w-4 text-primary" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-gray-900 truncate">{task.title}</p>
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className="text-xs text-primary font-medium">Completed</span>
+                      <span className="text-xs text-gray-400">•</span>
+                      <span className="text-xs text-gray-500">
+                        {isClient ? new Date(task.completed_at!).toLocaleDateString('en-US', { 
+                          month: 'short', 
+                          day: 'numeric',
+                          year: new Date(task.completed_at!).getFullYear() !== new Date().getFullYear() ? 'numeric' : undefined
+                        }) : new Date(task.completed_at!).toISOString().split('T')[0]}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-center w-6 h-6 bg-primary rounded-full flex-shrink-0">
+                    <span className="text-xs font-bold text-white">#{index + 1}</span>
+                  </div>
                 </div>
               ))}
           </div>

@@ -8,6 +8,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { completeTask, uncompleteTask } from '@/app/actions/tasks'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
+import { useQueryClient } from '@tanstack/react-query'
 
 interface Task {
   id: string
@@ -27,6 +28,7 @@ interface SimpleTaskListProps {
 
 export function SimpleTaskList({ tasks, goalId: _goalId }: SimpleTaskListProps) {
   const [loadingTaskId, setLoadingTaskId] = useState<string | null>(null)
+  const queryClient = useQueryClient()
 
   async function handleToggleComplete(task: Task) {
     setLoadingTaskId(task.id)
@@ -38,6 +40,12 @@ export function SimpleTaskList({ tasks, goalId: _goalId }: SimpleTaskListProps) 
         await completeTask(task.id)
         toast.success('Task completed!')
       }
+      
+      // Invalidate calendar queries to refresh the data
+      const today = new Date().toISOString().split('T')[0]
+      const currentDate = new Date()
+      queryClient.invalidateQueries({ queryKey: ['today-tasks', today] })
+      queryClient.invalidateQueries({ queryKey: ['calendar-tasks', currentDate.getFullYear(), currentDate.getMonth()] })
     } catch {
       toast.error('Failed to update task')
     } finally {
