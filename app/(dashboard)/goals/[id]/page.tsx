@@ -215,12 +215,6 @@ export default async function GoalPage({ params }: GoalPageProps) {
             <div className="space-y-6">
               {roadmap ? (
                 <div className="space-y-6">
-                  <div className="flex items-center justify-end">
-                    <Button variant="outline" size="sm">
-                      <Target className="h-4 w-4 mr-2" />
-                      Generate Tasks
-                    </Button>
-                  </div>
                   <ProgressStages roadmapId={roadmap.id} goalId={goal.id} />
                 </div>
               ) : (
@@ -237,10 +231,6 @@ export default async function GoalPage({ params }: GoalPageProps) {
             <div className="space-y-6">
               {/* Progress Overview - Clean Layout */}
               <div className="space-y-4">
-                <div>
-                  <h3 className="text-lg font-semibold">Progress Overview</h3>
-                  <p className="text-sm text-muted-foreground">Track your completion rate and milestones</p>
-                </div>
                 <div className="bg-card rounded-lg border p-4 md:p-6">
                   <ProgressChart tasks={tasks as unknown as Parameters<typeof ProgressChart>[0]['tasks']} />
                 </div>
