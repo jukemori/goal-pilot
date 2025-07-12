@@ -26,7 +26,7 @@ export function TemplatesSection({ hasActiveGoals }: TemplatesSectionProps) {
   return (
     <Card className="border-gray-200 shadow-sm">
       <CardHeader>
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0">
           <div>
             <CardTitle className="flex items-center gap-2 text-gray-800">
               <div className="p-2 bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg">
@@ -42,7 +42,7 @@ export function TemplatesSection({ hasActiveGoals }: TemplatesSectionProps) {
             variant="ghost"
             size="sm"
             onClick={() => setIsExpanded(!isExpanded)}
-            className="gap-2"
+            className="gap-2 self-start md:self-auto"
           >
             {isExpanded ? (
               <>
