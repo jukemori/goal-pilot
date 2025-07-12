@@ -23,7 +23,7 @@ export default async function GoalsPage() {
       <div className="relative">
         <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-primary/5 rounded-2xl -z-10" />
         <div className="p-4 md:p-8">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0">
             <div>
               <div className="flex items-center gap-3 mb-2">
                 <div className="p-2 bg-primary/10 rounded-lg">
@@ -33,7 +33,7 @@ export default async function GoalsPage() {
               </div>
               <p className="text-gray-600 text-lg">Manage and track all your learning goals</p>
             </div>
-            <Button asChild className="bg-primary hover:bg-primary/90 shadow-md">
+            <Button asChild className="bg-primary hover:bg-primary/90 shadow-md self-start md:self-auto">
               <Link href="/goals/new">
                 <Plus className="h-4 w-4 mr-2" />
                 New Goal
