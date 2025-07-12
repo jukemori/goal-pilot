@@ -40,7 +40,9 @@ export function ClickableTaskItem({ task }: ClickableTaskItemProps) {
             : "border-gray-300 group-hover:border-blue-500",
         )}
       >
-        {task.completed === true && <CheckCircle className="h-3 w-3 text-white" />}
+        {task.completed === true && (
+          <CheckCircle className="h-3 w-3 text-white" />
+        )}
       </div>
       <div className="flex-1">
         <p
@@ -97,4 +99,4 @@ export function ClickableTaskItemSkeleton() {
       </div>
     </div>
   );
-} 
+}

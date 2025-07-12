@@ -243,8 +243,9 @@ export default function HomePage() {
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-gray-600 text-base leading-relaxed">
-                  Get started quickly with our curated collection of learning templates
-                  for programming, languages, fitness, business skills, and more.
+                  Get started quickly with our curated collection of learning
+                  templates for programming, languages, fitness, business
+                  skills, and more.
                 </CardDescription>
               </CardContent>
             </Card>
@@ -260,8 +261,9 @@ export default function HomePage() {
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-gray-600 text-base leading-relaxed">
-                  Stay motivated with personal progress tracking, milestone celebrations,
-                  and a clear view of your learning journey from start to finish.
+                  Stay motivated with personal progress tracking, milestone
+                  celebrations, and a clear view of your learning journey from
+                  start to finish.
                 </CardDescription>
               </CardContent>
             </Card>
