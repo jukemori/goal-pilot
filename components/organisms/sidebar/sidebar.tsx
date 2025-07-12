@@ -56,7 +56,9 @@ export function Sidebar() {
         >
           {isHydrated && isMobileMenuOpen ? <X /> : <Menu />}
         </Button>
-        <h2 className="text-lg font-semibold text-primary">Goal Pilot</h2>
+        <Link href="/" className="text-lg font-semibold text-primary hover:opacity-80 transition-opacity">
+          Goal Pilot
+        </Link>
         <div className="w-10" /> {/* Spacer for centering */}
       </div>
 
@@ -67,7 +69,9 @@ export function Sidebar() {
       )}>
         <div className="flex flex-col h-full">
           <div className="hidden lg:flex items-center justify-center h-16 border-b">
-            <h2 className="text-xl font-bold text-primary">Goal Pilot</h2>
+            <Link href="/" className="text-xl font-bold text-primary hover:opacity-80 transition-opacity">
+              Goal Pilot
+            </Link>
           </div>
           
           <nav className="flex-1 px-4 pt-8 pb-4 lg:pt-4 space-y-1">
