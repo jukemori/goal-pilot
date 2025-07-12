@@ -204,7 +204,7 @@ export function CalendarView(_props: CalendarViewProps) {
                           key={dateString}
                           onClick={() => setSelectedDate(isSelected ? null : dateString)}
                           className={cn(
-                            "p-2 text-left border rounded-lg transition-colors relative cursor-pointer flex flex-col h-full",
+                            "p-1 md:p-2 text-left border rounded-lg transition-colors relative cursor-pointer flex flex-col h-full min-w-0",
                             isToday(date) && "border-primary bg-primary/5",
                             !isCurrentMonth(date) && "text-gray-400 bg-gray-50",
                             isSelected && "border-primary bg-primary/10",
@@ -216,25 +216,42 @@ export function CalendarView(_props: CalendarViewProps) {
                           </div>
                           
                           {dateTasks.length > 0 && (
-                            <div className="flex-1 space-y-1 min-h-0 overflow-hidden">
-                              {/* Show all tasks with same color, line-through for completed */}
-                              {dateTasks.slice(0, 2).map((task) => (
+                            <div className="flex-1 space-y-0.5 md:space-y-1 min-h-0 overflow-hidden">
+                              {/* Show only first task on mobile, first 2 on desktop */}
+                              {dateTasks.slice(0, 1).map((task) => (
                                 <div
                                   key={task.id}
                                   className={cn(
-                                    "text-[10px] px-1 py-0.5 rounded truncate bg-primary/10 text-primary",
+                                    "text-[8px] md:text-[10px] px-0.5 md:px-1 py-0.5 rounded bg-primary/10 text-primary overflow-hidden",
                                     task.completed && "line-through opacity-60"
                                   )}
                                   title={task.title}
                                 >
-                                  <span className="truncate">{task.title}</span>
+                                  <div className="truncate max-w-full">{task.title}</div>
                                 </div>
                               ))}
                               
-                              {/* Show more indicator */}
-                              {dateTasks.length > 2 && (
-                                <div className="text-[9px] text-gray-500 px-1">
-                                  +{dateTasks.length - 2} more
+                              {/* Show second task only on medium screens and up */}
+                              <div className="hidden md:block">
+                                {dateTasks.slice(1, 2).map((task) => (
+                                  <div
+                                    key={task.id}
+                                    className={cn(
+                                      "text-[10px] px-1 py-0.5 rounded bg-primary/10 text-primary overflow-hidden",
+                                      task.completed && "line-through opacity-60"
+                                    )}
+                                    title={task.title}
+                                  >
+                                    <div className="truncate max-w-full">{task.title}</div>
+                                  </div>
+                                ))}
+                              </div>
+                              
+                              {/* More indicator - different count for mobile vs desktop */}
+                              {dateTasks.length > 1 && (
+                                <div className="text-[8px] md:text-[9px] text-gray-500 px-0.5 md:px-1">
+                                  <span className="md:hidden">+{dateTasks.length - 1} more</span>
+                                  <span className="hidden md:inline">{dateTasks.length > 2 ? `+${dateTasks.length - 2} more` : ''}</span>
                                 </div>
                               )}
                             </div>

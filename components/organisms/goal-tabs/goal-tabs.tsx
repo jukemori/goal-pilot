@@ -22,22 +22,22 @@ function GoalTabsInner({ children }: GoalTabsProps) {
 
   return (
     <Tabs value={tab} onValueChange={setTab} className="w-full">
-      <TabsList>
-        <TabsTrigger value="overview">
-          <BarChart3 className="h-4 w-4 mr-2" />
-          Overview
+      <TabsList className="grid w-full grid-cols-4 h-auto">
+        <TabsTrigger value="overview" className="flex flex-col sm:flex-row items-center justify-center px-1 py-2 sm:px-3 sm:py-1.5 text-xs sm:text-sm">
+          <BarChart3 className="h-4 w-4 sm:mr-2 mb-0.5 sm:mb-0" />
+          <span>Overview</span>
         </TabsTrigger>
-        <TabsTrigger value="roadmap">
-          <BookOpen className="h-4 w-4 mr-2" />
-          Roadmap
+        <TabsTrigger value="roadmap" className="flex flex-col sm:flex-row items-center justify-center px-1 py-2 sm:px-3 sm:py-1.5 text-xs sm:text-sm">
+          <BookOpen className="h-4 w-4 sm:mr-2 mb-0.5 sm:mb-0" />
+          <span>Roadmap</span>
         </TabsTrigger>
-        <TabsTrigger value="stages">
-          <Target className="h-4 w-4 mr-2" />
-          Stages
+        <TabsTrigger value="stages" className="flex flex-col sm:flex-row items-center justify-center px-1 py-2 sm:px-3 sm:py-1.5 text-xs sm:text-sm">
+          <Target className="h-4 w-4 sm:mr-2 mb-0.5 sm:mb-0" />
+          <span>Stages</span>
         </TabsTrigger>
-        <TabsTrigger value="progress">
-          <TrendingUp className="h-4 w-4 mr-2" />
-          Progress
+        <TabsTrigger value="progress" className="flex flex-col sm:flex-row items-center justify-center px-1 py-2 sm:px-3 sm:py-1.5 text-xs sm:text-sm">
+          <TrendingUp className="h-4 w-4 sm:mr-2 mb-0.5 sm:mb-0" />
+          <span>Progress</span>
         </TabsTrigger>
       </TabsList>
 
