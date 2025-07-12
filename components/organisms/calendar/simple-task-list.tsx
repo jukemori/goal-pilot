@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo, useCallback, memo } from 'react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { CheckCircle, Clock, MoreHorizontal } from 'lucide-react'
@@ -9,20 +9,10 @@ import { completeTask, uncompleteTask } from '@/app/actions/tasks'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import { useQueryClient } from '@tanstack/react-query'
-
-interface Task {
-  id: string
-  title: string
-  description: string | null
-  scheduled_date: string
-  estimated_duration: number
-  completed: boolean
-  completed_at: string | null
-  priority: number
-}
+import type { TaskWithRoadmap } from '@/lib/hooks/use-tasks'
 
 interface SimpleTaskListProps {
-  tasks: Task[]
+  tasks: TaskWithRoadmap[]
   goalId: string
 }
 
@@ -30,7 +20,7 @@ export function SimpleTaskList({ tasks, goalId: _goalId }: SimpleTaskListProps) 
   const [loadingTaskId, setLoadingTaskId] = useState<string | null>(null)
   const queryClient = useQueryClient()
 
-  async function handleToggleComplete(task: Task) {
+  const handleToggleComplete = useCallback(async (task: TaskWithRoadmap) => {
     setLoadingTaskId(task.id)
     try {
       if (task.completed) {
@@ -51,27 +41,28 @@ export function SimpleTaskList({ tasks, goalId: _goalId }: SimpleTaskListProps) 
     } finally {
       setLoadingTaskId(null)
     }
-  }
+  }, [queryClient])
 
-  const getPriorityColor = (priority: number) => {
-    switch (priority) {
-      case 5: return 'bg-red-100 text-red-800'
-      case 4: return 'bg-orange-100 text-orange-800'
-      case 3: return 'bg-yellow-100 text-yellow-800'
-      case 2: return 'bg-primary/10 text-primary'
-      default: return 'bg-gray-100 text-gray-800'
+  const { getPriorityColor, getPriorityLabel } = useMemo(() => ({
+    getPriorityColor: (priority: number) => {
+      switch (priority) {
+        case 5: return 'bg-red-100 text-red-800'
+        case 4: return 'bg-orange-100 text-orange-800'
+        case 3: return 'bg-yellow-100 text-yellow-800'
+        case 2: return 'bg-primary/10 text-primary'
+        default: return 'bg-gray-100 text-gray-800'
+      }
+    },
+    getPriorityLabel: (priority: number) => {
+      switch (priority) {
+        case 5: return 'Critical'
+        case 4: return 'High'
+        case 3: return 'Medium'
+        case 2: return 'Low'
+        default: return 'Lowest'
+      }
     }
-  }
-
-  const getPriorityLabel = (priority: number) => {
-    switch (priority) {
-      case 5: return 'Critical'
-      case 4: return 'High'
-      case 3: return 'Medium'
-      case 2: return 'Low'
-      default: return 'Lowest'
-    }
-  }
+  }), [])
 
   if (tasks.length === 0) {
     return (
@@ -91,24 +82,7 @@ export function SimpleTaskList({ tasks, goalId: _goalId }: SimpleTaskListProps) 
   return (
     <div className="space-y-4">
       {/* Task Statistics */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-gray-50 rounded-lg">
-        <div className="text-center">
-          <div className="text-lg font-semibold text-primary">{tasks.length}</div>
-          <div className="text-xs text-gray-600">Total Tasks</div>
-        </div>
-        <div className="text-center">
-          <div className="text-lg font-semibold text-primary">{tasks.filter(t => t.completed).length}</div>
-          <div className="text-xs text-gray-600">Completed</div>
-        </div>
-        <div className="text-center">
-          <div className="text-lg font-semibold text-orange-600">{tasks.filter(t => !t.completed && t.scheduled_date < new Date().toISOString().split('T')[0]).length}</div>
-          <div className="text-xs text-gray-600">Overdue</div>
-        </div>
-        <div className="text-center">
-          <div className="text-lg font-semibold text-purple-600">{tasks.length}</div>
-          <div className="text-xs text-gray-600">Total</div>
-        </div>
-      </div>
+      <TaskStatistics tasks={tasks} />
 
       {/* Task List */}
       <div className="space-y-2">
@@ -144,9 +118,9 @@ export function SimpleTaskList({ tasks, goalId: _goalId }: SimpleTaskListProps) 
               </h4>
               <Badge 
                 variant="outline" 
-                className={cn("text-xs", getPriorityColor(task.priority))}
+                className={cn("text-xs", getPriorityColor(task.priority || 1))}
               >
-                {getPriorityLabel(task.priority)}
+                {getPriorityLabel(task.priority || 1)}
               </Badge>
             </div>
             
@@ -157,7 +131,7 @@ export function SimpleTaskList({ tasks, goalId: _goalId }: SimpleTaskListProps) 
             <div className="flex items-center gap-4 text-xs text-gray-500">
               <div className="flex items-center gap-1">
                 <Clock className="h-3 w-3" />
-                {task.estimated_duration} min
+                {task.estimated_duration || 0} min
               </div>
               {task.completed_at && (
                 <div className="flex items-center gap-1 text-primary">
@@ -191,3 +165,36 @@ export function SimpleTaskList({ tasks, goalId: _goalId }: SimpleTaskListProps) 
     </div>
   )
 }
+
+// Memoized TaskStatistics component
+const TaskStatistics = memo(function TaskStatistics({ tasks }: { tasks: TaskWithRoadmap[] }) {
+  const stats = useMemo(() => {
+    const today = new Date().toISOString().split('T')[0]
+    return {
+      total: tasks.length,
+      completed: tasks.filter(t => t.completed === true).length,
+      overdue: tasks.filter(t => t.completed !== true && t.scheduled_date < today).length
+    }
+  }, [tasks])
+
+  return (
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-gray-50 rounded-lg">
+      <div className="text-center">
+        <div className="text-lg font-semibold text-primary">{stats.total}</div>
+        <div className="text-xs text-gray-600">Total Tasks</div>
+      </div>
+      <div className="text-center">
+        <div className="text-lg font-semibold text-primary">{stats.completed}</div>
+        <div className="text-xs text-gray-600">Completed</div>
+      </div>
+      <div className="text-center">
+        <div className="text-lg font-semibold text-orange-600">{stats.overdue}</div>
+        <div className="text-xs text-gray-600">Overdue</div>
+      </div>
+      <div className="text-center">
+        <div className="text-lg font-semibold text-purple-600">{stats.total}</div>
+        <div className="text-xs text-gray-600">Total</div>
+      </div>
+    </div>
+  )
+})

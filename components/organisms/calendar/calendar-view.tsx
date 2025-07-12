@@ -1,31 +1,32 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo, lazy, Suspense } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, CheckCircle, Clock } from 'lucide-react'
-import { SimpleTaskList } from '@/components/organisms/calendar/simple-task-list'
-import { useQuery } from '@tanstack/react-query'
-import { createClient } from '@/lib/supabase/client'
+import { useOptimizedCalendarTasks, type TaskWithRoadmap } from '@/lib/hooks/use-tasks'
 import { format, parseISO } from 'date-fns'
 
-interface Task {
-  id: string
-  title: string
-  description: string | null
-  scheduled_date: string
-  estimated_duration: number
-  completed: boolean
-  completed_at: string | null
-  priority: number
-  roadmaps: {
-    goal_id: string
-    goals: {
-      title: string
-      status: string
-    }
-  }
+// Lazy load heavy components
+const SimpleTaskList = lazy(() => import('@/components/organisms/calendar/simple-task-list').then(module => ({ default: module.SimpleTaskList })))
+
+// Loading skeleton component
+function TaskListSkeleton() {
+  return (
+    <div className="space-y-3">
+      {Array.from({ length: 3 }).map((_, i) => (
+        <div key={i} className="flex items-center gap-3 p-3 border rounded-lg">
+          <div className="h-4 w-4 bg-gray-200 rounded animate-pulse" />
+          <div className="flex-1 space-y-2">
+            <div className="h-4 bg-gray-200 rounded animate-pulse" />
+            <div className="h-3 bg-gray-200 rounded animate-pulse w-3/4" />
+          </div>
+        </div>
+      ))}
+    </div>
+  )
 }
+
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface CalendarViewProps {
@@ -35,95 +36,37 @@ interface CalendarViewProps {
 export function CalendarView(_props: CalendarViewProps) {
   const [currentDate, setCurrentDate] = useState(new Date())
   const [selectedDate, setSelectedDate] = useState<string | null>(null)
-  const supabase = createClient()
 
-  // Fetch tasks for current month
-  const { data: tasks = [], isFetching } = useQuery<Task[]>({
-    queryKey: ['calendar-tasks', currentDate.getFullYear(), currentDate.getMonth()],
-    queryFn: async () => {
-      const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1)
-      const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0)
-      
-      const { data, error } = await supabase
-        .from('tasks')
-        .select(`
-          *,
-          roadmaps!inner(
-            goal_id,
-            goals!inner(
-              title,
-              status
-            )
-          )
-        `)
-        .gte('scheduled_date', startOfMonth.toISOString().split('T')[0])
-        .lte('scheduled_date', endOfMonth.toISOString().split('T')[0])
-        .order('scheduled_date')
-
-      if (error) throw error
-      return (data as Task[]) || []
-    },
-    staleTime: 60000, // Cache for 1 minute
-    placeholderData: [] // Use placeholderData instead of keepPreviousData
-  })
-
-  // Fetch today's tasks
-  const today = new Date().toISOString().split('T')[0]
-  const { data: todayTasks = [] } = useQuery<Task[]>({
-    queryKey: ['today-tasks', today],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('tasks')
-        .select(`
-          *,
-          roadmaps!inner(
-            goal_id,
-            goals!inner(
-              title,
-              status
-            )
-          )
-        `)
-        .eq('scheduled_date', today)
-        .order('priority', { ascending: false })
-
-      if (error) throw error
-      return (data as Task[]) || []
-    }
-  })
-
-  // Group tasks by date
-  const tasksByDate = tasks.reduce((acc, task) => {
-    const date = task.scheduled_date
-    if (!acc[date]) {
-      acc[date] = []
-    }
-    acc[date].push(task)
-    return acc
-  }, {} as Record<string, Task[]>)
+  // Use optimized unified hook
+  const { data: calendarData, isFetching } = useOptimizedCalendarTasks(currentDate)
+  const { todayTasks = [], tasksByDate = {} } = calendarData || {}
 
   const selectedDateTasks = selectedDate ? tasksByDate[selectedDate] || [] : []
 
-  // Calendar helpers
-  const monthStart = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1)
-  const monthEnd = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0)
-  const startDate = new Date(monthStart)
-  startDate.setDate(startDate.getDate() - startDate.getDay()) // Start from Sunday
+  // Memoize calendar date calculations
+  const { weeks } = useMemo(() => {
+    const monthStart = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1)
+    const monthEnd = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0)
+    const startDate = new Date(monthStart)
+    startDate.setDate(startDate.getDate() - startDate.getDay()) // Start from Sunday
 
-  const endDate = new Date(monthEnd)
-  endDate.setDate(endDate.getDate() + (6 - monthEnd.getDay())) // End on Saturday
+    const endDate = new Date(monthEnd)
+    endDate.setDate(endDate.getDate() + (6 - monthEnd.getDay())) // End on Saturday
 
-  const dateRange = []
-  const currentDateIterator = new Date(startDate)
-  while (currentDateIterator <= endDate) {
-    dateRange.push(new Date(currentDateIterator))
-    currentDateIterator.setDate(currentDateIterator.getDate() + 1)
-  }
+    const dateRange = []
+    const currentDateIterator = new Date(startDate)
+    while (currentDateIterator <= endDate) {
+      dateRange.push(new Date(currentDateIterator))
+      currentDateIterator.setDate(currentDateIterator.getDate() + 1)
+    }
 
-  const weeks = []
-  for (let i = 0; i < dateRange.length; i += 7) {
-    weeks.push(dateRange.slice(i, i + 7))
-  }
+    const weeks = []
+    for (let i = 0; i < dateRange.length; i += 7) {
+      weeks.push(dateRange.slice(i, i + 7))
+    }
+
+    return { weeks }
+  }, [currentDate])
 
   const goToPreviousMonth = () => {
     setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1))
@@ -150,10 +93,13 @@ export function CalendarView(_props: CalendarViewProps) {
     return tasksByDate[getDateString(date)] || []
   }
 
-  // Today's stats
-  const completedToday = todayTasks.filter(task => task.completed).length
-  const totalToday = todayTasks.length
-  const todayProgress = totalToday > 0 ? Math.round((completedToday / totalToday) * 100) : 0
+  // Memoize today's stats
+  const { completedToday, totalToday, todayProgress } = useMemo(() => {
+    const completed = todayTasks.filter(task => task.completed === true).length
+    const total = todayTasks.length
+    const progress = total > 0 ? Math.round((completed / total) * 100) : 0
+    return { completedToday: completed, totalToday: total, todayProgress: progress }
+  }, [todayTasks])
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 h-[600px]">
@@ -218,12 +164,12 @@ export function CalendarView(_props: CalendarViewProps) {
                           {dateTasks.length > 0 && (
                             <div className="flex-1 space-y-0.5 md:space-y-1 min-h-0 overflow-hidden w-full">
                               {/* Show only first task on mobile, first 2 on desktop */}
-                              {dateTasks.slice(0, 1).map((task) => (
+                              {dateTasks.slice(0, 1).map((task: TaskWithRoadmap) => (
                                 <div
                                   key={task.id}
                                   className={cn(
                                     "text-[7px] md:text-[10px] px-0.5 md:px-1 py-0.5 rounded bg-primary/10 text-primary overflow-hidden w-full break-words",
-                                    task.completed && "line-through opacity-60"
+                                    task.completed === true && "line-through opacity-60"
                                   )}
                                   title={task.title}
                                   style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}
@@ -234,12 +180,12 @@ export function CalendarView(_props: CalendarViewProps) {
                               
                               {/* Show second task only on medium screens and up */}
                               <div className="hidden md:block w-full">
-                                {dateTasks.slice(1, 2).map((task) => (
+                                {dateTasks.slice(1, 2).map((task: TaskWithRoadmap) => (
                                   <div
                                     key={task.id}
                                     className={cn(
                                       "text-[10px] px-1 py-0.5 rounded bg-primary/10 text-primary overflow-hidden w-full break-words",
-                                      task.completed && "line-through opacity-60"
+                                      task.completed === true && "line-through opacity-60"
                                     )}
                                     title={task.title}
                                     style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}
@@ -326,16 +272,16 @@ export function CalendarView(_props: CalendarViewProps) {
               <div className="h-full overflow-y-auto">
                 {selectedDateTasks.length > 0 ? (
                   <div className="space-y-2">
-                    {selectedDateTasks.map((task) => (
+                    {selectedDateTasks.map((task: TaskWithRoadmap) => (
                       <div
                         key={task.id}
                         className={cn(
                           "p-2 border rounded text-xs",
-                          task.completed && "opacity-60 bg-gray-50"
+                          task.completed === true && "opacity-60 bg-gray-50"
                         )}
                       >
                         <div className="flex items-start gap-2">
-                          {task.completed ? (
+                          {task.completed === true ? (
                             <CheckCircle className="h-3 w-3 text-primary mt-0.5 flex-shrink-0" />
                           ) : (
                             <div className="h-3 w-3 border border-gray-300 rounded mt-0.5 flex-shrink-0" />
@@ -343,16 +289,13 @@ export function CalendarView(_props: CalendarViewProps) {
                           <div className="flex-1 min-w-0">
                             <h4 className={cn(
                               "font-medium text-xs leading-tight",
-                              task.completed && "line-through text-gray-500"
+                              task.completed === true && "line-through text-gray-500"
                             )}>
                               {task.title}
                             </h4>
-                            <p className="text-[10px] text-gray-500 mt-1 truncate">
-                              {task.roadmaps.goals.title}
-                            </p>
                             <div className="flex items-center gap-1 mt-1 text-[10px] text-gray-500">
                               <Clock className="h-2 w-2" />
-                              {task.estimated_duration}min
+                              {task.estimated_duration || 0}min
                             </div>
                           </div>
                         </div>
@@ -375,7 +318,9 @@ export function CalendarView(_props: CalendarViewProps) {
             </CardHeader>
             <CardContent className="flex-1 pt-0 overflow-hidden">
               <div className="h-full overflow-y-auto">
-                <SimpleTaskList tasks={todayTasks} goalId="" />
+                <Suspense fallback={<TaskListSkeleton />}>
+                  <SimpleTaskList tasks={todayTasks} goalId="" />
+                </Suspense>
               </div>
             </CardContent>
           </Card>
