@@ -1,5 +1,12 @@
-import { CalendarView } from '@/components/organisms/calendar/calendar-view'
 import { Calendar } from 'lucide-react'
+import { CalendarErrorBoundary } from '@/components/error-boundary'
+import dynamic from 'next/dynamic'
+import { CalendarSkeleton } from '@/components/ui/skeletons'
+
+// Lazy load CalendarView for better performance
+const LazyCalendarView = dynamic(() => import('@/components/organisms/calendar/calendar-view').then(mod => ({ default: mod.CalendarView })), {
+  loading: () => <CalendarSkeleton />
+})
 
 export default function CalendarPage() {
   return (
@@ -18,7 +25,9 @@ export default function CalendarPage() {
         </div>
       </div>
 
-      <CalendarView />
+      <CalendarErrorBoundary>
+        <LazyCalendarView />
+      </CalendarErrorBoundary>
     </div>
   )
 }

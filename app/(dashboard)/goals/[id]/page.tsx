@@ -7,12 +7,66 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { DeleteGoalButton } from '@/components/molecules/delete-goal-button'
 import { Edit3, Calendar, Clock, Target, CheckCircle, Activity, BookOpen } from 'lucide-react'
-import { RoadmapView } from '@/components/organisms/roadmap-view/roadmap-view'
-import { TaskList } from '@/components/organisms/task-list/task-list'
-import { ProgressChart } from '@/components/molecules/progress-chart/progress-chart'
-import { ProgressStages } from '@/components/organisms/progress-stages/progress-stages'
-import { RoadmapTimeline } from '@/components/organisms/roadmap-timeline/roadmap-timeline'
 import { cn } from '@/lib/utils'
+import dynamic from 'next/dynamic'
+import { ErrorBoundary, TaskErrorBoundary, RoadmapErrorBoundary } from '@/components/error-boundary'
+import { Tables } from '@/types/database'
+import { RoadmapSkeleton, TaskListSkeleton, ProgressChartSkeleton, ProgressStagesSkeleton, RoadmapTimelineSkeleton } from '@/components/ui/skeletons'
+
+// Component prop types for proper TypeScript handling
+type RoadmapViewRoadmapType = {
+  id: string
+  ai_generated_plan: {
+    overview?: string
+    phases: Array<{
+      title: string
+      description: string
+      duration_weeks: number
+      learning_objectives?: string[]
+      key_concepts?: string[]
+      deliverables?: string[]
+    }>
+    timeline: {
+      total_weeks: number
+      daily_commitment: string
+    }
+    estimated_completion_date?: string
+    total_hours_required?: number
+  }
+  milestones: Array<{
+    id?: string
+    week: number
+    title: string
+    description: string
+    deliverables: string[]
+    completed?: boolean
+    completed_date?: string
+    target_date?: string
+  }>
+  created_at: string
+}
+
+// Lazy load heavy components to reduce initial bundle size
+const RoadmapView = dynamic(() => import('@/components/organisms/roadmap-view/roadmap-view').then(mod => ({ default: mod.RoadmapView })), {
+  loading: () => <RoadmapSkeleton />
+})
+
+const TaskList = dynamic(() => import('@/components/organisms/task-list/task-list').then(mod => ({ default: mod.TaskList })), {
+  loading: () => <TaskListSkeleton />
+})
+
+const ProgressChart = dynamic(() => import('@/components/molecules/progress-chart/progress-chart').then(mod => ({ default: mod.ProgressChart })), {
+  loading: () => <ProgressChartSkeleton />
+})
+
+const ProgressStages = dynamic(() => import('@/components/organisms/progress-stages/progress-stages').then(mod => ({ default: mod.ProgressStages })), {
+  loading: () => <ProgressStagesSkeleton />
+})
+
+const RoadmapTimeline = dynamic(() => import('@/components/organisms/roadmap-timeline/roadmap-timeline').then(mod => ({ default: mod.RoadmapTimeline })), {
+  loading: () => <RoadmapTimelineSkeleton />
+})
+
 
 interface GoalPageProps {
   params: Promise<{ id: string }>
@@ -176,7 +230,9 @@ export default async function GoalPage({ params }: GoalPageProps) {
             </CardHeader>
             <CardContent>
               {roadmap ? (
-                <RoadmapView roadmap={roadmap as unknown as Parameters<typeof RoadmapView>[0]['roadmap']} />
+                <RoadmapErrorBoundary>
+                  <RoadmapView roadmap={roadmap as unknown as RoadmapViewRoadmapType} />
+                </RoadmapErrorBoundary>
               ) : (
                 <div className="text-center py-12">
                   <div className="relative">
@@ -199,7 +255,9 @@ export default async function GoalPage({ params }: GoalPageProps) {
             <div className="space-y-6">
               {roadmap ? (
                 <div className="space-y-6">
-                  <RoadmapTimeline roadmapId={roadmap.id} goalId={goal.id} />
+                  <RoadmapErrorBoundary>
+                    <RoadmapTimeline roadmapId={roadmap.id} goalId={goal.id} />
+                  </RoadmapErrorBoundary>
                 </div>
               ) : (
                 <div className="bg-card rounded-lg border p-4 md:p-8">
@@ -215,7 +273,9 @@ export default async function GoalPage({ params }: GoalPageProps) {
             <div className="space-y-6">
               {roadmap ? (
                 <div className="space-y-6">
-                  <ProgressStages roadmapId={roadmap.id} goalId={goal.id} />
+                  <RoadmapErrorBoundary>
+                    <ProgressStages roadmapId={roadmap.id} goalId={goal.id} />
+                  </RoadmapErrorBoundary>
                 </div>
               ) : (
                 <div className="bg-card rounded-lg border p-4 md:p-8">
@@ -232,7 +292,9 @@ export default async function GoalPage({ params }: GoalPageProps) {
               {/* Progress Overview - Clean Layout */}
               <div className="space-y-4">
                 <div className="bg-card rounded-lg border p-4 md:p-6">
-                  <ProgressChart tasks={tasks as unknown as Parameters<typeof ProgressChart>[0]['tasks']} />
+                  <ErrorBoundary>
+                    <ProgressChart tasks={tasks as Tables<'tasks'>[]} />
+                  </ErrorBoundary>
                 </div>
               </div>
 
@@ -243,7 +305,9 @@ export default async function GoalPage({ params }: GoalPageProps) {
                   <p className="text-sm text-muted-foreground">Your daily action items</p>
                 </div>
                 <div className="bg-card rounded-lg border p-4 md:p-6">
-                  <TaskList tasks={tasks as unknown as Parameters<typeof TaskList>[0]['tasks']} goalId={goal.id} />
+                  <TaskErrorBoundary>
+                    <TaskList tasks={tasks as Tables<'tasks'>[]} goalId={goal.id} />
+                  </TaskErrorBoundary>
                 </div>
               </div>
             </div>

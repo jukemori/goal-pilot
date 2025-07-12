@@ -4,7 +4,23 @@ import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { Plus, Clock, Target, Calendar } from 'lucide-react'
 import { Tables } from '@/types/database'
-import { TemplatesSection } from '@/components/organisms/goal-templates/templates-section'
+import dynamic from 'next/dynamic'
+import { ErrorBoundary } from '@/components/error-boundary'
+import { TemplatesSkeleton } from '@/components/ui/skeletons'
+
+// Type for GoalCard component props
+type GoalCardGoalType = Tables<'goals'> & { 
+  progress?: number;
+  roadmaps?: Array<{
+    id: string;
+    tasks?: Array<{ completed: boolean }>;
+  }>;
+}
+
+// Lazy load TemplatesSection to reduce initial bundle
+const TemplatesSection = dynamic(() => import('@/components/organisms/goal-templates/templates-section').then(mod => ({ default: mod.TemplatesSection })), {
+  loading: () => <TemplatesSkeleton />
+})
 
 export default async function GoalsPage() {
   const supabase = await createClient()
@@ -44,7 +60,9 @@ export default async function GoalsPage() {
       </div>
 
       {/* Goal Templates Section */}
-      <TemplatesSection hasActiveGoals={activeGoals.length > 0} />
+      <ErrorBoundary>
+        <TemplatesSection hasActiveGoals={activeGoals.length > 0} />
+      </ErrorBoundary>
 
       {/* Active Goals */}
       <Card className="border-gray-200 shadow-sm">
@@ -63,7 +81,7 @@ export default async function GoalsPage() {
           {activeGoals.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {activeGoals.map((goal) => (
-                <GoalCard key={goal.id} goal={goal as unknown as Parameters<typeof GoalCard>[0]['goal']} />
+                <GoalCard key={goal.id} goal={goal as unknown as GoalCardGoalType} />
               ))}
             </div>
           ) : (
@@ -106,7 +124,7 @@ export default async function GoalsPage() {
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {completedGoals.map((goal) => (
-                <GoalCard key={goal.id} goal={goal as unknown as Parameters<typeof GoalCard>[0]['goal']} />
+                <GoalCard key={goal.id} goal={goal as unknown as GoalCardGoalType} />
               ))}
             </div>
           </CardContent>
@@ -116,13 +134,7 @@ export default async function GoalsPage() {
   )
 }
 
-function GoalCard({ goal }: { goal: Tables<'goals'> & { 
-  progress?: number;
-  roadmaps?: Array<{
-    id: string;
-    tasks: Array<{ completed: boolean }>;
-  }>;
-} }) {
+function GoalCard({ goal }: { goal: GoalCardGoalType }) {
 
   return (
     <Link href={`/goals/${goal.id}`}>
