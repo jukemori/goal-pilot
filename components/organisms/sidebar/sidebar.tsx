@@ -1,47 +1,47 @@
-'use client'
+"use client";
 
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
-import { 
-  LayoutDashboard, 
-  Target, 
-  Calendar, 
-  Settings, 
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import {
+  LayoutDashboard,
+  Target,
+  Calendar,
+  Settings,
   LogOut,
   Menu,
-  X
-} from 'lucide-react'
-import { useState, useEffect } from 'react'
-import { createClient } from '@/lib/supabase/client'
-import { useRouter } from 'next/navigation'
-import { toast } from 'sonner'
+  X,
+} from "lucide-react";
+import { useState, useEffect } from "react";
+import { createClient } from "@/lib/supabase/client";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 const navigation = [
-  { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-  { name: 'Goals', href: '/goals', icon: Target },
-  { name: 'Calendar', href: '/calendar', icon: Calendar },
-  { name: 'Settings', href: '/settings', icon: Settings },
-]
+  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { name: "Goals", href: "/goals", icon: Target },
+  { name: "Calendar", href: "/calendar", icon: Calendar },
+  { name: "Settings", href: "/settings", icon: Settings },
+];
 
 export function Sidebar() {
-  const pathname = usePathname()
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const [isHydrated, setIsHydrated] = useState(false)
-  const router = useRouter()
-  const supabase = createClient()
+  const pathname = usePathname();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isHydrated, setIsHydrated] = useState(false);
+  const router = useRouter();
+  const supabase = createClient();
 
   useEffect(() => {
-    setIsHydrated(true)
-  }, [])
+    setIsHydrated(true);
+  }, []);
 
   async function handleSignOut() {
-    const { error } = await supabase.auth.signOut()
+    const { error } = await supabase.auth.signOut();
     if (error) {
-      toast.error('Error signing out')
+      toast.error("Error signing out");
     } else {
-      router.push('/login')
+      router.push("/login");
     }
   }
 
@@ -56,29 +56,40 @@ export function Sidebar() {
         >
           {isHydrated && isMobileMenuOpen ? <X /> : <Menu />}
         </Button>
-        <Link href="/" className="text-lg font-semibold text-primary hover:opacity-80 transition-opacity">
+        <Link
+          href="/"
+          className="text-lg font-semibold text-primary hover:opacity-80 transition-opacity"
+        >
           Goal Pilot
         </Link>
         <div className="w-10" /> {/* Spacer for centering */}
       </div>
 
       {/* Sidebar */}
-      <div className={cn(
-        "fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 transform transition-transform duration-200 ease-in-out",
-        isHydrated && isMobileMenuOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
-      )}>
+      <div
+        className={cn(
+          "fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 transform transition-transform duration-200 ease-in-out",
+          isHydrated && isMobileMenuOpen
+            ? "translate-x-0"
+            : "-translate-x-full lg:translate-x-0",
+        )}
+      >
         <div className="flex flex-col h-full">
           <div className="hidden lg:flex items-center justify-center h-16 border-b">
-            <Link href="/" className="text-xl font-bold text-primary hover:opacity-80 transition-opacity">
+            <Link
+              href="/"
+              className="text-xl font-bold text-primary hover:opacity-80 transition-opacity"
+            >
               Goal Pilot
             </Link>
           </div>
-          
+
           <nav className="flex-1 px-4 pt-8 pb-4 lg:pt-4 space-y-1">
             {navigation.map((item) => {
-              const isActive = item.href === '/goals' 
-                ? pathname.startsWith('/goals')
-                : pathname === item.href
+              const isActive =
+                item.href === "/goals"
+                  ? pathname.startsWith("/goals")
+                  : pathname === item.href;
               return (
                 <Link
                   key={item.name}
@@ -87,14 +98,14 @@ export function Sidebar() {
                     "flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md transition-colors cursor-pointer",
                     isActive
                       ? "bg-primary/10 text-primary"
-                      : "text-gray-700 hover:bg-gray-50"
+                      : "text-gray-700 hover:bg-gray-50",
                   )}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   <item.icon className="h-5 w-5" />
                   {item.name}
                 </Link>
-              )
+              );
             })}
           </nav>
 
@@ -119,5 +130,5 @@ export function Sidebar() {
         />
       )}
     </>
-  )
+  );
 }

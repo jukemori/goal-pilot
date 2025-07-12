@@ -1,48 +1,64 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import Link from 'next/link'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { createClient } from '@/lib/supabase/client'
-import { ArrowLeft, Loader2, AlertCircle, CheckCircle, Mail } from 'lucide-react'
-import { toast } from 'sonner'
+import { useState } from "react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { createClient } from "@/lib/supabase/client";
+import {
+  ArrowLeft,
+  Loader2,
+  AlertCircle,
+  CheckCircle,
+  Mail,
+} from "lucide-react";
+import { toast } from "sonner";
 
 export default function ForgotPasswordPage() {
-  const [email, setEmail] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState('')
-  const [isSuccess, setIsSuccess] = useState(false)
+  const [email, setEmail] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [isSuccess, setIsSuccess] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
-    setError('')
-    
+    e.preventDefault();
+    setIsLoading(true);
+    setError("");
+
     try {
-      const supabase = createClient()
-      
-      const { error: resetError } = await supabase.auth.resetPasswordForEmail(email.trim(), {
-        redirectTo: `${window.location.origin}/reset-password`,
-      })
+      const supabase = createClient();
+
+      const { error: resetError } = await supabase.auth.resetPasswordForEmail(
+        email.trim(),
+        {
+          redirectTo: `${window.location.origin}/reset-password`,
+        },
+      );
 
       if (resetError) {
-        setError(resetError.message || 'An error occurred. Please try again.')
-        return
+        setError(resetError.message || "An error occurred. Please try again.");
+        return;
       }
 
-      setIsSuccess(true)
-      toast.success('Password reset email sent!')
+      setIsSuccess(true);
+      toast.success("Password reset email sent!");
     } catch (err) {
-      setError('Network error. Please check your connection and try again.')
-      console.error('Password reset error:', err)
+      setError("Network error. Please check your connection and try again.");
+      console.error("Password reset error:", err);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className="space-y-6">
@@ -54,12 +70,14 @@ export default function ForgotPasswordPage() {
 
       <Card className="border-gray-200 shadow-sm">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-xl text-center">Forgot Your Password?</CardTitle>
+          <CardTitle className="text-xl text-center">
+            Forgot Your Password?
+          </CardTitle>
           <CardDescription className="text-center">
             Enter your email and we'll send you a reset link
           </CardDescription>
         </CardHeader>
-        
+
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
             {/* Error Alert */}
@@ -75,7 +93,8 @@ export default function ForgotPasswordPage() {
               <Alert className="border-green-200 bg-green-50 text-green-800">
                 <CheckCircle className="h-4 w-4" />
                 <AlertDescription>
-                  Password reset email sent! Check your inbox and follow the link to reset your password.
+                  Password reset email sent! Check your inbox and follow the
+                  link to reset your password.
                 </AlertDescription>
               </Alert>
             )}
@@ -100,8 +119,8 @@ export default function ForgotPasswordPage() {
           </CardContent>
 
           <CardFooter className="flex flex-col space-y-6 mt-6">
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               className="w-full bg-primary hover:bg-primary/90 shadow-sm"
               disabled={isLoading || isSuccess || !email}
             >
@@ -116,13 +135,13 @@ export default function ForgotPasswordPage() {
                   Email Sent!
                 </>
               ) : (
-                'Send Reset Link'
+                "Send Reset Link"
               )}
             </Button>
-            
+
             <div className="text-center">
-              <Link 
-                href="/login" 
+              <Link
+                href="/login"
                 className="inline-flex items-center gap-2 text-sm text-primary hover:underline font-medium"
               >
                 <ArrowLeft className="h-4 w-4" />
@@ -133,5 +152,5 @@ export default function ForgotPasswordPage() {
         </form>
       </Card>
     </div>
-  )
+  );
 }

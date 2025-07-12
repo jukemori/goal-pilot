@@ -1,37 +1,49 @@
-import { createClient } from '@/lib/supabase/server'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import Link from 'next/link'
-import { Plus, Clock, Target, Calendar } from 'lucide-react'
-import { Tables } from '@/types/database'
-import dynamic from 'next/dynamic'
-import { ErrorBoundary } from '@/components/error-boundary'
-import { TemplatesSkeleton } from '@/components/ui/skeletons'
+import { createClient } from "@/lib/supabase/server";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { Plus, Clock, Target, Calendar } from "lucide-react";
+import { Tables } from "@/types/database";
+import dynamic from "next/dynamic";
+import { ErrorBoundary } from "@/components/error-boundary";
+import { TemplatesSkeleton } from "@/components/ui/skeletons";
 
 // Type for GoalCard component props
-type GoalCardGoalType = Tables<'goals'> & { 
+type GoalCardGoalType = Tables<"goals"> & {
   progress?: number;
   roadmaps?: Array<{
     id: string;
     tasks?: Array<{ completed: boolean }>;
   }>;
-}
+};
 
 // Lazy load TemplatesSection to reduce initial bundle
-const TemplatesSection = dynamic(() => import('@/components/organisms/goal-templates/templates-section').then(mod => ({ default: mod.TemplatesSection })), {
-  loading: () => <TemplatesSkeleton />
-})
+const TemplatesSection = dynamic(
+  () =>
+    import("@/components/organisms/goal-templates/templates-section").then(
+      (mod) => ({ default: mod.TemplatesSection }),
+    ),
+  {
+    loading: () => <TemplatesSkeleton />,
+  },
+);
 
 export default async function GoalsPage() {
-  const supabase = await createClient()
-  
-  const { data: goals } = await supabase
-    .from('goals')
-    .select('*, roadmaps(id)')
-    .order('created_at', { ascending: false })
+  const supabase = await createClient();
 
-  const activeGoals = goals?.filter(g => g.status === 'active') || []
-  const completedGoals = goals?.filter(g => g.status === 'completed') || []
+  const { data: goals } = await supabase
+    .from("goals")
+    .select("*, roadmaps(id)")
+    .order("created_at", { ascending: false });
+
+  const activeGoals = goals?.filter((g) => g.status === "active") || [];
+  const completedGoals = goals?.filter((g) => g.status === "completed") || [];
 
   return (
     <div className="space-y-8">
@@ -47,9 +59,14 @@ export default async function GoalsPage() {
                 </div>
                 <h1 className="text-3xl font-bold text-gray-900">Goals</h1>
               </div>
-              <p className="text-gray-600 text-lg">Manage and track all your learning goals</p>
+              <p className="text-gray-600 text-lg">
+                Manage and track all your learning goals
+              </p>
             </div>
-            <Button asChild className="bg-primary hover:bg-primary/90 shadow-md self-start md:self-auto">
+            <Button
+              asChild
+              className="bg-primary hover:bg-primary/90 shadow-md self-start md:self-auto"
+            >
               <Link href="/goals/new">
                 <Plus className="h-4 w-4 mr-2" />
                 New Goal
@@ -81,7 +98,10 @@ export default async function GoalsPage() {
           {activeGoals.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {activeGoals.map((goal) => (
-                <GoalCard key={goal.id} goal={goal as unknown as GoalCardGoalType} />
+                <GoalCard
+                  key={goal.id}
+                  goal={goal as unknown as GoalCardGoalType}
+                />
               ))}
             </div>
           ) : (
@@ -92,11 +112,17 @@ export default async function GoalsPage() {
                 </div>
                 <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-20 h-20 bg-primary/5 rounded-full -z-10"></div>
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">No active goals yet</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                No active goals yet
+              </h3>
               <p className="text-gray-600 mb-6 max-w-md mx-auto">
-                Start your learning journey by creating your first goal. Set your target and let AI generate a personalized roadmap.
+                Start your learning journey by creating your first goal. Set
+                your target and let AI generate a personalized roadmap.
               </p>
-              <Button asChild className="bg-primary hover:bg-primary/90 shadow-md">
+              <Button
+                asChild
+                className="bg-primary hover:bg-primary/90 shadow-md"
+              >
                 <Link href="/goals/new">
                   <Plus className="h-4 w-4 mr-2" />
                   Create Your First Goal
@@ -124,18 +150,20 @@ export default async function GoalsPage() {
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {completedGoals.map((goal) => (
-                <GoalCard key={goal.id} goal={goal as unknown as GoalCardGoalType} />
+                <GoalCard
+                  key={goal.id}
+                  goal={goal as unknown as GoalCardGoalType}
+                />
               ))}
             </div>
           </CardContent>
         </Card>
       )}
     </div>
-  )
+  );
 }
 
 function GoalCard({ goal }: { goal: GoalCardGoalType }) {
-
   return (
     <Link href={`/goals/${goal.id}`}>
       <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
@@ -151,7 +179,9 @@ function GoalCard({ goal }: { goal: GoalCardGoalType }) {
           <div className="space-y-2 text-sm text-gray-600">
             <div className="flex items-center gap-2">
               <Calendar className="h-4 w-4" />
-              <span>Started {new Date(goal.start_date).toLocaleDateString()}</span>
+              <span>
+                Started {new Date(goal.start_date).toLocaleDateString()}
+              </span>
             </div>
             <div className="flex items-center gap-2">
               <Clock className="h-4 w-4" />
@@ -160,13 +190,13 @@ function GoalCard({ goal }: { goal: GoalCardGoalType }) {
             <div className="flex items-center gap-2">
               <Target className="h-4 w-4" />
               <span>
-                {goal.roadmaps && goal.roadmaps.length > 0 
-                  ? 'Roadmap ready' 
-                  : 'Generating roadmap...'}
+                {goal.roadmaps && goal.roadmaps.length > 0
+                  ? "Roadmap ready"
+                  : "Generating roadmap..."}
               </span>
             </div>
           </div>
-          {goal.status === 'completed' && (
+          {goal.status === "completed" && (
             <div className="mt-4 text-sm text-primary font-medium">
               Completed
             </div>
@@ -174,5 +204,5 @@ function GoalCard({ goal }: { goal: GoalCardGoalType }) {
         </CardContent>
       </Card>
     </Link>
-  )
+  );
 }

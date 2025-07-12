@@ -1,6 +1,12 @@
-import Link from 'next/link'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 export default function AuthErrorPage() {
   return (
@@ -23,22 +29,18 @@ export default function AuthErrorPage() {
               <li>• The link is invalid or corrupted</li>
             </ul>
           </div>
-          
+
           <div className="flex flex-col gap-3">
             <Button asChild>
-              <Link href="/register">
-                Try Signing Up Again
-              </Link>
+              <Link href="/register">Try Signing Up Again</Link>
             </Button>
-            
+
             <Button variant="outline" asChild>
-              <Link href="/login">
-                Go to Login
-              </Link>
+              <Link href="/login">Go to Login</Link>
             </Button>
           </div>
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

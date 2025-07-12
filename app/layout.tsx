@@ -15,7 +15,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Goal Pilot - AI-Powered Goal Roadmap & Calendar",
-  description: "Achieve your goals with personalized AI-generated roadmaps and daily task scheduling",
+  description:
+    "Achieve your goals with personalized AI-generated roadmaps and daily task scheduling",
 };
 
 export default function RootLayout({

@@ -1,7 +1,13 @@
-import Link from 'next/link'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { AlertTriangle } from 'lucide-react'
+import Link from "next/link";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { AlertTriangle } from "lucide-react";
 
 export default function AuthCodeErrorPage() {
   return (
@@ -22,9 +28,7 @@ export default function AuthCodeErrorPage() {
           </p>
           <div className="space-y-2">
             <Link href="/register">
-              <Button className="w-full">
-                Try Registering Again
-              </Button>
+              <Button className="w-full">Try Registering Again</Button>
             </Link>
             <Link href="/login">
               <Button variant="outline" className="w-full">
@@ -35,5 +39,5 @@ export default function AuthCodeErrorPage() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

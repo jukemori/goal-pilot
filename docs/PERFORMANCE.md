@@ -5,6 +5,7 @@ This document outlines the performance monitoring tools and optimization strateg
 ## 🔧 Performance Tools
 
 ### Bundle Analyzer
+
 Analyze bundle sizes and dependencies to identify optimization opportunities.
 
 ```bash
@@ -18,23 +19,28 @@ bun run analyze
 ```
 
 ### Development Performance Monitor
+
 Real-time performance monitoring widget available in development mode.
 
 **Features:**
+
 - Real-time FPS monitoring
 - Memory usage tracking
 - DOM node count
 - Bundle size information
 
 **Usage:**
+
 - Automatically enabled in development mode
 - Press `Ctrl+Shift+P` to toggle visibility
 - View performance metrics in bottom-right corner
 
 ### Webpack Performance Plugin
+
 Custom webpack plugin that provides detailed build-time analysis.
 
 **Provides:**
+
 - Asset size analysis
 - Chunk composition breakdown
 - Large module identification
@@ -43,6 +49,7 @@ Custom webpack plugin that provides detailed build-time analysis.
 ## 📊 Performance Metrics
 
 ### Current Bundle Sizes
+
 - `/goals/[id]`: ~278 kB (includes dynamic imports)
 - `/calendar`: ~180 kB (with lazy loading)
 - `/goals`: ~165 kB (optimized templates)
@@ -51,6 +58,7 @@ Custom webpack plugin that provides detailed build-time analysis.
 ### Optimization Strategies Implemented
 
 #### 1. Code Splitting
+
 - Dynamic imports for heavy components
 - Route-based splitting
 - Component-level lazy loading
@@ -63,17 +71,20 @@ const RoadmapView = dynamic(() => import('@/components/organisms/roadmap-view/ro
 ```
 
 #### 2. Bundle Optimization
+
 - Separate chunks for UI libraries (`@radix-ui`, `lucide-react`)
 - Vendor chunk splitting (max 244KB)
 - Utility library grouping
 
 #### 3. Performance Monitoring
+
 - Component render time tracking
 - Memory usage monitoring
 - FPS performance tracking
 - Bundle size analysis
 
 #### 4. Caching Strategies
+
 - React Query with optimized cache times
 - 5-minute stale time for data
 - 10-minute garbage collection time
@@ -83,6 +94,7 @@ const RoadmapView = dynamic(() => import('@/components/organisms/roadmap-view/ro
 ### For Developers
 
 1. **Monitor Bundle Size**
+
    ```bash
    bun run analyze  # Run this regularly
    ```
@@ -93,12 +105,13 @@ const RoadmapView = dynamic(() => import('@/components/organisms/roadmap-view/ro
    - Watch for memory leaks
 
 3. **Component Optimization**
+
    ```typescript
    // Use performance monitoring for heavy components
-   import { usePerformanceMonitor } from '@/lib/utils/performance-monitor'
-   
+   import { usePerformanceMonitor } from "@/lib/utils/performance-monitor";
+
    function HeavyComponent() {
-     const metrics = usePerformanceMonitor('HeavyComponent')
+     const metrics = usePerformanceMonitor("HeavyComponent");
      // Component logic...
    }
    ```

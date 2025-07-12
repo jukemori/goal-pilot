@@ -83,7 +83,7 @@
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.70 0.16 142.1);
+  --primary: oklch(0.7 0.16 142.1);
   --primary-foreground: oklch(0.145 0 0);
   --secondary: oklch(0.269 0 0);
   --secondary-foreground: oklch(0.985 0 0);
@@ -91,7 +91,7 @@
   --muted-foreground: oklch(0.708 0 0);
   --accent: oklch(0.269 0 0);
   --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.60 0.23 25);
+  --destructive: oklch(0.6 0.23 25);
   --destructive-foreground: oklch(1 0 0);
   --border: oklch(0.269 0 0);
   --input: oklch(1 0 0 / 15%);
@@ -125,7 +125,7 @@
     height: 100%;
     min-height: 100vh;
   }
-  
+
   /* Ensure modal overlays cover the full viewport */
   [data-slot="dialog-overlay"],
   .modal-overlay {
@@ -145,21 +145,20 @@
     opacity: 1 !important;
     backdrop-filter: none !important;
   }
-  
+
   /* Dark mode toasts */
   .dark .toaster [data-sonner-toast] {
     background: #1e293b !important;
     color: #f8fafc !important;
     border: 1px solid #475569 !important;
   }
-  
+
   /* Additional Sonner overrides */
   .toaster [data-sonner-toast][data-styled="true"] {
     background: #ffffff !important;
   }
-  
+
   .dark .toaster [data-sonner-toast][data-styled="true"] {
     background: #1e293b !important;
   }
 }
-

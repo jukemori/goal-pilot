@@ -1,95 +1,100 @@
-'use client'
+"use client";
 
-import { motion, AnimatePresence } from 'framer-motion'
-import { Sparkles, Bot, Brain, Zap } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { motion, AnimatePresence } from "framer-motion";
+import { Sparkles, Bot, Brain, Zap } from "lucide-react";
+import { useEffect, useState } from "react";
 
 interface AIGenerationOverlayProps {
-  isVisible: boolean
-  stage: 'roadmap' | 'tasks' | 'analysis'
-  onCancel?: () => void
+  isVisible: boolean;
+  stage: "roadmap" | "tasks" | "analysis";
+  onCancel?: () => void;
 }
 
 const stageConfig = {
   roadmap: {
-    title: 'Creating Your Personalized Roadmap',
-    subtitle: 'Our AI is analyzing your goal and crafting a detailed learning path tailored just for you.',
+    title: "Creating Your Personalized Roadmap",
+    subtitle:
+      "Our AI is analyzing your goal and crafting a detailed learning path tailored just for you.",
     icon: Brain,
     steps: [
-      'Analyzing your goal and current level...',
-      'Calculating optimal timeline...',
-      'Designing learning stages...',
-      'Creating detailed milestones...',
-      'Finalizing your roadmap...'
-    ]
+      "Analyzing your goal and current level...",
+      "Calculating optimal timeline...",
+      "Designing learning stages...",
+      "Creating detailed milestones...",
+      "Finalizing your roadmap...",
+    ],
   },
   tasks: {
-    title: 'Generating Daily Tasks',
-    subtitle: 'Breaking down your learning stages into actionable daily tasks.',
+    title: "Generating Daily Tasks",
+    subtitle: "Breaking down your learning stages into actionable daily tasks.",
     icon: Zap,
     steps: [
-      'Analyzing stage requirements...',
-      'Creating daily task sequences...',
-      'Optimizing task difficulty...',
-      'Scheduling tasks...',
-      'Finalizing task list...'
-    ]
+      "Analyzing stage requirements...",
+      "Creating daily task sequences...",
+      "Optimizing task difficulty...",
+      "Scheduling tasks...",
+      "Finalizing task list...",
+    ],
   },
   analysis: {
-    title: 'Analyzing Progress',
-    subtitle: 'Our AI is reviewing your progress and updating recommendations.',
+    title: "Analyzing Progress",
+    subtitle: "Our AI is reviewing your progress and updating recommendations.",
     icon: Bot,
     steps: [
-      'Reviewing completed tasks...',
-      'Analyzing learning patterns...',
-      'Adjusting recommendations...',
-      'Updating timeline...',
-      'Finalizing analysis...'
-    ]
-  }
-}
+      "Reviewing completed tasks...",
+      "Analyzing learning patterns...",
+      "Adjusting recommendations...",
+      "Updating timeline...",
+      "Finalizing analysis...",
+    ],
+  },
+};
 
-export function AIGenerationOverlay({ isVisible, stage, onCancel }: AIGenerationOverlayProps) {
-  const [currentStep, setCurrentStep] = useState(0)
-  const [dots, setDots] = useState('')
-  
-  const config = stageConfig[stage]
-  const IconComponent = config.icon
+export function AIGenerationOverlay({
+  isVisible,
+  stage,
+  onCancel,
+}: AIGenerationOverlayProps) {
+  const [currentStep, setCurrentStep] = useState(0);
+  const [dots, setDots] = useState("");
+
+  const config = stageConfig[stage];
+  const IconComponent = config.icon;
 
   // Cycle through steps
   useEffect(() => {
-    if (!isVisible) return
-    
+    if (!isVisible) return;
+
     const interval = setInterval(() => {
-      setCurrentStep((prev) => (prev + 1) % config.steps.length)
-    }, 2000) // Change step every 2 seconds
-    
-    return () => clearInterval(interval)
-  }, [isVisible, config.steps.length])
+      setCurrentStep((prev) => (prev + 1) % config.steps.length);
+    }, 2000); // Change step every 2 seconds
+
+    return () => clearInterval(interval);
+  }, [isVisible, config.steps.length]);
 
   // Animate dots
   useEffect(() => {
-    if (!isVisible) return
-    
+    if (!isVisible) return;
+
     const interval = setInterval(() => {
-      setDots(prev => prev.length >= 3 ? '' : prev + '.')
-    }, 500)
-    
-    return () => clearInterval(interval)
-  }, [isVisible])
+      setDots((prev) => (prev.length >= 3 ? "" : prev + "."));
+    }, 500);
+
+    return () => clearInterval(interval);
+  }, [isVisible]);
 
   // Prevent background scrolling
   useEffect(() => {
     if (isVisible) {
-      document.body.style.overflow = 'hidden'
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = 'unset'
+      document.body.style.overflow = "unset";
     }
-    
+
     return () => {
-      document.body.style.overflow = 'unset'
-    }
-  }, [isVisible])
+      document.body.style.overflow = "unset";
+    };
+  }, [isVisible]);
 
   return (
     <AnimatePresence>
@@ -117,14 +122,14 @@ export function AIGenerationOverlay({ isVisible, stage, onCancel }: AIGeneration
             <div className="relative z-10 text-center">
               {/* Icon with pulsing animation */}
               <motion.div
-                animate={{ 
+                animate={{
                   scale: [1, 1.1, 1],
-                  rotate: [0, 5, -5, 0]
+                  rotate: [0, 5, -5, 0],
                 }}
-                transition={{ 
+                transition={{
                   duration: 2,
                   repeat: Infinity,
-                  ease: "easeInOut"
+                  ease: "easeInOut",
                 }}
                 className="inline-flex items-center justify-center w-16 h-16 text-primary bg-white rounded-2xl shadow-lg mb-6"
               >
@@ -152,7 +157,8 @@ export function AIGenerationOverlay({ isVisible, stage, onCancel }: AIGeneration
                 >
                   <Sparkles className="w-4 h-4 text-primary" />
                   <span className="text-sm font-medium">
-                    {config.steps[currentStep]}{dots}
+                    {config.steps[currentStep]}
+                    {dots}
                   </span>
                 </motion.div>
               </div>
@@ -163,9 +169,13 @@ export function AIGenerationOverlay({ isVisible, stage, onCancel }: AIGeneration
                   <motion.div
                     key={index}
                     className={`w-2 h-2 rounded-full transition-colors duration-300 ${
-                      index === currentStep ? 'bg-primary' : 'bg-gray-300'
+                      index === currentStep ? "bg-primary" : "bg-gray-300"
                     }`}
-                    animate={index === currentStep ? { scale: [1, 1.2, 1] } : { scale: 1 }}
+                    animate={
+                      index === currentStep
+                        ? { scale: [1, 1.2, 1] }
+                        : { scale: 1 }
+                    }
                     transition={{ duration: 0.3 }}
                   />
                 ))}
@@ -182,7 +192,8 @@ export function AIGenerationOverlay({ isVisible, stage, onCancel }: AIGeneration
                       Please don't navigate away
                     </p>
                     <p className="text-amber-700 text-xs leading-relaxed">
-                      This process takes about 30 seconds. Leaving this page will interrupt the generation.
+                      This process takes about 30 seconds. Leaving this page
+                      will interrupt the generation.
                     </p>
                   </div>
                 </div>
@@ -202,5 +213,5 @@ export function AIGenerationOverlay({ isVisible, stage, onCancel }: AIGeneration
         </motion.div>
       )}
     </AnimatePresence>
-  )
+  );
 }

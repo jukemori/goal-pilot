@@ -1,106 +1,124 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
-import Link from 'next/link'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { createClient } from '@/lib/supabase/client'
-import { Eye, EyeOff, Loader2, AlertCircle, CheckCircle } from 'lucide-react'
-import { toast } from 'sonner'
+import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { createClient } from "@/lib/supabase/client";
+import { Eye, EyeOff, Loader2, AlertCircle, CheckCircle } from "lucide-react";
+import { toast } from "sonner";
 
 export default function LoginPage() {
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const redirectTo = searchParams.get('redirectTo') || '/dashboard'
-  
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [showPassword, setShowPassword] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const [isGoogleLoading, setIsGoogleLoading] = useState(false)
-  const [error, setError] = useState('')
-  const [isSuccess, setIsSuccess] = useState(false)
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get("redirectTo") || "/dashboard";
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [isSuccess, setIsSuccess] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
-    setError('')
-    
+    e.preventDefault();
+    setIsLoading(true);
+    setError("");
+
     try {
-      const supabase = createClient()
-      
-      const { data, error: authError } = await supabase.auth.signInWithPassword({
-        email: email.trim(),
-        password,
-      })
+      const supabase = createClient();
+
+      const { data, error: authError } = await supabase.auth.signInWithPassword(
+        {
+          email: email.trim(),
+          password,
+        },
+      );
 
       if (authError) {
         // Handle specific auth errors with user-friendly messages
         switch (authError.message) {
-          case 'Invalid login credentials':
-            setError('Invalid email or password. Please check your credentials and try again.')
-            break
-          case 'Email not confirmed':
-            setError('Please check your email and click the confirmation link before signing in.')
-            break
-          case 'Too many requests':
-            setError('Too many login attempts. Please wait a few minutes before trying again.')
-            break
+          case "Invalid login credentials":
+            setError(
+              "Invalid email or password. Please check your credentials and try again.",
+            );
+            break;
+          case "Email not confirmed":
+            setError(
+              "Please check your email and click the confirmation link before signing in.",
+            );
+            break;
+          case "Too many requests":
+            setError(
+              "Too many login attempts. Please wait a few minutes before trying again.",
+            );
+            break;
           default:
-            setError(authError.message || 'An error occurred during sign in. Please try again.')
+            setError(
+              authError.message ||
+                "An error occurred during sign in. Please try again.",
+            );
         }
-        return
+        return;
       }
 
       if (data?.user) {
-        setIsSuccess(true)
-        toast.success('Welcome back! Redirecting to your dashboard...')
-        
+        setIsSuccess(true);
+        toast.success("Welcome back! Redirecting to your dashboard...");
+
         // Small delay to show success state
         setTimeout(() => {
-          router.push(redirectTo)
-          router.refresh()
-        }, 1000)
+          router.push(redirectTo);
+          router.refresh();
+        }, 1000);
       }
     } catch (err) {
-      setError('Network error. Please check your connection and try again.')
-      console.error('Login error:', err)
+      setError("Network error. Please check your connection and try again.");
+      console.error("Login error:", err);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const handleGoogleSignIn = async () => {
-    setIsGoogleLoading(true)
-    setError('')
-    
+    setIsGoogleLoading(true);
+    setError("");
+
     try {
-      const supabase = createClient()
-      
+      const supabase = createClient();
+
       const { error: authError } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
+        provider: "google",
         options: {
-          redirectTo: `${window.location.origin}/auth/callback?redirectTo=${encodeURIComponent(redirectTo)}`
-        }
-      })
+          redirectTo: `${window.location.origin}/auth/callback?redirectTo=${encodeURIComponent(redirectTo)}`,
+        },
+      });
 
       if (authError) {
-        setError('Failed to sign in with Google. Please try again.')
-        console.error('Google sign in error:', authError)
+        setError("Failed to sign in with Google. Please try again.");
+        console.error("Google sign in error:", authError);
       }
-      
+
       // Note: For OAuth, the redirect happens automatically, so we don't handle success here
     } catch (err) {
-      setError('Network error. Please check your connection and try again.')
-      console.error('Google sign in error:', err)
+      setError("Network error. Please check your connection and try again.");
+      console.error("Google sign in error:", err);
     } finally {
-      setIsGoogleLoading(false)
+      setIsGoogleLoading(false);
     }
-  }
+  };
 
   return (
     <div className="space-y-6">
@@ -117,7 +135,7 @@ export default function LoginPage() {
             Enter your credentials to access your account
           </CardDescription>
         </CardHeader>
-        
+
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
             {/* Error Alert */}
@@ -132,7 +150,9 @@ export default function LoginPage() {
             {isSuccess && (
               <Alert className="border-green-200 bg-green-50 text-green-800">
                 <CheckCircle className="h-4 w-4" />
-                <AlertDescription>Successfully signed in! Redirecting...</AlertDescription>
+                <AlertDescription>
+                  Successfully signed in! Redirecting...
+                </AlertDescription>
               </Alert>
             )}
 
@@ -180,7 +200,9 @@ export default function LoginPage() {
                 <span className="w-full border-t border-gray-300" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-white px-2 text-gray-500">Or continue with email</span>
+                <span className="bg-white px-2 text-gray-500">
+                  Or continue with email
+                </span>
               </div>
             </div>
 
@@ -203,8 +225,8 @@ export default function LoginPage() {
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <Label htmlFor="password">Password</Label>
-                <Link 
-                  href="/forgot-password" 
+                <Link
+                  href="/forgot-password"
                   className="text-sm text-primary hover:underline"
                 >
                   Forgot password?
@@ -213,7 +235,7 @@ export default function LoginPage() {
               <div className="relative">
                 <Input
                   id="password"
-                  type={showPassword ? 'text' : 'password'}
+                  type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Enter your password"
@@ -240,8 +262,8 @@ export default function LoginPage() {
           </CardContent>
 
           <CardFooter className="flex flex-col space-y-6 mt-6">
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               className="w-full bg-primary hover:bg-primary/90 shadow-sm"
               disabled={isLoading || isSuccess || !email || !password}
             >
@@ -256,15 +278,15 @@ export default function LoginPage() {
                   Success!
                 </>
               ) : (
-                'Sign In'
+                "Sign In"
               )}
             </Button>
-            
+
             <div className="text-center">
               <p className="text-sm text-gray-600">
-                Don't have an account?{' '}
-                <Link 
-                  href="/register" 
+                Don't have an account?{" "}
+                <Link
+                  href="/register"
                   className="text-primary hover:underline font-medium"
                 >
                   Create Account
@@ -275,5 +297,5 @@ export default function LoginPage() {
         </form>
       </Card>
     </div>
-  )
+  );
 }

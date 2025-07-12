@@ -1,13 +1,13 @@
-import { Button } from '@/components/ui/button'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { Button } from "@/components/ui/button";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface TaskPaginationProps {
-  currentPage: number
-  totalPages: number
-  startIndex: number
-  endIndex: number
-  totalItems: number
-  onPageChange: (page: number) => void
+  currentPage: number;
+  totalPages: number;
+  startIndex: number;
+  endIndex: number;
+  totalItems: number;
+  onPageChange: (page: number) => void;
 }
 
 export function TaskPagination({
@@ -16,18 +16,19 @@ export function TaskPagination({
   startIndex,
   endIndex,
   totalItems,
-  onPageChange
+  onPageChange,
 }: TaskPaginationProps) {
   if (totalPages <= 1) {
-    return null
+    return null;
   }
 
   return (
     <div className="flex items-center justify-between pt-4">
       <div className="text-sm text-gray-700">
-        Showing {startIndex + 1}-{Math.min(endIndex, totalItems)} of {totalItems} date groups
+        Showing {startIndex + 1}-{Math.min(endIndex, totalItems)} of{" "}
+        {totalItems} date groups
       </div>
-      
+
       <div className="flex items-center gap-2">
         <Button
           variant="outline"
@@ -39,17 +40,18 @@ export function TaskPagination({
           <ChevronLeft className="h-4 w-4" />
           Previous
         </Button>
-        
+
         <div className="flex items-center gap-1">
           {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-            const pageNumber = currentPage <= 3 
-              ? i + 1 
-              : currentPage + i - 2 <= totalPages 
-                ? currentPage + i - 2 
-                : totalPages - 4 + i
-                
-            if (pageNumber > totalPages) return null
-            
+            const pageNumber =
+              currentPage <= 3
+                ? i + 1
+                : currentPage + i - 2 <= totalPages
+                  ? currentPage + i - 2
+                  : totalPages - 4 + i;
+
+            if (pageNumber > totalPages) return null;
+
             return (
               <Button
                 key={pageNumber}
@@ -60,10 +62,10 @@ export function TaskPagination({
               >
                 {pageNumber}
               </Button>
-            )
+            );
           })}
         </div>
-        
+
         <Button
           variant="outline"
           size="sm"
@@ -76,5 +78,5 @@ export function TaskPagination({
         </Button>
       </div>
     </div>
-  )
+  );
 }

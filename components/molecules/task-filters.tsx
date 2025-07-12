@@ -1,18 +1,24 @@
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Search, Filter } from 'lucide-react'
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Search, Filter } from "lucide-react";
 
 interface TaskFiltersProps {
-  searchQuery: string
-  statusFilter: 'all' | 'completed' | 'pending'
-  priorityFilter: 'all' | '5' | '4' | '3' | '2' | '1'
-  dateFilter: 'all' | 'today' | 'week' | 'overdue'
-  onSearchChange: (value: string) => void
-  onStatusChange: (value: 'all' | 'completed' | 'pending') => void
-  onPriorityChange: (value: 'all' | '5' | '4' | '3' | '2' | '1') => void
-  onDateChange: (value: 'all' | 'today' | 'week' | 'overdue') => void
-  onClearFilters: () => void
+  searchQuery: string;
+  statusFilter: "all" | "completed" | "pending";
+  priorityFilter: "all" | "5" | "4" | "3" | "2" | "1";
+  dateFilter: "all" | "today" | "week" | "overdue";
+  onSearchChange: (value: string) => void;
+  onStatusChange: (value: "all" | "completed" | "pending") => void;
+  onPriorityChange: (value: "all" | "5" | "4" | "3" | "2" | "1") => void;
+  onDateChange: (value: "all" | "today" | "week" | "overdue") => void;
+  onClearFilters: () => void;
 }
 
 export function TaskFilters({
@@ -24,7 +30,7 @@ export function TaskFilters({
   onStatusChange,
   onPriorityChange,
   onDateChange,
-  onClearFilters
+  onClearFilters,
 }: TaskFiltersProps) {
   return (
     <div className="space-y-4">
@@ -37,7 +43,7 @@ export function TaskFilters({
           className="pl-12 h-12 text-base bg-white border-gray-200 rounded-xl shadow-sm focus:border-primary focus:ring-2 focus:ring-primary/20"
         />
       </div>
-      
+
       <div className="flex flex-wrap gap-3">
         <Select value={statusFilter} onValueChange={onStatusChange}>
           <SelectTrigger className="w-[140px] h-10 bg-white border-gray-200 rounded-xl shadow-sm focus:border-primary focus:ring-2 focus:ring-primary/20">
@@ -87,5 +93,5 @@ export function TaskFilters({
         </Button>
       </div>
     </div>
-  )
+  );
 }

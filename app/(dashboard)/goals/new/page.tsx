@@ -1,64 +1,72 @@
-'use client'
+"use client";
 
-import { createGoal } from '@/app/actions/goals'
-import { GoalForm } from '@/components/organisms/goal-form/goal-form'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { ArrowLeft, Target, Sparkles } from 'lucide-react'
-import Link from 'next/link'
-import { useSearchParams } from 'next/navigation'
-import { useEffect, useState } from 'react'
-import { GoalTemplate } from '@/lib/templates/goal-templates'
-import { GoalFormData } from '@/lib/validations/goal'
+import { createGoal } from "@/app/actions/goals";
+import { GoalForm } from "@/components/organisms/goal-form/goal-form";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { ArrowLeft, Target, Sparkles } from "lucide-react";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { GoalTemplate } from "@/lib/templates/goal-templates";
+import { GoalFormData } from "@/lib/validations/goal";
 
 export default function NewGoalPage() {
-  const searchParams = useSearchParams()
-  const fromTemplate = searchParams.get('fromTemplate') === 'true'
-  const [selectedTemplate, setSelectedTemplate] = useState<GoalTemplate | null>(null)
-  const [templateDefaults, setTemplateDefaults] = useState<Partial<GoalFormData>>({})
-  const [isLoadingTemplate, setIsLoadingTemplate] = useState(fromTemplate)
+  const searchParams = useSearchParams();
+  const fromTemplate = searchParams.get("fromTemplate") === "true";
+  const [selectedTemplate, setSelectedTemplate] = useState<GoalTemplate | null>(
+    null,
+  );
+  const [templateDefaults, setTemplateDefaults] = useState<
+    Partial<GoalFormData>
+  >({});
+  const [isLoadingTemplate, setIsLoadingTemplate] = useState(fromTemplate);
 
   useEffect(() => {
     if (fromTemplate) {
       try {
-        const templateData = sessionStorage.getItem('selectedTemplate')
+        const templateData = sessionStorage.getItem("selectedTemplate");
         if (templateData) {
-          const template: GoalTemplate = JSON.parse(templateData)
-          setSelectedTemplate(template)
-          
+          const template: GoalTemplate = JSON.parse(templateData);
+          setSelectedTemplate(template);
+
           // Convert template to goal form defaults with all fields pre-filled
-          const today = new Date()
-          const startDate = today.toISOString().split('T')[0]
-          const targetDate = template.suggested_target_date_weeks ? (() => {
-            const target = new Date(today)
-            target.setDate(target.getDate() + (template.suggested_target_date_weeks * 7))
-            return target.toISOString().split('T')[0]
-          })() : ''
+          const today = new Date();
+          const startDate = today.toISOString().split("T")[0];
+          const targetDate = template.suggested_target_date_weeks
+            ? (() => {
+                const target = new Date(today);
+                target.setDate(
+                  target.getDate() + template.suggested_target_date_weeks * 7,
+                );
+                return target.toISOString().split("T")[0];
+              })()
+            : "";
 
           const defaults: Partial<GoalFormData> = {
             title: template.title,
             description: template.description,
             daily_time_commitment: template.default_time_commitment,
-            current_level: template.suggested_current_levels[0] || '',
+            current_level: template.suggested_current_levels[0] || "",
             start_date: startDate,
             target_date: targetDate,
             weekly_schedule: template.default_weekly_schedule,
-          }
-          
-          setTemplateDefaults(defaults)
-          
+          };
+
+          setTemplateDefaults(defaults);
+
           // Clear the template from sessionStorage
-          sessionStorage.removeItem('selectedTemplate')
+          sessionStorage.removeItem("selectedTemplate");
         }
       } catch (error) {
-        console.error('Error loading template:', error)
+        console.error("Error loading template:", error);
       } finally {
-        setIsLoadingTemplate(false)
+        setIsLoadingTemplate(false);
       }
     } else {
-      setIsLoadingTemplate(false)
+      setIsLoadingTemplate(false);
     }
-  }, [fromTemplate])
+  }, [fromTemplate]);
 
   return (
     <div className="space-y-6">
@@ -83,29 +91,35 @@ export default function NewGoalPage() {
               </div>
               <div>
                 <h1 className="text-3xl font-bold text-gray-900">
-                  {selectedTemplate ? 'Customize Your Goal' : 'Create New Goal'}
+                  {selectedTemplate ? "Customize Your Goal" : "Create New Goal"}
                 </h1>
                 <p className="text-gray-600 mt-1">
-                  {selectedTemplate 
-                    ? 'Review and customize the template to fit your needs'
-                    : 'Tell us about your goal and we\'ll create a personalized roadmap for you'
-                  }
+                  {selectedTemplate
+                    ? "Review and customize the template to fit your needs"
+                    : "Tell us about your goal and we'll create a personalized roadmap for you"}
                 </p>
               </div>
             </div>
             {selectedTemplate && (
-              <Badge variant="secondary" className="bg-purple-50 text-purple-700 gap-2">
+              <Badge
+                variant="secondary"
+                className="bg-purple-50 text-purple-700 gap-2"
+              >
                 <Sparkles className="h-3 w-3" />
                 From Template
               </Badge>
             )}
           </div>
-          
+
           {selectedTemplate && (
             <div className="mt-4 space-y-4">
               <div className="p-4 bg-white/50 rounded-lg border border-gray-100">
-                <h3 className="font-medium text-gray-900 mb-2">Template: {selectedTemplate.title}</h3>
-                <p className="text-sm text-gray-600 mb-3">{selectedTemplate.description}</p>
+                <h3 className="font-medium text-gray-900 mb-2">
+                  Template: {selectedTemplate.title}
+                </h3>
+                <p className="text-sm text-gray-600 mb-3">
+                  {selectedTemplate.description}
+                </p>
                 <div className="flex flex-wrap gap-2">
                   {selectedTemplate.tags.map((tag) => (
                     <Badge key={tag} variant="outline" className="text-xs">
@@ -114,7 +128,7 @@ export default function NewGoalPage() {
                   ))}
                 </div>
               </div>
-              
+
               <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
                 <h4 className="font-medium text-blue-900 mb-2 flex items-center gap-2">
                   <Sparkles className="h-4 w-4" />
@@ -143,5 +157,5 @@ export default function NewGoalPage() {
         </div>
       )}
     </div>
-  )
+  );
 }

@@ -1,14 +1,17 @@
-import { Card, CardContent, CardHeader } from '@/components/ui/card'
-import { cn } from '@/lib/utils'
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
 // Base skeleton component
-function Skeleton({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+function Skeleton({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
       className={cn("animate-pulse rounded-md bg-gray-200", className)}
       {...props}
     />
-  )
+  );
 }
 
 // Roadmap skeleton
@@ -20,7 +23,7 @@ export function RoadmapSkeleton() {
         <Skeleton className="h-4 w-full" />
         <Skeleton className="h-4 w-2/3" />
       </div>
-      
+
       <div className="grid gap-4 md:grid-cols-2">
         {Array.from({ length: 4 }).map((_, i) => (
           <Card key={i} className="p-4">
@@ -39,7 +42,7 @@ export function RoadmapSkeleton() {
         ))}
       </div>
     </div>
-  )
+  );
 }
 
 // Task list skeleton
@@ -60,7 +63,7 @@ export function TaskListSkeleton() {
         </div>
       ))}
     </div>
-  )
+  );
 }
 
 // Progress chart skeleton
@@ -71,19 +74,19 @@ export function ProgressChartSkeleton() {
         <Skeleton className="h-6 w-32" />
         <Skeleton className="h-4 w-20" />
       </div>
-      
+
       <div className="relative h-64 flex items-end justify-between gap-2 p-4">
         {Array.from({ length: 7 }).map((_, i) => (
           <div key={i} className="flex flex-col items-center gap-2 flex-1">
-            <Skeleton 
-              className="w-full rounded-t" 
+            <Skeleton
+              className="w-full rounded-t"
               style={{ height: `${Math.random() * 150 + 50}px` }}
             />
             <Skeleton className="h-3 w-8" />
           </div>
         ))}
       </div>
-      
+
       <div className="grid grid-cols-3 gap-4">
         {Array.from({ length: 3 }).map((_, i) => (
           <div key={i} className="text-center space-y-1">
@@ -93,7 +96,7 @@ export function ProgressChartSkeleton() {
         ))}
       </div>
     </div>
-  )
+  );
 }
 
 // Progress stages skeleton
@@ -104,7 +107,7 @@ export function ProgressStagesSkeleton() {
         <Skeleton className="h-6 w-40" />
         <Skeleton className="h-4 w-24" />
       </div>
-      
+
       <div className="space-y-4">
         {Array.from({ length: 5 }).map((_, i) => (
           <div key={i} className="relative">
@@ -127,7 +130,7 @@ export function ProgressStagesSkeleton() {
         ))}
       </div>
     </div>
-  )
+  );
 }
 
 // Timeline skeleton
@@ -138,7 +141,7 @@ export function RoadmapTimelineSkeleton() {
         <Skeleton className="h-7 w-48" />
         <Skeleton className="h-4 w-32" />
       </div>
-      
+
       <div className="relative">
         <Skeleton className="h-1 w-full rounded-full" />
         <div className="absolute top-0 left-0 flex justify-between w-full">
@@ -147,7 +150,7 @@ export function RoadmapTimelineSkeleton() {
           ))}
         </div>
       </div>
-      
+
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {Array.from({ length: 6 }).map((_, i) => (
           <Card key={i} className="p-4">
@@ -162,7 +165,7 @@ export function RoadmapTimelineSkeleton() {
         ))}
       </div>
     </div>
-  )
+  );
 }
 
 // Calendar skeleton
@@ -179,28 +182,32 @@ export function CalendarSkeleton() {
           <Skeleton className="h-8 w-8" />
         </div>
       </div>
-      
+
       <div className="grid grid-cols-7 gap-2 mb-4">
-        {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day) => (
+        {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day) => (
           <div key={day} className="text-center py-2">
             <Skeleton className="h-4 w-8 mx-auto" />
           </div>
         ))}
       </div>
-      
+
       <div className="grid grid-cols-7 gap-2">
         {Array.from({ length: 35 }).map((_, i) => (
           <div key={i} className="aspect-square p-2 border rounded-lg">
             <Skeleton className="h-4 w-6 mb-1" />
             <div className="space-y-1">
-              {Math.random() > 0.7 && <Skeleton className="h-2 w-full rounded" />}
-              {Math.random() > 0.8 && <Skeleton className="h-2 w-3/4 rounded" />}
+              {Math.random() > 0.7 && (
+                <Skeleton className="h-2 w-full rounded" />
+              )}
+              {Math.random() > 0.8 && (
+                <Skeleton className="h-2 w-3/4 rounded" />
+              )}
             </div>
           </div>
         ))}
       </div>
     </div>
-  )
+  );
 }
 
 // Goal templates skeleton
@@ -232,7 +239,7 @@ export function TemplatesSkeleton() {
         ))}
       </div>
     </div>
-  )
+  );
 }
 
-export { Skeleton }
+export { Skeleton };

@@ -1,132 +1,144 @@
-'use server'
+"use server";
 
-import { createClient } from '@/lib/supabase/server'
-import { revalidatePath } from 'next/cache'
-import { redirect } from 'next/navigation'
-import { goalFormSchema } from '@/lib/validations/goal'
-import { generateRoadmap } from './ai'
-import { ensureUserProfile } from './auth'
+import { createClient } from "@/lib/supabase/server";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import { goalFormSchema } from "@/lib/validations/goal";
+import { generateRoadmap } from "./ai";
+import { ensureUserProfile } from "./auth";
 
 export async function createGoal(formData: FormData) {
-  const supabase = await createClient()
-  
+  const supabase = await createClient();
+
   // Ensure user profile exists and get user
-  const user = await ensureUserProfile()
+  const user = await ensureUserProfile();
 
   // Parse and validate form data
   const rawData = {
-    title: formData.get('title') as string,
-    description: formData.get('description') as string,
-    current_level: formData.get('current_level') as string,
-    start_date: formData.get('start_date') as string,
-    target_date: formData.get('target_date') as string,
-    daily_time_commitment: parseInt(formData.get('daily_time_commitment') as string),
-    weekly_schedule: JSON.parse(formData.get('weekly_schedule') as string),
-  }
+    title: formData.get("title") as string,
+    description: formData.get("description") as string,
+    current_level: formData.get("current_level") as string,
+    start_date: formData.get("start_date") as string,
+    target_date: formData.get("target_date") as string,
+    daily_time_commitment: parseInt(
+      formData.get("daily_time_commitment") as string,
+    ),
+    weekly_schedule: JSON.parse(formData.get("weekly_schedule") as string),
+  };
 
-  const validatedData = goalFormSchema.parse(rawData)
-  
+  const validatedData = goalFormSchema.parse(rawData);
+
   // Handle empty target_date - convert empty string to null
   const goalData = {
     ...validatedData,
-    target_date: validatedData.target_date && validatedData.target_date.trim() !== '' 
-      ? validatedData.target_date 
-      : null,
-  }
-  
-  console.log('Creating goal with data:', { user_id: user.id, ...goalData })
+    target_date:
+      validatedData.target_date && validatedData.target_date.trim() !== ""
+        ? validatedData.target_date
+        : null,
+  };
+
+  console.log("Creating goal with data:", { user_id: user.id, ...goalData });
 
   // Create the goal
   const { data: goal, error } = await supabase
-    .from('goals')
+    .from("goals")
     .insert({
       user_id: user.id,
       ...goalData,
     })
     .select()
-    .single()
-    
+    .single();
+
   if (error) {
-    console.error('Supabase error creating goal:', error)
-    throw new Error(`Failed to create goal: ${error.message}`)
+    console.error("Supabase error creating goal:", error);
+    throw new Error(`Failed to create goal: ${error.message}`);
   }
-  
+
   // Generate AI roadmap
   try {
-    await generateRoadmap(goal.id)
+    await generateRoadmap(goal.id);
   } catch (error) {
-    console.error('Failed to generate roadmap:', error)
+    console.error("Failed to generate roadmap:", error);
     // Don't throw here - let the user see their goal even if AI fails
   }
-  
-  revalidatePath('/dashboard')
-  return { success: true, goalId: goal.id }
+
+  revalidatePath("/dashboard");
+  return { success: true, goalId: goal.id };
 }
 
 export async function updateGoal(goalId: string, formData: FormData) {
-  const supabase = await createClient()
-  
-  const { data: { user }, error: userError } = await supabase.auth.getUser()
-  
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
   if (userError || !user) {
-    throw new Error('Unauthorized')
+    throw new Error("Unauthorized");
   }
 
   const rawData = {
-    title: formData.get('title') as string,
-    description: formData.get('description') as string,
-    current_level: formData.get('current_level') as string,
-    start_date: formData.get('start_date') as string,
-    target_date: formData.get('target_date') as string,
-    daily_time_commitment: parseInt(formData.get('daily_time_commitment') as string),
-    weekly_schedule: JSON.parse(formData.get('weekly_schedule') as string),
-  }
+    title: formData.get("title") as string,
+    description: formData.get("description") as string,
+    current_level: formData.get("current_level") as string,
+    start_date: formData.get("start_date") as string,
+    target_date: formData.get("target_date") as string,
+    daily_time_commitment: parseInt(
+      formData.get("daily_time_commitment") as string,
+    ),
+    weekly_schedule: JSON.parse(formData.get("weekly_schedule") as string),
+  };
 
-  const validatedData = goalFormSchema.parse(rawData)
+  const validatedData = goalFormSchema.parse(rawData);
 
   // Handle empty target_date - convert empty string to null
   const goalData = {
     ...validatedData,
-    target_date: validatedData.target_date && validatedData.target_date.trim() !== '' 
-      ? validatedData.target_date 
-      : null,
-  }
+    target_date:
+      validatedData.target_date && validatedData.target_date.trim() !== ""
+        ? validatedData.target_date
+        : null,
+  };
 
   const { error } = await supabase
-    .from('goals')
+    .from("goals")
     .update(goalData)
-    .eq('id', goalId)
-    .eq('user_id', user.id)
-    
+    .eq("id", goalId)
+    .eq("user_id", user.id);
+
   if (error) {
-    throw new Error('Failed to update goal')
+    throw new Error("Failed to update goal");
   }
-  
-  revalidatePath('/dashboard')
-  revalidatePath(`/goals/${goalId}`)
-  return { success: true, goalId }
+
+  revalidatePath("/dashboard");
+  revalidatePath(`/goals/${goalId}`);
+  return { success: true, goalId };
 }
 
 export async function deleteGoal(goalId: string) {
-  const supabase = await createClient()
-  
-  const { data: { user }, error: userError } = await supabase.auth.getUser()
-  
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
   if (userError || !user) {
-    throw new Error('Unauthorized')
+    throw new Error("Unauthorized");
   }
 
   const { error } = await supabase
-    .from('goals')
+    .from("goals")
     .delete()
-    .eq('id', goalId)
-    .eq('user_id', user.id)
-    
+    .eq("id", goalId)
+    .eq("user_id", user.id);
+
   if (error) {
-    throw new Error('Failed to delete goal')
+    throw new Error("Failed to delete goal");
   }
-  
-  revalidatePath('/dashboard')
-  revalidatePath('/goals')
-  redirect('/goals')
+
+  revalidatePath("/dashboard");
+  revalidatePath("/goals");
+  redirect("/goals");
 }

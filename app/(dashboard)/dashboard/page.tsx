@@ -1,31 +1,49 @@
-import { createClient } from '@/lib/supabase/server'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import Link from 'next/link'
-import { Plus, Target, CheckCircle, Clock, TrendingUp, Calendar, BookOpen, Zap, Star, ArrowRight } from 'lucide-react'
-import { StatsCard } from '@/components/molecules/stats-card'
-import { cn } from '@/lib/utils'
+import { createClient } from "@/lib/supabase/server";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import Link from "next/link";
+import {
+  Plus,
+  Target,
+  CheckCircle,
+  Clock,
+  TrendingUp,
+  Calendar,
+  BookOpen,
+  Zap,
+  Star,
+  ArrowRight,
+} from "lucide-react";
+import { StatsCard } from "@/components/molecules/stats-card";
+import { cn } from "@/lib/utils";
 
 export default async function DashboardPage() {
-  const supabase = await createClient()
-  
+  const supabase = await createClient();
+
   // Get user's goals
   const { data: goals } = await supabase
-    .from('goals')
-    .select('*, roadmaps(id)')
-    .order('created_at', { ascending: false })
-    .limit(3)
+    .from("goals")
+    .select("*, roadmaps(id)")
+    .order("created_at", { ascending: false })
+    .limit(3);
 
   // Get today's tasks
-  const today = new Date().toISOString().split('T')[0]
+  const today = new Date().toISOString().split("T")[0];
   const { data: todayTasks } = await supabase
-    .from('tasks')
-    .select('*')
-    .eq('scheduled_date', today)
+    .from("tasks")
+    .select("*")
+    .eq("scheduled_date", today);
 
-  const completedTasks = todayTasks?.filter(task => task.completed).length || 0
-  const totalTasks = todayTasks?.length || 0
+  const completedTasks =
+    todayTasks?.filter((task) => task.completed).length || 0;
+  const totalTasks = todayTasks?.length || 0;
 
   return (
     <div className="space-y-8">
@@ -39,7 +57,9 @@ export default async function DashboardPage() {
             </div>
             <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
           </div>
-          <p className="text-gray-600 text-lg">Track your progress and manage your learning journey</p>
+          <p className="text-gray-600 text-lg">
+            Track your progress and manage your learning journey
+          </p>
         </div>
       </div>
 
@@ -47,7 +67,7 @@ export default async function DashboardPage() {
       <div className="grid gap-3 grid-cols-2 md:gap-6 md:grid-cols-2 lg:grid-cols-4">
         <StatsCard
           title="Active Goals"
-          value={goals?.filter(g => g.status === 'active').length || 0}
+          value={goals?.filter((g) => g.status === "active").length || 0}
           icon={<Target className="h-4 w-4 md:h-5 md:w-5" />}
           color="blue"
         />
@@ -65,7 +85,11 @@ export default async function DashboardPage() {
         />
         <StatsCard
           title="Progress Rate"
-          value={totalTasks > 0 ? `${Math.round((completedTasks / totalTasks) * 100)}%` : '0%'}
+          value={
+            totalTasks > 0
+              ? `${Math.round((completedTasks / totalTasks) * 100)}%`
+              : "0%"
+          }
           icon={<TrendingUp className="h-4 w-4 md:h-5 md:w-5" />}
           color="orange"
         />
@@ -86,7 +110,10 @@ export default async function DashboardPage() {
             </CardDescription>
           </div>
           <Link href="/goals/new" className="self-start sm:self-auto">
-            <Button size="sm" className="bg-primary hover:bg-primary/90 shadow-md">
+            <Button
+              size="sm"
+              className="bg-primary hover:bg-primary/90 shadow-md"
+            >
               <Plus className="h-4 w-4 mr-2" />
               New Goal
             </Button>
@@ -108,18 +135,25 @@ export default async function DashboardPage() {
                           <h3 className="font-semibold text-gray-900 group-hover:text-primary transition-colors truncate">
                             {goal.title}
                           </h3>
-                          <Badge variant="secondary" className="text-xs flex-shrink-0">
+                          <Badge
+                            variant="secondary"
+                            className="text-xs flex-shrink-0"
+                          >
                             {goal.status}
                           </Badge>
                         </div>
                         <div className="flex flex-col gap-1 text-sm text-gray-600 sm:flex-row sm:items-center sm:gap-3">
                           <div className="flex items-center gap-1 min-w-0">
                             <Star className="h-3 w-3 flex-shrink-0" />
-                            <span className="truncate">{goal.current_level}</span>
+                            <span className="truncate">
+                              {goal.current_level}
+                            </span>
                           </div>
                           <div className="flex items-center gap-1">
                             <Clock className="h-3 w-3 flex-shrink-0" />
-                            <span className="whitespace-nowrap">{goal.daily_time_commitment} min/day</span>
+                            <span className="whitespace-nowrap">
+                              {goal.daily_time_commitment} min/day
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -128,12 +162,16 @@ export default async function DashboardPage() {
                           {goal.roadmaps.length > 0 ? (
                             <>
                               <div className="w-2 h-2 bg-primary rounded-full"></div>
-                              <span className="text-sm text-primary font-medium">Ready</span>
+                              <span className="text-sm text-primary font-medium">
+                                Ready
+                              </span>
                             </>
                           ) : (
                             <>
                               <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></div>
-                              <span className="text-sm text-orange-600 font-medium">Generating...</span>
+                              <span className="text-sm text-orange-600 font-medium">
+                                Generating...
+                              </span>
                             </>
                           )}
                         </div>
@@ -160,9 +198,12 @@ export default async function DashboardPage() {
                 </div>
                 <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-20 h-20 bg-primary/5 rounded-full -z-10"></div>
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">No goals yet</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                No goals yet
+              </h3>
               <p className="text-gray-600 mb-6 max-w-md mx-auto">
-                Start your learning journey by creating your first goal. Set your target and let AI generate a personalized roadmap.
+                Start your learning journey by creating your first goal. Set
+                your target and let AI generate a personalized roadmap.
               </p>
               <Link href="/goals/new">
                 <Button className="bg-primary hover:bg-primary/90 shadow-md">
@@ -185,10 +226,11 @@ export default async function DashboardPage() {
             Today's Tasks
           </CardTitle>
           <CardDescription className="text-gray-600 mt-1">
-            Tasks scheduled for {new Date().toLocaleDateString('en-US', { 
-              weekday: 'long', 
-              month: 'long', 
-              day: 'numeric' 
+            Tasks scheduled for{" "}
+            {new Date().toLocaleDateString("en-US", {
+              weekday: "long",
+              month: "long",
+              day: "numeric",
             })}
           </CardDescription>
         </CardHeader>
@@ -200,24 +242,30 @@ export default async function DashboardPage() {
                   key={task.id}
                   className={cn(
                     "group flex items-center gap-3 p-4 border rounded-xl transition-all duration-300 hover:shadow-md",
-                    task.completed 
-                      ? "bg-gradient-to-r from-green-50 to-green-100 border-green-200 opacity-75" 
-                      : "hover:bg-gradient-to-r hover:from-blue-50 hover:to-blue-100 hover:border-blue-200"
+                    task.completed
+                      ? "bg-gradient-to-r from-green-50 to-green-100 border-green-200 opacity-75"
+                      : "hover:bg-gradient-to-r hover:from-blue-50 hover:to-blue-100 hover:border-blue-200",
                   )}
                 >
-                  <div className={cn(
-                    "w-4 h-4 rounded-full border-2 flex items-center justify-center",
-                    task.completed 
-                      ? "bg-primary border-primary" 
-                      : "border-gray-300 group-hover:border-blue-500"
-                  )}>
-                    {task.completed && <CheckCircle className="h-3 w-3 text-white" />}
+                  <div
+                    className={cn(
+                      "w-4 h-4 rounded-full border-2 flex items-center justify-center",
+                      task.completed
+                        ? "bg-primary border-primary"
+                        : "border-gray-300 group-hover:border-blue-500",
+                    )}
+                  >
+                    {task.completed && (
+                      <CheckCircle className="h-3 w-3 text-white" />
+                    )}
                   </div>
                   <div className="flex-1">
-                    <p className={cn(
-                      "font-medium text-gray-900",
-                      task.completed && "line-through text-gray-600"
-                    )}>
+                    <p
+                      className={cn(
+                        "font-medium text-gray-900",
+                        task.completed && "line-through text-gray-600",
+                      )}
+                    >
                       {task.title}
                     </p>
                     <div className="flex items-center gap-3 mt-1">
@@ -226,16 +274,23 @@ export default async function DashboardPage() {
                         {task.estimated_duration} min
                       </div>
                       {task.priority && (
-                        <Badge 
-                          variant="outline" 
+                        <Badge
+                          variant="outline"
                           className={cn(
                             "text-xs",
                             task.priority <= 2 && "border-red-200 text-red-600",
-                            task.priority === 3 && "border-orange-200 text-orange-600", 
-                            task.priority >= 4 && "border-green-200 text-green-600"
+                            task.priority === 3 &&
+                              "border-orange-200 text-orange-600",
+                            task.priority >= 4 &&
+                              "border-green-200 text-green-600",
                           )}
                         >
-                          {task.priority <= 2 ? 'High' : task.priority === 3 ? 'Medium' : 'Low'} Priority
+                          {task.priority <= 2
+                            ? "High"
+                            : task.priority === 3
+                              ? "Medium"
+                              : "Low"}{" "}
+                          Priority
                         </Badge>
                       )}
                     </div>
@@ -265,9 +320,12 @@ export default async function DashboardPage() {
                 </div>
                 <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-20 h-20 bg-blue-50 rounded-full -z-10"></div>
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">No tasks for today</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                No tasks for today
+              </h3>
               <p className="text-gray-600 mb-6 max-w-md mx-auto">
-                You're all caught up! Tasks will appear here when you generate them from your learning phases.
+                You're all caught up! Tasks will appear here when you generate
+                them from your learning phases.
               </p>
               <Link href="/goals">
                 <Button variant="outline">
@@ -280,5 +338,5 @@ export default async function DashboardPage() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

@@ -1,11 +1,11 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { Trash2 } from 'lucide-react'
-import { deleteGoal } from '@/app/actions/goals'
-import { motion, AnimatePresence } from 'framer-motion'
-import { LoadingSpinner } from '@/components/ui/loading-spinner'
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Trash2 } from "lucide-react";
+import { deleteGoal } from "@/app/actions/goals";
+import { motion, AnimatePresence } from "framer-motion";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -16,43 +16,41 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/components/ui/alert-dialog'
+} from "@/components/ui/alert-dialog";
 
 interface DeleteGoalButtonProps {
-  goalId: string
-  goalTitle: string
+  goalId: string;
+  goalTitle: string;
 }
 
 export function DeleteGoalButton({ goalId, goalTitle }: DeleteGoalButtonProps) {
-  const [isDeleting, setIsDeleting] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false);
 
   async function handleDelete() {
-    setIsDeleting(true)
+    setIsDeleting(true);
     try {
-      await deleteGoal(goalId)
+      await deleteGoal(goalId);
     } catch (error) {
-      console.error('Failed to delete goal:', error)
-      setIsDeleting(false)
+      console.error("Failed to delete goal:", error);
+      setIsDeleting(false);
     }
   }
 
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button 
-          variant="outline"
-          size="sm" 
-          disabled={isDeleting}
-        >
+        <Button variant="outline" size="sm" disabled={isDeleting}>
           <Trash2 className="h-4 w-4 mr-2" />
-          {isDeleting ? 'Deleting...' : 'Delete'}
+          {isDeleting ? "Deleting..." : "Delete"}
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent className="bg-white border border-gray-200 shadow-xl">
         <AlertDialogHeader>
           <AlertDialogTitle>Delete Goal</AlertDialogTitle>
           <AlertDialogDescription>
-            Are you sure you want to delete "{goalTitle}"? This will permanently delete the goal, its roadmap, and all associated tasks. This action cannot be undone.
+            Are you sure you want to delete "{goalTitle}"? This will permanently
+            delete the goal, its roadmap, and all associated tasks. This action
+            cannot be undone.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
@@ -91,5 +89,5 @@ export function DeleteGoalButton({ goalId, goalTitle }: DeleteGoalButtonProps) {
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
-  )
+  );
 }

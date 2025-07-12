@@ -1,19 +1,22 @@
-"use client"
+"use client";
 
-import { motion } from "framer-motion"
-import { cn } from "@/lib/utils"
+import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 interface LoadingSpinnerProps {
-  size?: "sm" | "md" | "lg"
-  className?: string
+  size?: "sm" | "md" | "lg";
+  className?: string;
 }
 
-export function LoadingSpinner({ size = "md", className }: LoadingSpinnerProps) {
+export function LoadingSpinner({
+  size = "md",
+  className,
+}: LoadingSpinnerProps) {
   const sizeClasses = {
     sm: "h-4 w-4",
-    md: "h-6 w-6", 
-    lg: "h-8 w-8"
-  }
+    md: "h-6 w-6",
+    lg: "h-8 w-8",
+  };
 
   return (
     <motion.div
@@ -22,7 +25,7 @@ export function LoadingSpinner({ size = "md", className }: LoadingSpinnerProps) 
       transition={{
         duration: 1,
         repeat: Infinity,
-        ease: "linear"
+        ease: "linear",
       }}
     >
       <svg
@@ -54,7 +57,7 @@ export function LoadingSpinner({ size = "md", className }: LoadingSpinnerProps) 
         />
       </svg>
     </motion.div>
-  )
+  );
 }
 
 export function PulsingDots({ className }: { className?: string }) {
@@ -66,28 +69,28 @@ export function PulsingDots({ className }: { className?: string }) {
           className="h-2 w-2 bg-current rounded-full"
           animate={{
             scale: [1, 1.2, 1],
-            opacity: [0.5, 1, 0.5]
+            opacity: [0.5, 1, 0.5],
           }}
           transition={{
             duration: 1.5,
             repeat: Infinity,
             delay: i * 0.2,
-            ease: "easeInOut"
+            ease: "easeInOut",
           }}
         />
       ))}
     </div>
-  )
+  );
 }
 
-export function ProgressBar({ 
-  progress, 
+export function ProgressBar({
+  progress,
   className,
-  showText = false 
-}: { 
-  progress: number
-  className?: string
-  showText?: boolean
+  showText = false,
+}: {
+  progress: number;
+  className?: string;
+  showText?: boolean;
 }) {
   return (
     <div className={cn("w-full", className)}>
@@ -100,7 +103,7 @@ export function ProgressBar({
         />
       </div>
       {showText && (
-        <motion.p 
+        <motion.p
           className="text-sm text-gray-600 mt-1 text-center"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -110,5 +113,5 @@ export function ProgressBar({
         </motion.p>
       )}
     </div>
-  )
+  );
 }

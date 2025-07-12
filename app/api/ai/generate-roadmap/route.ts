@@ -1,200 +1,236 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
-import { openai, AI_MODELS } from '@/lib/ai/openai'
-import { generateRoadmapPrompt, ROADMAP_SYSTEM_PROMPT } from '@/lib/ai/prompts'
-import { Json } from '@/types/database'
+import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase/server";
+import { openai, AI_MODELS } from "@/lib/ai/openai";
+import { generateRoadmapPrompt, ROADMAP_SYSTEM_PROMPT } from "@/lib/ai/prompts";
+import { Json } from "@/types/database";
 
 export async function POST(request: NextRequest) {
   try {
-    const { goalId } = await request.json()
-    
-    const supabase = await createClient()
-    
-    const { data: { user } } = await supabase.auth.getUser()
-    
+    const { goalId } = await request.json();
+
+    const supabase = await createClient();
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
     if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Get the goal details
     const { data: goal, error: goalError } = await supabase
-      .from('goals')
-      .select('*')
-      .eq('id', goalId)
-      .eq('user_id', user.id)
-      .single()
+      .from("goals")
+      .select("*")
+      .eq("id", goalId)
+      .eq("user_id", user.id)
+      .single();
 
     if (goalError || !goal) {
-      return NextResponse.json({ error: 'Goal not found' }, { status: 404 })
+      return NextResponse.json({ error: "Goal not found" }, { status: 404 });
     }
 
     // Generate the roadmap using OpenAI with retry logic
     const prompt = generateRoadmapPrompt(
       goal.title,
-      goal.current_level || 'beginner',
+      goal.current_level || "beginner",
       goal.daily_time_commitment || 30,
       goal.target_date,
       goal.weekly_schedule as Record<string, boolean>,
-      goal.start_date
-    )
+      goal.start_date,
+    );
 
     // Retry logic for reliability
-    let completion
-    let lastError
-    const maxRetries = 3
-    
+    let completion;
+    let lastError;
+    const maxRetries = 3;
+
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
-        console.log(`AI generation attempt ${attempt}/${maxRetries}`)
-        
-        completion = await openai.chat.completions.create({
-          model: AI_MODELS.roadmap,
-          messages: [
-            { role: 'system', content: ROADMAP_SYSTEM_PROMPT },
-            { role: 'user', content: prompt }
-          ],
-          response_format: { type: 'json_object' },
-          temperature: 0.7,
-          max_tokens: 12000, // Increased from 3000 to allow for 6-12 detailed stages
-        }, {
-          timeout: 120000, // 2 minutes timeout
-        })
-        
+        console.log(`AI generation attempt ${attempt}/${maxRetries}`);
+
+        completion = await openai.chat.completions.create(
+          {
+            model: AI_MODELS.roadmap,
+            messages: [
+              { role: "system", content: ROADMAP_SYSTEM_PROMPT },
+              { role: "user", content: prompt },
+            ],
+            response_format: { type: "json_object" },
+            temperature: 0.7,
+            max_tokens: 12000, // Increased from 3000 to allow for 6-12 detailed stages
+          },
+          {
+            timeout: 120000, // 2 minutes timeout
+          },
+        );
+
         // If we get here, the request succeeded
-        break
-        
+        break;
       } catch (error) {
-        console.error(`AI generation attempt ${attempt} failed:`, error)
-        lastError = error
-        
+        console.error(`AI generation attempt ${attempt} failed:`, error);
+        lastError = error;
+
         if (attempt < maxRetries) {
           // Exponential backoff: wait 2^attempt seconds
-          const waitTime = Math.pow(2, attempt) * 1000
-          console.log(`Retrying in ${waitTime}ms...`)
-          await new Promise(resolve => setTimeout(resolve, waitTime))
+          const waitTime = Math.pow(2, attempt) * 1000;
+          console.log(`Retrying in ${waitTime}ms...`);
+          await new Promise((resolve) => setTimeout(resolve, waitTime));
         }
       }
     }
-    
+
     if (!completion) {
-      console.error('All AI generation attempts failed')
-      throw lastError || new Error('AI generation failed after all retries')
+      console.error("All AI generation attempts failed");
+      throw lastError || new Error("AI generation failed after all retries");
     }
 
-    let roadmapData
-    
+    let roadmapData;
+
     try {
-      let content = completion.choices[0].message.content!
-      console.log('API - Raw AI response length:', content.length)
-      
+      let content = completion.choices[0].message.content!;
+      console.log("API - Raw AI response length:", content.length);
+
       // Clean up common JSON issues
-      content = content.trim()
-      
+      content = content.trim();
+
       // Remove any text before the JSON starts
-      const jsonStart = content.indexOf('{')
+      const jsonStart = content.indexOf("{");
       if (jsonStart > 0) {
-        content = content.substring(jsonStart)
+        content = content.substring(jsonStart);
       }
-      
+
       // Remove any text after the JSON ends
-      const jsonEnd = content.lastIndexOf('}')
+      const jsonEnd = content.lastIndexOf("}");
       if (jsonEnd > 0 && jsonEnd < content.length - 1) {
-        content = content.substring(0, jsonEnd + 1)
+        content = content.substring(0, jsonEnd + 1);
       }
-      
-      roadmapData = JSON.parse(content)
-      
+
+      roadmapData = JSON.parse(content);
+
       // Validate that we have a complete response
-      if (!roadmapData.phases || !Array.isArray(roadmapData.phases) || roadmapData.phases.length < 3) {
-        console.error('API - Incomplete response: only', roadmapData.phases?.length || 0, 'phases generated')
-        throw new Error(`Incomplete AI response: only ${roadmapData.phases?.length || 0} phases generated, expected 6-12`)
+      if (
+        !roadmapData.phases ||
+        !Array.isArray(roadmapData.phases) ||
+        roadmapData.phases.length < 3
+      ) {
+        console.error(
+          "API - Incomplete response: only",
+          roadmapData.phases?.length || 0,
+          "phases generated",
+        );
+        throw new Error(
+          `Incomplete AI response: only ${roadmapData.phases?.length || 0} phases generated, expected 6-12`,
+        );
       }
-      
-      console.log('API - Complete response validated:', roadmapData.phases.length, 'phases generated')
-      
+
+      console.log(
+        "API - Complete response validated:",
+        roadmapData.phases.length,
+        "phases generated",
+      );
     } catch (parseError) {
-      console.error('API - JSON parsing error:', parseError)
-      console.error('API - Raw content:', completion.choices[0].message.content)
-      return NextResponse.json({ error: 'Failed to parse AI response as JSON' }, { status: 500 })
+      console.error("API - JSON parsing error:", parseError);
+      console.error(
+        "API - Raw content:",
+        completion.choices[0].message.content,
+      );
+      return NextResponse.json(
+        { error: "Failed to parse AI response as JSON" },
+        { status: 500 },
+      );
     }
-    
+
     // Save the roadmap to database
     const { data: roadmap, error: roadmapError } = await supabase
-      .from('roadmaps')
+      .from("roadmaps")
       .insert({
         goal_id: goalId,
         ai_generated_plan: roadmapData as unknown as Json,
         milestones: (roadmapData.milestones || []) as unknown as Json,
         ai_model: AI_MODELS.roadmap,
-        prompt_version: 'v1',
+        prompt_version: "v1",
       })
       .select()
-      .single()
+      .single();
 
     if (roadmapError) {
-      return NextResponse.json({ error: 'Failed to save roadmap' }, { status: 500 })
+      return NextResponse.json(
+        { error: "Failed to save roadmap" },
+        { status: 500 },
+      );
     }
 
     // Create stage records only (no tasks initially)
     if (roadmapData.phases && roadmapData.phases.length > 0) {
-      console.log(`Creating ${roadmapData.phases.length} stages for roadmap ${roadmap.id}`)
+      console.log(
+        `Creating ${roadmapData.phases.length} stages for roadmap ${roadmap.id}`,
+      );
       try {
-        await createLearningPhases(supabase, roadmap.id, roadmapData.phases, goal.start_date)
-        console.log('Stages created successfully')
+        await createLearningPhases(
+          supabase,
+          roadmap.id,
+          roadmapData.phases,
+          goal.start_date,
+        );
+        console.log("Stages created successfully");
       } catch (stageError) {
-        console.error('Failed to create stages:', stageError)
+        console.error("Failed to create stages:", stageError);
         // Continue anyway - stages can be created later
       }
       // Tasks will be generated on-demand per stage when user clicks "Generate Tasks"
     } else {
-      console.log('No stages found in roadmap data')
+      console.log("No stages found in roadmap data");
     }
 
-    return NextResponse.json(roadmap)
+    return NextResponse.json(roadmap);
   } catch (error) {
-    console.error('OpenAI API error:', error)
-    return NextResponse.json({ error: 'Failed to generate roadmap' }, { status: 500 })
+    console.error("OpenAI API error:", error);
+    return NextResponse.json(
+      { error: "Failed to generate roadmap" },
+      { status: 500 },
+    );
   }
 }
 
 interface Phase {
-  id?: string
-  title: string
-  description: string
-  duration_weeks?: number
-  skills_to_learn?: string[]
-  learning_objectives?: string[]
-  key_concepts?: string[]
-  prerequisites?: string[]
-  outcomes?: string[]
-  resources?: string[] | Record<string, unknown> | unknown
+  id?: string;
+  title: string;
+  description: string;
+  duration_weeks?: number;
+  skills_to_learn?: string[];
+  learning_objectives?: string[];
+  key_concepts?: string[];
+  prerequisites?: string[];
+  outcomes?: string[];
+  resources?: string[] | Record<string, unknown> | unknown;
   daily_tasks?: Array<{
-    title: string
-    description?: string
-    estimated_minutes?: number
-    type?: string
-  }>
-  tasks?: string[]
+    title: string;
+    description?: string;
+    estimated_minutes?: number;
+    type?: string;
+  }>;
+  tasks?: string[];
 }
 
 async function createLearningPhases(
   supabase: Awaited<ReturnType<typeof createClient>>, // Supabase client type from external library
   roadmapId: string,
   stages: Phase[],
-  startDate: string
+  startDate: string,
 ) {
-  let weekOffset = 0
-  const stageRecords = []
-  
+  let weekOffset = 0;
+  const stageRecords = [];
+
   for (let i = 0; i < stages.length; i++) {
-    const stage = stages[i]
-    const stageStartDate = new Date(startDate)
-    stageStartDate.setDate(stageStartDate.getDate() + (weekOffset * 7))
-    
-    const durationWeeks = stage.duration_weeks || 4
-    const stageEndDate = new Date(stageStartDate)
-    stageEndDate.setDate(stageEndDate.getDate() + (durationWeeks * 7) - 1)
-    
+    const stage = stages[i];
+    const stageStartDate = new Date(startDate);
+    stageStartDate.setDate(stageStartDate.getDate() + weekOffset * 7);
+
+    const durationWeeks = stage.duration_weeks || 4;
+    const stageEndDate = new Date(stageStartDate);
+    stageEndDate.setDate(stageEndDate.getDate() + durationWeeks * 7 - 1);
+
     stageRecords.push({
       roadmap_id: roadmapId,
       phase_id: stage.id || `stage-${i + 1}`,
@@ -207,28 +243,26 @@ async function createLearningPhases(
       key_concepts: stage.key_concepts || [],
       prerequisites: stage.prerequisites || [],
       outcomes: stage.outcomes || [],
-      resources: stage.resources as Json || null,
-      start_date: stageStartDate.toISOString().split('T')[0],
-      end_date: stageEndDate.toISOString().split('T')[0],
-      status: i === 0 ? 'active' : 'pending'
-    })
-    
-    weekOffset += durationWeeks
+      resources: (stage.resources as Json) || null,
+      start_date: stageStartDate.toISOString().split("T")[0],
+      end_date: stageEndDate.toISOString().split("T")[0],
+      status: i === 0 ? "active" : "pending",
+    });
+
+    weekOffset += durationWeeks;
   }
-  
-  console.log('Inserting stages:', stageRecords.length, 'stages')
-  
+
+  console.log("Inserting stages:", stageRecords.length, "stages");
+
   const { data, error } = await supabase
-    .from('learning_phases')
+    .from("learning_phases")
     .insert(stageRecords)
-    .select()
-  
+    .select();
+
   if (error) {
-    console.error('Failed to create stages:', error)
-    throw error
+    console.error("Failed to create stages:", error);
+    throw error;
   } else {
-    console.log('Successfully created stages:', data?.length)
+    console.log("Successfully created stages:", data?.length);
   }
 }
-
-

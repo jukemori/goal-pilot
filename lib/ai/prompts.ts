@@ -1,10 +1,10 @@
 export const ROADMAP_SYSTEM_PROMPT = `You are an expert personal development coach and educational curriculum designer. 
 Your task is to create a high-level learning roadmap overview with milestones and phases.
-Always respond with valid JSON that matches the expected schema.`
+Always respond with valid JSON that matches the expected schema.`;
 
 export const STAGES_SYSTEM_PROMPT = `You are an expert personal development coach and educational curriculum designer. 
 Your task is to create detailed, actionable learning stages based on the roadmap overview.
-Always respond with valid JSON that matches the expected schema.`
+Always respond with valid JSON that matches the expected schema.`;
 
 export const generateRoadmapPrompt = (
   goal: string,
@@ -12,138 +12,272 @@ export const generateRoadmapPrompt = (
   timeCommitment: number,
   targetDate: string | null,
   weeklySchedule: Record<string, boolean>,
-  startDate: string
+  startDate: string,
 ) => {
   const availableDays = Object.entries(weeklySchedule)
     .filter(([_, available]) => available)
     .map(([day]) => day)
-    .join(', ')
+    .join(", ");
 
-  const currentYear = new Date().getFullYear()
+  const currentYear = new Date().getFullYear();
 
-  const availableDaysCount = Object.values(weeklySchedule).filter(Boolean).length
-  const hoursPerWeek = Math.round(timeCommitment * availableDaysCount / 60 * 10) / 10
-  
+  const availableDaysCount =
+    Object.values(weeklySchedule).filter(Boolean).length;
+  const hoursPerWeek =
+    Math.round(((timeCommitment * availableDaysCount) / 60) * 10) / 10;
+
   // Intelligent time estimation based on goal description and category
-  const goalLowerCase = goal.toLowerCase()
-  const currentLevelLowerCase = currentLevel.toLowerCase()
-  
+  const goalLowerCase = goal.toLowerCase();
+  const currentLevelLowerCase = currentLevel.toLowerCase();
+
   // Determine skill level from goal description and current level
-  let skillLevel = 'basic' // default
-  
-  if (goalLowerCase.includes('master') || goalLowerCase.includes('expert') || goalLowerCase.includes('advanced') || 
-      goalLowerCase.includes('professional') || goalLowerCase.includes('fluent') || goalLowerCase.includes('native')) {
-    skillLevel = 'expert'
-  } else if (goalLowerCase.includes('professional') || goalLowerCase.includes('business') || goalLowerCase.includes('work') ||
-             goalLowerCase.includes('intermediate') || goalLowerCase.includes('proficient') || goalLowerCase.includes('conversational')) {
-    skillLevel = 'professional'
-  } else if (goalLowerCase.includes('basic') || goalLowerCase.includes('beginner') || goalLowerCase.includes('intro') ||
-             goalLowerCase.includes('fundamentals') || goalLowerCase.includes('foundation') || goalLowerCase.includes('travel')) {
-    skillLevel = 'basic'
+  let skillLevel = "basic"; // default
+
+  if (
+    goalLowerCase.includes("master") ||
+    goalLowerCase.includes("expert") ||
+    goalLowerCase.includes("advanced") ||
+    goalLowerCase.includes("professional") ||
+    goalLowerCase.includes("fluent") ||
+    goalLowerCase.includes("native")
+  ) {
+    skillLevel = "expert";
+  } else if (
+    goalLowerCase.includes("professional") ||
+    goalLowerCase.includes("business") ||
+    goalLowerCase.includes("work") ||
+    goalLowerCase.includes("intermediate") ||
+    goalLowerCase.includes("proficient") ||
+    goalLowerCase.includes("conversational")
+  ) {
+    skillLevel = "professional";
+  } else if (
+    goalLowerCase.includes("basic") ||
+    goalLowerCase.includes("beginner") ||
+    goalLowerCase.includes("intro") ||
+    goalLowerCase.includes("fundamentals") ||
+    goalLowerCase.includes("foundation") ||
+    goalLowerCase.includes("travel")
+  ) {
+    skillLevel = "basic";
   }
-  
+
   // Adjust based on current level description
-  if (currentLevelLowerCase.includes('complete beginner') || currentLevelLowerCase.includes('no experience') || 
-      currentLevelLowerCase.includes('never') || currentLevelLowerCase.includes('zero')) {
+  if (
+    currentLevelLowerCase.includes("complete beginner") ||
+    currentLevelLowerCase.includes("no experience") ||
+    currentLevelLowerCase.includes("never") ||
+    currentLevelLowerCase.includes("zero")
+  ) {
     // Stay at determined level
-  } else if (currentLevelLowerCase.includes('some experience') || currentLevelLowerCase.includes('beginner') ||
-             currentLevelLowerCase.includes('basic')) {
+  } else if (
+    currentLevelLowerCase.includes("some experience") ||
+    currentLevelLowerCase.includes("beginner") ||
+    currentLevelLowerCase.includes("basic")
+  ) {
     // Reduce hours by 20% since they have some foundation
-    skillLevel = skillLevel === 'expert' ? 'professional' : skillLevel === 'professional' ? 'basic' : 'basic'
+    skillLevel =
+      skillLevel === "expert"
+        ? "professional"
+        : skillLevel === "professional"
+          ? "basic"
+          : "basic";
   }
-  
+
   // Determine goal category and base hours
-  let baseHours = 300 // default
-  
+  let baseHours = 300; // default
+
   // Technical Skills (Programming, IT, Data Science, Engineering)
-  if (goalLowerCase.includes('programming') || goalLowerCase.includes('coding') || goalLowerCase.includes('software') ||
-      goalLowerCase.includes('web development') || goalLowerCase.includes('javascript') || goalLowerCase.includes('python') ||
-      goalLowerCase.includes('data science') || goalLowerCase.includes('machine learning') || goalLowerCase.includes('ai') ||
-      goalLowerCase.includes('cybersecurity') || goalLowerCase.includes('database') || goalLowerCase.includes('cloud') ||
-      goalLowerCase.includes('devops') || goalLowerCase.includes('engineering')) {
-    baseHours = skillLevel === 'basic' ? 200 : skillLevel === 'professional' ? 750 : 2500
+  if (
+    goalLowerCase.includes("programming") ||
+    goalLowerCase.includes("coding") ||
+    goalLowerCase.includes("software") ||
+    goalLowerCase.includes("web development") ||
+    goalLowerCase.includes("javascript") ||
+    goalLowerCase.includes("python") ||
+    goalLowerCase.includes("data science") ||
+    goalLowerCase.includes("machine learning") ||
+    goalLowerCase.includes("ai") ||
+    goalLowerCase.includes("cybersecurity") ||
+    goalLowerCase.includes("database") ||
+    goalLowerCase.includes("cloud") ||
+    goalLowerCase.includes("devops") ||
+    goalLowerCase.includes("engineering")
+  ) {
+    baseHours =
+      skillLevel === "basic" ? 200 : skillLevel === "professional" ? 750 : 2500;
   }
-  
+
   // Creative Skills (Music, Art, Writing, Design)
-  else if (goalLowerCase.includes('music') || goalLowerCase.includes('instrument') || goalLowerCase.includes('piano') ||
-           goalLowerCase.includes('guitar') || goalLowerCase.includes('singing') || goalLowerCase.includes('art') ||
-           goalLowerCase.includes('drawing') || goalLowerCase.includes('painting') || goalLowerCase.includes('design') ||
-           goalLowerCase.includes('graphic') || goalLowerCase.includes('writing') || goalLowerCase.includes('photography') ||
-           goalLowerCase.includes('video editing') || goalLowerCase.includes('animation')) {
-    baseHours = skillLevel === 'basic' ? 150 : skillLevel === 'professional' ? 1000 : 3000
+  else if (
+    goalLowerCase.includes("music") ||
+    goalLowerCase.includes("instrument") ||
+    goalLowerCase.includes("piano") ||
+    goalLowerCase.includes("guitar") ||
+    goalLowerCase.includes("singing") ||
+    goalLowerCase.includes("art") ||
+    goalLowerCase.includes("drawing") ||
+    goalLowerCase.includes("painting") ||
+    goalLowerCase.includes("design") ||
+    goalLowerCase.includes("graphic") ||
+    goalLowerCase.includes("writing") ||
+    goalLowerCase.includes("photography") ||
+    goalLowerCase.includes("video editing") ||
+    goalLowerCase.includes("animation")
+  ) {
+    baseHours =
+      skillLevel === "basic"
+        ? 150
+        : skillLevel === "professional"
+          ? 1000
+          : 3000;
   }
-  
+
   // Physical Skills (Sports, Fitness, Martial Arts)
-  else if (goalLowerCase.includes('fitness') || goalLowerCase.includes('workout') || goalLowerCase.includes('gym') ||
-           goalLowerCase.includes('running') || goalLowerCase.includes('marathon') || goalLowerCase.includes('sport') ||
-           goalLowerCase.includes('martial arts') || goalLowerCase.includes('yoga') || goalLowerCase.includes('dance') ||
-           goalLowerCase.includes('swimming') || goalLowerCase.includes('cycling') || goalLowerCase.includes('tennis') ||
-           goalLowerCase.includes('golf') || goalLowerCase.includes('basketball') || goalLowerCase.includes('soccer') ||
-           goalLowerCase.includes('fit') || goalLowerCase.includes('train') || goalLowerCase.includes('muscle') ||
-           goalLowerCase.includes('strength') || goalLowerCase.includes('cardio') || goalLowerCase.includes('athletic')) {
-    baseHours = skillLevel === 'basic' ? 100 : skillLevel === 'professional' ? 750 : 2000
+  else if (
+    goalLowerCase.includes("fitness") ||
+    goalLowerCase.includes("workout") ||
+    goalLowerCase.includes("gym") ||
+    goalLowerCase.includes("running") ||
+    goalLowerCase.includes("marathon") ||
+    goalLowerCase.includes("sport") ||
+    goalLowerCase.includes("martial arts") ||
+    goalLowerCase.includes("yoga") ||
+    goalLowerCase.includes("dance") ||
+    goalLowerCase.includes("swimming") ||
+    goalLowerCase.includes("cycling") ||
+    goalLowerCase.includes("tennis") ||
+    goalLowerCase.includes("golf") ||
+    goalLowerCase.includes("basketball") ||
+    goalLowerCase.includes("soccer") ||
+    goalLowerCase.includes("fit") ||
+    goalLowerCase.includes("train") ||
+    goalLowerCase.includes("muscle") ||
+    goalLowerCase.includes("strength") ||
+    goalLowerCase.includes("cardio") ||
+    goalLowerCase.includes("athletic")
+  ) {
+    baseHours =
+      skillLevel === "basic" ? 100 : skillLevel === "professional" ? 750 : 2000;
   }
-  
+
   // Business/Professional Skills
-  else if (goalLowerCase.includes('business') || goalLowerCase.includes('management') || goalLowerCase.includes('leadership') ||
-           goalLowerCase.includes('sales') || goalLowerCase.includes('marketing') || goalLowerCase.includes('finance') ||
-           goalLowerCase.includes('accounting') || goalLowerCase.includes('project management') || goalLowerCase.includes('consulting') ||
-           goalLowerCase.includes('entrepreneurship') || goalLowerCase.includes('public speaking') || goalLowerCase.includes('negotiation') ||
-           goalLowerCase.includes('time management') || goalLowerCase.includes('productivity') || goalLowerCase.includes('organization')) {
-    baseHours = skillLevel === 'basic' ? 150 : skillLevel === 'professional' ? 600 : 1500
+  else if (
+    goalLowerCase.includes("business") ||
+    goalLowerCase.includes("management") ||
+    goalLowerCase.includes("leadership") ||
+    goalLowerCase.includes("sales") ||
+    goalLowerCase.includes("marketing") ||
+    goalLowerCase.includes("finance") ||
+    goalLowerCase.includes("accounting") ||
+    goalLowerCase.includes("project management") ||
+    goalLowerCase.includes("consulting") ||
+    goalLowerCase.includes("entrepreneurship") ||
+    goalLowerCase.includes("public speaking") ||
+    goalLowerCase.includes("negotiation") ||
+    goalLowerCase.includes("time management") ||
+    goalLowerCase.includes("productivity") ||
+    goalLowerCase.includes("organization")
+  ) {
+    baseHours =
+      skillLevel === "basic" ? 150 : skillLevel === "professional" ? 600 : 1500;
   }
-  
+
   // Academic/Language/Certification Skills
-  else if (goalLowerCase.includes('language') || goalLowerCase.includes('spanish') || goalLowerCase.includes('french') ||
-           goalLowerCase.includes('german') || goalLowerCase.includes('chinese') || goalLowerCase.includes('japanese') ||
-           goalLowerCase.includes('certification') || goalLowerCase.includes('degree') || goalLowerCase.includes('course') ||
-           goalLowerCase.includes('science') || goalLowerCase.includes('math') || goalLowerCase.includes('history') ||
-           goalLowerCase.includes('literature') || goalLowerCase.includes('philosophy') || goalLowerCase.includes('psychology')) {
+  else if (
+    goalLowerCase.includes("language") ||
+    goalLowerCase.includes("spanish") ||
+    goalLowerCase.includes("french") ||
+    goalLowerCase.includes("german") ||
+    goalLowerCase.includes("chinese") ||
+    goalLowerCase.includes("japanese") ||
+    goalLowerCase.includes("certification") ||
+    goalLowerCase.includes("degree") ||
+    goalLowerCase.includes("course") ||
+    goalLowerCase.includes("science") ||
+    goalLowerCase.includes("math") ||
+    goalLowerCase.includes("history") ||
+    goalLowerCase.includes("literature") ||
+    goalLowerCase.includes("philosophy") ||
+    goalLowerCase.includes("psychology")
+  ) {
     // Language learning specific adjustments (based on FSI categories and practical experience)
-    if (goalLowerCase.includes('language') || goalLowerCase.includes('spanish') || goalLowerCase.includes('french') ||
-        goalLowerCase.includes('german') || goalLowerCase.includes('chinese') || goalLowerCase.includes('japanese')) {
-      if (goalLowerCase.includes('basic') || goalLowerCase.includes('travel')) {
-        baseHours = 120 // 3-6 months for basic travel Spanish
-      } else if (goalLowerCase.includes('conversational') || goalLowerCase.includes('conversation')) {
-        baseHours = 200 // 6-12 months for conversational level
-      } else if (goalLowerCase.includes('business') || goalLowerCase.includes('professional')) {
-        baseHours = 450 // 1.5-2 years for business proficiency
-      } else if (goalLowerCase.includes('fluent') || goalLowerCase.includes('native') || goalLowerCase.includes('advanced')) {
-        baseHours = 700 // 2+ years for fluency
+    if (
+      goalLowerCase.includes("language") ||
+      goalLowerCase.includes("spanish") ||
+      goalLowerCase.includes("french") ||
+      goalLowerCase.includes("german") ||
+      goalLowerCase.includes("chinese") ||
+      goalLowerCase.includes("japanese")
+    ) {
+      if (goalLowerCase.includes("basic") || goalLowerCase.includes("travel")) {
+        baseHours = 120; // 3-6 months for basic travel Spanish
+      } else if (
+        goalLowerCase.includes("conversational") ||
+        goalLowerCase.includes("conversation")
+      ) {
+        baseHours = 200; // 6-12 months for conversational level
+      } else if (
+        goalLowerCase.includes("business") ||
+        goalLowerCase.includes("professional")
+      ) {
+        baseHours = 450; // 1.5-2 years for business proficiency
+      } else if (
+        goalLowerCase.includes("fluent") ||
+        goalLowerCase.includes("native") ||
+        goalLowerCase.includes("advanced")
+      ) {
+        baseHours = 700; // 2+ years for fluency
       } else {
-        baseHours = 180 // default: basic conversational (6-9 months)
+        baseHours = 180; // default: basic conversational (6-9 months)
       }
     } else {
-      baseHours = skillLevel === 'basic' ? 200 : skillLevel === 'professional' ? 900 : 2000
+      baseHours =
+        skillLevel === "basic"
+          ? 200
+          : skillLevel === "professional"
+            ? 900
+            : 2000;
     }
   }
-  
+
   // Crafts and Hobbies
-  else if (goalLowerCase.includes('cooking') || goalLowerCase.includes('baking') || goalLowerCase.includes('gardening') ||
-           goalLowerCase.includes('woodworking') || goalLowerCase.includes('knitting') || goalLowerCase.includes('sewing') ||
-           goalLowerCase.includes('pottery') || goalLowerCase.includes('jewelry') || goalLowerCase.includes('crafts')) {
-    baseHours = skillLevel === 'basic' ? 80 : skillLevel === 'professional' ? 400 : 1200
+  else if (
+    goalLowerCase.includes("cooking") ||
+    goalLowerCase.includes("baking") ||
+    goalLowerCase.includes("gardening") ||
+    goalLowerCase.includes("woodworking") ||
+    goalLowerCase.includes("knitting") ||
+    goalLowerCase.includes("sewing") ||
+    goalLowerCase.includes("pottery") ||
+    goalLowerCase.includes("jewelry") ||
+    goalLowerCase.includes("crafts")
+  ) {
+    baseHours =
+      skillLevel === "basic" ? 80 : skillLevel === "professional" ? 400 : 1200;
   }
-  
+
   // Default for unclassified goals
   else {
-    baseHours = skillLevel === 'basic' ? 200 : skillLevel === 'professional' ? 500 : 1500
+    baseHours =
+      skillLevel === "basic" ? 200 : skillLevel === "professional" ? 500 : 1500;
   }
-  
-  const totalHoursNeeded = baseHours
-  
-  const totalWeeksNeeded = Math.round(totalHoursNeeded / hoursPerWeek)
-  const totalYearsNeeded = Math.round(totalWeeksNeeded / 52 * 10) / 10
-  
+
+  const totalHoursNeeded = baseHours;
+
+  const totalWeeksNeeded = Math.round(totalHoursNeeded / hoursPerWeek);
+  const totalYearsNeeded = Math.round((totalWeeksNeeded / 52) * 10) / 10;
+
   // Calculate expected number of stages based on timeline
-  const estimatedStages = totalWeeksNeeded < 12 
-    ? Math.ceil(totalWeeksNeeded / 2)      // Short timeline: 1-3 weeks per stage
-    : totalWeeksNeeded < 50 
-    ? Math.ceil(totalWeeksNeeded / 6)      // Medium timeline: 2-8 weeks per stage  
-    : Math.ceil(totalWeeksNeeded / 8)      // Long timeline: 4-12 weeks per stage
-  
+  const estimatedStages =
+    totalWeeksNeeded < 12
+      ? Math.ceil(totalWeeksNeeded / 2) // Short timeline: 1-3 weeks per stage
+      : totalWeeksNeeded < 50
+        ? Math.ceil(totalWeeksNeeded / 6) // Medium timeline: 2-8 weeks per stage
+        : Math.ceil(totalWeeksNeeded / 8); // Long timeline: 4-12 weeks per stage
+
   // Ensure we stay within 6-12 stages range
-  const finalStageCount = Math.max(6, Math.min(12, estimatedStages))
+  const finalStageCount = Math.max(6, Math.min(12, estimatedStages));
 
   return `Create a comprehensive learning roadmap for the following goal:
 
@@ -152,7 +286,7 @@ CRITICAL TIMELINE CALCULATION (MUST FOLLOW):
 - Total hours needed for this goal: ${totalHoursNeeded} hours
 - Total weeks required: ${totalHoursNeeded} ÷ ${hoursPerWeek} = ${totalWeeksNeeded} weeks
 - Total years required: ${totalWeeksNeeded} ÷ 52 = ${totalYearsNeeded} years
-- Completion date should be approximately: ${new Date(new Date(startDate).getTime() + totalWeeksNeeded * 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]}
+- Completion date should be approximately: ${new Date(new Date(startDate).getTime() + totalWeeksNeeded * 7 * 24 * 60 * 60 * 1000).toISOString().split("T")[0]}
 
 🚨 CRITICAL REQUIREMENT: YOUR PHASES MUST TOTAL EXACTLY ${totalWeeksNeeded} WEEKS! 🚨
 
@@ -166,7 +300,7 @@ Current Level Description: ${currentLevel}
 Daily Time Commitment: ${timeCommitment} minutes
 Available Days: ${availableDays}
 Start Date: ${startDate}
-${targetDate ? `Target Completion Date: ${targetDate}` : 'No specific deadline'}
+${targetDate ? `Target Completion Date: ${targetDate}` : "No specific deadline"}
 
 IMPORTANT: 
 - All dates must be in ${currentYear} or later. Use the start date (${startDate}) as your reference point.
@@ -230,9 +364,9 @@ KEY CONCEPTS: ["Customer discovery methodology", "Lean startup principles", "Bas
 
 REALISTIC TIMELINE CALCULATION:
 - Calculate total hours needed realistically (don't underestimate)
-- Time available per week: ${timeCommitment} minutes/day × ${Object.values(weeklySchedule).filter(Boolean).length} days = ${Math.round(timeCommitment * Object.values(weeklySchedule).filter(Boolean).length / 60 * 10) / 10} hours/week
+- Time available per week: ${timeCommitment} minutes/day × ${Object.values(weeklySchedule).filter(Boolean).length} days = ${Math.round(((timeCommitment * Object.values(weeklySchedule).filter(Boolean).length) / 60) * 10) / 10} hours/week
 - For this specific goal: expect ${totalHoursNeeded} total hours
-- Total weeks needed: Total hours ÷ hours per week (${totalHoursNeeded} hours ÷ ${Math.round(timeCommitment * Object.values(weeklySchedule).filter(Boolean).length / 60 * 10) / 10} hours/week = ${Math.round(totalHoursNeeded / (timeCommitment * Object.values(weeklySchedule).filter(Boolean).length / 60))} weeks)
+- Total weeks needed: Total hours ÷ hours per week (${totalHoursNeeded} hours ÷ ${Math.round(((timeCommitment * Object.values(weeklySchedule).filter(Boolean).length) / 60) * 10) / 10} hours/week = ${Math.round(totalHoursNeeded / ((timeCommitment * Object.values(weeklySchedule).filter(Boolean).length) / 60))} weeks)
 - Stage durations must add up to the total realistic timeline
 - IMPORTANT: Each stage duration must be calculated to fit within the realistic total timeline
 - Include time for review, practice, and skill consolidation
@@ -377,14 +511,14 @@ JSON format:
       ]
     }
   ],
-  "estimated_completion_date": "${new Date(new Date(startDate).getTime() + totalWeeksNeeded * 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]}",
+  "estimated_completion_date": "${new Date(new Date(startDate).getTime() + totalWeeksNeeded * 7 * 24 * 60 * 60 * 1000).toISOString().split("T")[0]}",
   "total_hours_required": ${totalHoursNeeded},
   "milestones": [
     {
       "id": "milestone-1",
       "title": "Foundation Complete",
       "description": "Basic skills established and ready for intermediate concepts",
-      "target_date": "${new Date(new Date(startDate).getTime() + Math.floor(totalWeeksNeeded * 0.33) * 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]}",
+      "target_date": "${new Date(new Date(startDate).getTime() + Math.floor(totalWeeksNeeded * 0.33) * 7 * 24 * 60 * 60 * 1000).toISOString().split("T")[0]}",
       "stage_number": ${Math.ceil(finalStageCount * 0.33)},
       "skills_validated": ["Core fundamentals mastered", "Ready for next level"],
       "icon": "foundation",
@@ -394,7 +528,7 @@ JSON format:
       "id": "milestone-2", 
       "title": "Intermediate Mastery",
       "description": "Confident application of intermediate skills",
-      "target_date": "${new Date(new Date(startDate).getTime() + Math.floor(totalWeeksNeeded * 0.67) * 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]}",
+      "target_date": "${new Date(new Date(startDate).getTime() + Math.floor(totalWeeksNeeded * 0.67) * 7 * 24 * 60 * 60 * 1000).toISOString().split("T")[0]}",
       "stage_number": ${Math.ceil(finalStageCount * 0.67)},
       "skills_validated": ["Intermediate concepts applied", "Complex problems solved"],
       "icon": "target",
@@ -404,7 +538,7 @@ JSON format:
       "id": "milestone-3",
       "title": "Goal Achievement", 
       "description": "Full mastery achieved and goal completed successfully",
-      "target_date": "${new Date(new Date(startDate).getTime() + totalWeeksNeeded * 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]}",
+      "target_date": "${new Date(new Date(startDate).getTime() + totalWeeksNeeded * 7 * 24 * 60 * 60 * 1000).toISOString().split("T")[0]}",
       "stage_number": ${finalStageCount},
       "skills_validated": ["Expert level reached", "Goal fully accomplished"],
       "icon": "trophy",
@@ -414,9 +548,9 @@ JSON format:
 }
 
 CALCULATION EXAMPLE FOR YOUR SPECIFIC CASE:
-- You have ${timeCommitment} minutes/day × ${Object.values(weeklySchedule).filter(Boolean).length} days/week = ${Math.round(timeCommitment * Object.values(weeklySchedule).filter(Boolean).length / 60 * 10) / 10} hours/week
-- For this goal (${totalHoursNeeded} hours): ${totalHoursNeeded} ÷ ${Math.round(timeCommitment * Object.values(weeklySchedule).filter(Boolean).length / 60 * 10) / 10} = ${Math.round(totalHoursNeeded / (timeCommitment * Object.values(weeklySchedule).filter(Boolean).length / 60))} weeks = ${Math.round(totalHoursNeeded / (timeCommitment * Object.values(weeklySchedule).filter(Boolean).length / 60) / 52 * 10) / 10} years
-- Your stages should total approximately ${Math.round(totalHoursNeeded / (timeCommitment * Object.values(weeklySchedule).filter(Boolean).length / 60))} weeks
+- You have ${timeCommitment} minutes/day × ${Object.values(weeklySchedule).filter(Boolean).length} days/week = ${Math.round(((timeCommitment * Object.values(weeklySchedule).filter(Boolean).length) / 60) * 10) / 10} hours/week
+- For this goal (${totalHoursNeeded} hours): ${totalHoursNeeded} ÷ ${Math.round(((timeCommitment * Object.values(weeklySchedule).filter(Boolean).length) / 60) * 10) / 10} = ${Math.round(totalHoursNeeded / ((timeCommitment * Object.values(weeklySchedule).filter(Boolean).length) / 60))} weeks = ${Math.round((totalHoursNeeded / ((timeCommitment * Object.values(weeklySchedule).filter(Boolean).length) / 60) / 52) * 10) / 10} years
+- Your stages should total approximately ${Math.round(totalHoursNeeded / ((timeCommitment * Object.values(weeklySchedule).filter(Boolean).length) / 60))} weeks
 - Example stage distribution: Adjust based on total timeline - shorter goals need shorter stages
 
 IMPORTANT: 
@@ -434,8 +568,8 @@ Before submitting your response, verify:
 1. ✅ Sum of all stage duration_weeks = ${totalWeeksNeeded} weeks (NOT 10-15 weeks for a multi-year goal)
 2. ✅ Number of stages matches calculated amount (exactly ${finalStageCount} stages for ${totalWeeksNeeded} weeks)
 3. ✅ Each stage builds progressively toward mastery
-4. ✅ Completion date matches calculated timeline (~${Math.round(totalYearsNeeded * 10) / 10} years from start)`
-}
+4. ✅ Completion date matches calculated timeline (~${Math.round(totalYearsNeeded * 10) / 10} years from start)`;
+};
 
 // Generate only the overview and roadmap (no detailed stages)
 export const generateRoadmapOverviewPrompt = (
@@ -444,33 +578,38 @@ export const generateRoadmapOverviewPrompt = (
   timeCommitment: number,
   targetDate: string | null,
   weeklySchedule: Record<string, boolean>,
-  startDate: string
+  startDate: string,
 ) => {
   const availableDays = Object.entries(weeklySchedule)
     .filter(([_, available]) => available)
     .map(([day]) => day)
-    .join(', ')
+    .join(", ");
 
-  const availableDaysCount = Object.values(weeklySchedule).filter(Boolean).length
-  const hoursPerWeek = Math.round(timeCommitment * availableDaysCount / 60 * 10) / 10
-  
+  const availableDaysCount =
+    Object.values(weeklySchedule).filter(Boolean).length;
+  const hoursPerWeek =
+    Math.round(((timeCommitment * availableDaysCount) / 60) * 10) / 10;
+
   // Calculate total hours needed based on goal
-  const goalLowerCase = goal.toLowerCase()
-  let baseHours = 200 // default
-  
+  const goalLowerCase = goal.toLowerCase();
+  let baseHours = 200; // default
+
   // Language learning specific
-  if (goalLowerCase.includes('spanish') || goalLowerCase.includes('language')) {
-    if (goalLowerCase.includes('conversational')) {
-      baseHours = 200 // 6-12 months for conversational level
-    } else if (goalLowerCase.includes('fluent')) {
-      baseHours = 700 // 2+ years for fluency
+  if (goalLowerCase.includes("spanish") || goalLowerCase.includes("language")) {
+    if (goalLowerCase.includes("conversational")) {
+      baseHours = 200; // 6-12 months for conversational level
+    } else if (goalLowerCase.includes("fluent")) {
+      baseHours = 700; // 2+ years for fluency
     } else {
-      baseHours = 180 // default: basic conversational
+      baseHours = 180; // default: basic conversational
     }
   }
-  
-  const totalWeeksNeeded = Math.round(baseHours / hoursPerWeek)
-  const finalStageCount = Math.max(6, Math.min(12, Math.ceil(totalWeeksNeeded / 6)))
+
+  const totalWeeksNeeded = Math.round(baseHours / hoursPerWeek);
+  const finalStageCount = Math.max(
+    6,
+    Math.min(12, Math.ceil(totalWeeksNeeded / 6)),
+  );
 
   return `Create a high-level learning roadmap overview for this goal:
 
@@ -479,7 +618,7 @@ Current Level: ${currentLevel}
 Time Commitment: ${timeCommitment} minutes/day (${hoursPerWeek} hours/week)
 Available Days: ${availableDays}
 Start Date: ${startDate}
-${targetDate ? `Target Date: ${targetDate}` : ''}
+${targetDate ? `Target Date: ${targetDate}` : ""}
 
 Calculate realistic timeline:
 - Total hours needed: ~${baseHours} hours
@@ -521,8 +660,8 @@ JSON format:
       "color": "blue"
     }
   ]
-}`
-}
+}`;
+};
 
 // Generate detailed stages based on roadmap overview
 export const generateStagesPrompt = (
@@ -530,11 +669,11 @@ export const generateStagesPrompt = (
   currentLevel: string,
   roadmapOverview: Record<string, unknown>,
   _timeCommitment: number,
-  _weeklySchedule: Record<string, boolean>
+  _weeklySchedule: Record<string, boolean>,
 ) => {
-  const totalWeeks = Number(roadmapOverview.total_weeks_required) || 12
-  const stageCount = Number(roadmapOverview.stage_count) || 6
-  const avgWeeksPerStage = Math.round(totalWeeks / stageCount)
+  const totalWeeks = Number(roadmapOverview.total_weeks_required) || 12;
+  const stageCount = Number(roadmapOverview.stage_count) || 6;
+  const avgWeeksPerStage = Math.round(totalWeeks / stageCount);
 
   return `Create ${stageCount} detailed learning stages for this goal:
 
@@ -569,15 +708,15 @@ JSON format:
       "resources": ["Specific tools, apps, websites, books"]
     }
   ]
-}`
-}
+}`;
+};
 
 export const TASK_GENERATION_SYSTEM_PROMPT = `You are an expert learning designer and task planner. 
 Your task is to break down a specific learning phase into EXTREMELY SPECIFIC, CONCRETE, daily actionable tasks.
 
 CRITICAL: Tasks must be ACTIONABLE and SPECIFIC, not abstract. Instead of "Practice vocabulary", use "Complete Duolingo lessons 1-3 on family vocabulary (madre, padre, hermano, hermana)".
 
-Always respond with valid JSON that matches the expected schema.`
+Always respond with valid JSON that matches the expected schema.`;
 
 export const generateTasksForPhasePrompt = (
   phaseTitle: string,
@@ -589,14 +728,15 @@ export const generateTasksForPhasePrompt = (
   timeCommitment: number,
   weeklySchedule: Record<string, boolean>,
   phaseNumber: number,
-  goalTitle: string
+  goalTitle: string,
 ) => {
   const availableDays = Object.entries(weeklySchedule)
     .filter(([_, available]) => available)
     .map(([day]) => day)
-    .join(', ')
+    .join(", ");
 
-  const totalSessions = durationWeeks * Object.values(weeklySchedule).filter(Boolean).length
+  const totalSessions =
+    durationWeeks * Object.values(weeklySchedule).filter(Boolean).length;
 
   return `Break down this stage into specific, daily actionable tasks:
 
@@ -605,9 +745,9 @@ Stage: ${phaseTitle} (Stage ${phaseNumber})
 Goal: ${goalTitle}
 Description: ${phaseDescription}
 Duration: ${durationWeeks} weeks
-Skills to Develop: ${skillsToLearn.join(', ')}
-Objectives: ${learningObjectives?.join(', ') || 'Not specified'}
-Key Concepts: ${keyConcepts?.join(', ') || 'Not specified'}
+Skills to Develop: ${skillsToLearn.join(", ")}
+Objectives: ${learningObjectives?.join(", ") || "Not specified"}
+Key Concepts: ${keyConcepts?.join(", ") || "Not specified"}
 
 SCHEDULING DETAILS:
 Daily Time Commitment: ${timeCommitment} minutes
@@ -716,5 +856,5 @@ JSON format:
   "progression_notes": "How difficulty increases across patterns"
 }
 
-Create tasks that build systematically through the stage, ensuring comprehensive coverage of all skills and concepts.`
-}
+Create tasks that build systematically through the stage, ensuring comprehensive coverage of all skills and concepts.`;
+};

@@ -1,7 +1,13 @@
-import Link from 'next/link'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Mail, ArrowLeft } from 'lucide-react'
+import Link from "next/link";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Mail, ArrowLeft } from "lucide-react";
 
 export default function ConfirmPage() {
   return (
@@ -17,10 +23,12 @@ export default function ConfirmPage() {
       </CardHeader>
       <CardContent className="text-center space-y-4">
         <p className="text-sm text-gray-600">
-          Click the link in the email to confirm your account and start using Goal Pilot.
+          Click the link in the email to confirm your account and start using
+          Goal Pilot.
         </p>
         <p className="text-xs text-gray-500">
-          Didn't receive the email? Check your spam folder or try registering again.
+          Didn't receive the email? Check your spam folder or try registering
+          again.
         </p>
       </CardContent>
       <CardContent className="pt-0">
@@ -32,5 +40,5 @@ export default function ConfirmPage() {
         </Link>
       </CardContent>
     </Card>
-  )
+  );
 }

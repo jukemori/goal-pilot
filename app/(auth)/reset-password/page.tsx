@@ -1,108 +1,131 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import Link from 'next/link'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { createClient } from '@/lib/supabase/client'
-import { ArrowLeft, Loader2, AlertCircle, CheckCircle, Eye, EyeOff, Lock } from 'lucide-react'
-import { toast } from 'sonner'
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { createClient } from "@/lib/supabase/client";
+import {
+  ArrowLeft,
+  Loader2,
+  AlertCircle,
+  CheckCircle,
+  Eye,
+  EyeOff,
+  Lock,
+} from "lucide-react";
+import { toast } from "sonner";
 
 export default function ResetPasswordPage() {
-  const router = useRouter()
-  const [password, setPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
-  const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState('')
-  const [isSuccess, setIsSuccess] = useState(false)
-  const [isValidSession, setIsValidSession] = useState(false)
-  const [checkingSession, setCheckingSession] = useState(true)
+  const router = useRouter();
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [isValidSession, setIsValidSession] = useState(false);
+  const [checkingSession, setCheckingSession] = useState(true);
 
   // Listen for PASSWORD_RECOVERY auth event from email link
   useEffect(() => {
-    const supabase = createClient()
-    
+    const supabase = createClient();
+
     // Check current session first
     const checkInitialSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       if (session && session.user) {
-        setIsValidSession(true)
+        setIsValidSession(true);
       }
-      setCheckingSession(false)
-    }
-    
-    // Listen for auth state changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'PASSWORD_RECOVERY' && session) {
-        setIsValidSession(true)
-        setCheckingSession(false)
-      } else if (event === 'SIGNED_IN' && session) {
-        setIsValidSession(true)
-        setCheckingSession(false)
-      } else if (!session) {
-        setIsValidSession(false)
-        setError('Invalid or expired reset link. Please request a new password reset.')
-        setCheckingSession(false)
-      }
-    })
+      setCheckingSession(false);
+    };
 
-    checkInitialSession()
+    // Listen for auth state changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "PASSWORD_RECOVERY" && session) {
+        setIsValidSession(true);
+        setCheckingSession(false);
+      } else if (event === "SIGNED_IN" && session) {
+        setIsValidSession(true);
+        setCheckingSession(false);
+      } else if (!session) {
+        setIsValidSession(false);
+        setError(
+          "Invalid or expired reset link. Please request a new password reset.",
+        );
+        setCheckingSession(false);
+      }
+    });
+
+    checkInitialSession();
 
     return () => {
-      subscription.unsubscribe()
-    }
-  }, [])
+      subscription.unsubscribe();
+    };
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
-    setError('')
-    
+    e.preventDefault();
+    setIsLoading(true);
+    setError("");
+
     // Validation
     if (password.length < 6) {
-      setError('Password must be at least 6 characters long.')
-      setIsLoading(false)
-      return
+      setError("Password must be at least 6 characters long.");
+      setIsLoading(false);
+      return;
     }
-    
+
     if (password !== confirmPassword) {
-      setError('Passwords do not match.')
-      setIsLoading(false)
-      return
+      setError("Passwords do not match.");
+      setIsLoading(false);
+      return;
     }
-    
+
     try {
-      const supabase = createClient()
-      
+      const supabase = createClient();
+
       const { error: updateError } = await supabase.auth.updateUser({
-        password: password
-      })
+        password: password,
+      });
 
       if (updateError) {
-        setError(updateError.message || 'Failed to update password. Please try again.')
-        return
+        setError(
+          updateError.message || "Failed to update password. Please try again.",
+        );
+        return;
       }
 
-      setIsSuccess(true)
-      toast.success('Password updated successfully!')
-      
+      setIsSuccess(true);
+      toast.success("Password updated successfully!");
+
       // Redirect to dashboard after success
       setTimeout(() => {
-        router.push('/dashboard')
-      }, 2000)
+        router.push("/dashboard");
+      }, 2000);
     } catch (err) {
-      setError('Network error. Please check your connection and try again.')
-      console.error('Password reset error:', err)
+      setError("Network error. Please check your connection and try again.");
+      console.error("Password reset error:", err);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   if (checkingSession) {
     return (
@@ -112,14 +135,16 @@ export default function ResetPasswordPage() {
           <p className="text-gray-600">Verifying reset link...</p>
         </div>
       </div>
-    )
+    );
   }
 
   if (!isValidSession) {
     return (
       <div className="space-y-6">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900">Invalid Reset Link</h1>
+          <h1 className="text-2xl font-bold text-gray-900">
+            Invalid Reset Link
+          </h1>
           <p className="text-gray-600">This link is invalid or has expired</p>
         </div>
 
@@ -128,16 +153,17 @@ export default function ResetPasswordPage() {
             <div className="mx-auto w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mb-4">
               <AlertCircle className="h-6 w-6 text-red-600" />
             </div>
-            <CardTitle className="text-xl text-red-600">Reset Link Expired</CardTitle>
+            <CardTitle className="text-xl text-red-600">
+              Reset Link Expired
+            </CardTitle>
             <CardDescription>
-              This password reset link is invalid or has expired. Please request a new one.
+              This password reset link is invalid or has expired. Please request
+              a new one.
             </CardDescription>
           </CardHeader>
           <CardContent className="text-center space-y-4">
             <Link href="/forgot-password">
-              <Button className="w-full">
-                Request New Reset Link
-              </Button>
+              <Button className="w-full">Request New Reset Link</Button>
             </Link>
             <Link href="/login">
               <Button variant="outline" className="w-full">
@@ -148,7 +174,7 @@ export default function ResetPasswordPage() {
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
   return (
@@ -169,7 +195,7 @@ export default function ResetPasswordPage() {
             Choose a strong password for your account
           </CardDescription>
         </CardHeader>
-        
+
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
             {/* Error Alert */}
@@ -196,7 +222,7 @@ export default function ResetPasswordPage() {
               <div className="relative">
                 <Input
                   id="password"
-                  type={showPassword ? 'text' : 'password'}
+                  type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Enter your new password"
@@ -220,7 +246,9 @@ export default function ResetPasswordPage() {
                   )}
                 </Button>
               </div>
-              <p className="text-xs text-gray-500">Must be at least 6 characters</p>
+              <p className="text-xs text-gray-500">
+                Must be at least 6 characters
+              </p>
             </div>
 
             {/* Confirm Password Field */}
@@ -229,7 +257,7 @@ export default function ResetPasswordPage() {
               <div className="relative">
                 <Input
                   id="confirmPassword"
-                  type={showConfirmPassword ? 'text' : 'password'}
+                  type={showConfirmPassword ? "text" : "password"}
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="Confirm your new password"
@@ -257,8 +285,8 @@ export default function ResetPasswordPage() {
           </CardContent>
 
           <CardFooter className="flex flex-col space-y-6 mt-6">
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               className="w-full bg-primary hover:bg-primary/90 shadow-sm"
               disabled={isLoading || isSuccess || !password || !confirmPassword}
             >
@@ -273,13 +301,13 @@ export default function ResetPasswordPage() {
                   Password Updated!
                 </>
               ) : (
-                'Update Password'
+                "Update Password"
               )}
             </Button>
-            
+
             <div className="text-center">
-              <Link 
-                href="/login" 
+              <Link
+                href="/login"
                 className="inline-flex items-center gap-2 text-sm text-primary hover:underline font-medium"
               >
                 <ArrowLeft className="h-4 w-4" />
@@ -290,5 +318,5 @@ export default function ResetPasswordPage() {
         </form>
       </Card>
     </div>
-  )
+  );
 }

@@ -1,20 +1,26 @@
-import Link from 'next/link'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { 
-  Target, 
-  Calendar, 
-  Brain, 
-  Sparkles, 
-  ArrowRight, 
-  Users, 
-  TrendingUp, 
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
+  Target,
+  Calendar,
+  Brain,
+  Sparkles,
+  ArrowRight,
+  Users,
+  TrendingUp,
   Star,
   Zap,
   BookOpen,
-  Award
-} from 'lucide-react'
+  Award,
+} from "lucide-react";
 
 export default function HomePage() {
   return (
@@ -27,14 +33,18 @@ export default function HomePage() {
               <div className="p-2 bg-primary rounded-lg">
                 <Target className="h-6 w-6 text-white" />
               </div>
-              <span className="text-xl font-bold text-gray-900">Goal Pilot</span>
+              <span className="text-xl font-bold text-gray-900">
+                Goal Pilot
+              </span>
             </div>
             <div className="flex items-center gap-4">
               <Link href="/login">
                 <Button variant="ghost">Sign In</Button>
               </Link>
               <Link href="/register">
-                <Button className="bg-primary hover:bg-primary/90">Get Started</Button>
+                <Button className="bg-primary hover:bg-primary/90">
+                  Get Started
+                </Button>
               </Link>
             </div>
           </div>
@@ -45,36 +55,45 @@ export default function HomePage() {
       <section className="relative py-16 md:py-20 bg-white">
         <div className="mx-auto max-w-7xl p-3 md:p-4 lg:p-8">
           <div className="text-center max-w-5xl mx-auto">
-            <Badge variant="secondary" className="bg-gray-100 text-gray-700 mb-6">
+            <Badge
+              variant="secondary"
+              className="bg-gray-100 text-gray-700 mb-6"
+            >
               <Sparkles className="h-3 w-3 mr-1" />
               AI-Powered Goal Achievement
             </Badge>
             <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-gray-900 mb-6">
               Turn Your
               <span className="text-primary block">Dreams Into</span>
-              <span className="text-gray-900">
-                Daily Actions
-              </span>
+              <span className="text-gray-900">Daily Actions</span>
             </h1>
             <p className="text-xl text-gray-600 max-w-4xl mx-auto mb-8 leading-relaxed">
-              Stop procrastinating. Start achieving. Goal Pilot uses AI to create personalized learning roadmaps, 
-              schedule your tasks, and track your progress—all adapted to your real life.
+              Stop procrastinating. Start achieving. Goal Pilot uses AI to
+              create personalized learning roadmaps, schedule your tasks, and
+              track your progress—all adapted to your real life.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
               <Link href="/register">
-                <Button size="lg" className="px-8 py-4 text-lg bg-primary hover:bg-primary/90">
+                <Button
+                  size="lg"
+                  className="px-8 py-4 text-lg bg-primary hover:bg-primary/90"
+                >
                   <Sparkles className="h-5 w-5 mr-2" />
                   Start Learning Today
                 </Button>
               </Link>
               <Link href="/login">
-                <Button variant="outline" size="lg" className="px-8 py-4 text-lg">
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="px-8 py-4 text-lg"
+                >
                   <ArrowRight className="h-5 w-5 mr-2" />
                   Sign In
                 </Button>
               </Link>
             </div>
-            
+
             {/* Social Proof */}
             <div className="flex items-center justify-center gap-8 text-gray-500 text-sm">
               <div className="flex items-center gap-2">
@@ -99,19 +118,27 @@ export default function HomePage() {
         <div className="mx-auto max-w-7xl p-3 md:p-4 lg:p-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             <div className="text-center">
-              <div className="text-3xl md:text-4xl font-bold text-primary mb-2">12</div>
+              <div className="text-3xl md:text-4xl font-bold text-primary mb-2">
+                12
+              </div>
               <div className="text-gray-600">Goal Templates</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl md:text-4xl font-bold text-primary mb-2">AI</div>
+              <div className="text-3xl md:text-4xl font-bold text-primary mb-2">
+                AI
+              </div>
               <div className="text-gray-600">Powered Planning</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl md:text-4xl font-bold text-primary mb-2">Smart</div>
+              <div className="text-3xl md:text-4xl font-bold text-primary mb-2">
+                Smart
+              </div>
               <div className="text-gray-600">Scheduling</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl md:text-4xl font-bold text-primary mb-2">Daily</div>
+              <div className="text-3xl md:text-4xl font-bold text-primary mb-2">
+                Daily
+              </div>
               <div className="text-gray-600">Progress Tracking</div>
             </div>
           </div>
@@ -127,11 +154,12 @@ export default function HomePage() {
               <span className="text-primary"> succeed</span>
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              From intelligent planning to progress tracking, Goal Pilot provides all the tools 
-              you need to turn your ambitions into achievements.
+              From intelligent planning to progress tracking, Goal Pilot
+              provides all the tools you need to turn your ambitions into
+              achievements.
             </p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <Card className="border shadow-sm hover:shadow-md transition-shadow duration-200">
               <CardHeader className="pb-4">
@@ -144,8 +172,9 @@ export default function HomePage() {
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-gray-600 text-base leading-relaxed">
-                  Get personalized learning roadmaps that adapt to your skill level, 
-                  time availability, and learning style. Our AI creates the perfect path for you.
+                  Get personalized learning roadmaps that adapt to your skill
+                  level, time availability, and learning style. Our AI creates
+                  the perfect path for you.
                 </CardDescription>
               </CardContent>
             </Card>
@@ -161,8 +190,9 @@ export default function HomePage() {
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-gray-600 text-base leading-relaxed">
-                  Daily tasks that fit perfectly into your life. Our intelligent scheduling 
-                  considers your energy levels, availability, and personal preferences.
+                  Daily tasks that fit perfectly into your life. Our intelligent
+                  scheduling considers your energy levels, availability, and
+                  personal preferences.
                 </CardDescription>
               </CardContent>
             </Card>
@@ -178,8 +208,9 @@ export default function HomePage() {
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-gray-600 text-base leading-relaxed">
-                  Beautiful insights and analytics keep you motivated. See your progress 
-                  in real-time and celebrate every milestone you achieve.
+                  Beautiful insights and analytics keep you motivated. See your
+                  progress in real-time and celebrate every milestone you
+                  achieve.
                 </CardDescription>
               </CardContent>
             </Card>
@@ -195,8 +226,8 @@ export default function HomePage() {
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-gray-600 text-base leading-relaxed">
-                  Your roadmap evolves as you learn. Our AI adjusts difficulty, pacing, 
-                  and focus areas based on your progress and feedback.
+                  Your roadmap evolves as you learn. Our AI adjusts difficulty,
+                  pacing, and focus areas based on your progress and feedback.
                 </CardDescription>
               </CardContent>
             </Card>
@@ -212,8 +243,8 @@ export default function HomePage() {
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-gray-600 text-base leading-relaxed">
-                  Choose from 500+ professionally designed learning paths for programming, 
-                  languages, fitness, business skills, and more.
+                  Choose from 500+ professionally designed learning paths for
+                  programming, languages, fitness, business skills, and more.
                 </CardDescription>
               </CardContent>
             </Card>
@@ -229,8 +260,9 @@ export default function HomePage() {
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-gray-600 text-base leading-relaxed">
-                  Connect with fellow learners, share progress, get motivation, 
-                  and celebrate achievements together in our supportive community.
+                  Connect with fellow learners, share progress, get motivation,
+                  and celebrate achievements together in our supportive
+                  community.
                 </CardDescription>
               </CardContent>
             </Card>
@@ -249,35 +281,42 @@ export default function HomePage() {
               Transform your goals into reality with our simple 4-step process
             </p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
             {[
               {
                 step: "1",
                 title: "Define Your Goal",
-                description: "Tell us what you want to achieve and your current skill level. Choose from templates or create custom goals.",
-                color: "bg-blue-500"
+                description:
+                  "Tell us what you want to achieve and your current skill level. Choose from templates or create custom goals.",
+                color: "bg-blue-500",
               },
               {
-                step: "2", 
+                step: "2",
                 title: "Set Your Schedule",
-                description: "Choose your available time and preferred learning days. Our AI adapts to your real-life constraints.",
-                color: "bg-green-500"
+                description:
+                  "Choose your available time and preferred learning days. Our AI adapts to your real-life constraints.",
+                color: "bg-green-500",
               },
               {
                 step: "3",
-                title: "Get Your Roadmap", 
-                description: "Receive a personalized learning plan with milestones, tasks, and timelines created by AI.",
-                color: "bg-purple-500"
+                title: "Get Your Roadmap",
+                description:
+                  "Receive a personalized learning plan with milestones, tasks, and timelines created by AI.",
+                color: "bg-purple-500",
               },
               {
                 step: "4",
                 title: "Take Daily Action",
-                description: "Follow your daily tasks, track progress, and watch as you consistently move toward your goals.",
-                color: "bg-orange-500"
-              }
+                description:
+                  "Follow your daily tasks, track progress, and watch as you consistently move toward your goals.",
+                color: "bg-orange-500",
+              },
             ].map((item, index) => (
-              <Card key={index} className="border shadow-sm hover:shadow-md transition-shadow duration-200">
+              <Card
+                key={index}
+                className="border shadow-sm hover:shadow-md transition-shadow duration-200"
+              >
                 <CardHeader className="pb-4">
                   <div className="flex items-center gap-4 mb-4">
                     <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary text-white font-bold text-lg">
@@ -310,42 +349,46 @@ export default function HomePage() {
               Everything you need to know about Goal Pilot
             </p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
             {[
               {
                 question: "How does AI roadmap generation work?",
-                answer: "Our AI analyzes your goal, current skill level, and time availability to create a personalized learning path with specific milestones and daily tasks."
+                answer:
+                  "Our AI analyzes your goal, current skill level, and time availability to create a personalized learning path with specific milestones and daily tasks.",
               },
               {
                 question: "Can I customize my learning schedule?",
-                answer: "Yes! You can set your available days, daily time commitment, and preferred learning pace. The AI adapts your roadmap accordingly."
+                answer:
+                  "Yes! You can set your available days, daily time commitment, and preferred learning pace. The AI adapts your roadmap accordingly.",
               },
               {
                 question: "What types of goals can I create?",
-                answer: "Goal Pilot supports learning goals across programming, languages, fitness, business skills, creative pursuits, and academic subjects with pre-built templates."
+                answer:
+                  "Goal Pilot supports learning goals across programming, languages, fitness, business skills, creative pursuits, and academic subjects with pre-built templates.",
               },
               {
                 question: "How does progress tracking work?",
-                answer: "Track daily task completion, milestone achievements, and overall progress with visual dashboards and calendar integration."
+                answer:
+                  "Track daily task completion, milestone achievements, and overall progress with visual dashboards and calendar integration.",
               },
               {
                 question: "Is Goal Pilot suitable for beginners?",
-                answer: "Absolutely! Our templates include beginner-friendly paths, and the AI adjusts difficulty based on your current level and progress."
+                answer:
+                  "Absolutely! Our templates include beginner-friendly paths, and the AI adjusts difficulty based on your current level and progress.",
               },
               {
                 question: "Can I modify my roadmap after it's created?",
-                answer: "Yes, roadmaps are adaptive. You can adjust timelines, add custom tasks, and the AI will help rebalance your learning path as needed."
-              }
+                answer:
+                  "Yes, roadmaps are adaptive. You can adjust timelines, add custom tasks, and the AI will help rebalance your learning path as needed.",
+              },
             ].map((faq, index) => (
               <Card key={index} className="border shadow-sm">
                 <CardContent className="p-6">
                   <h3 className="font-semibold text-gray-900 mb-3 text-lg">
                     {faq.question}
                   </h3>
-                  <p className="text-gray-600 leading-relaxed">
-                    {faq.answer}
-                  </p>
+                  <p className="text-gray-600 leading-relaxed">{faq.answer}</p>
                 </CardContent>
               </Card>
             ))}
@@ -361,18 +404,25 @@ export default function HomePage() {
               Ready to achieve your goals?
             </h2>
             <p className="text-xl mb-8 max-w-3xl mx-auto text-gray-600">
-              Turn your dreams into daily actions. 
-              Start your journey today with AI-powered goal achievement.
+              Turn your dreams into daily actions. Start your journey today with
+              AI-powered goal achievement.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link href="/register">
-                <Button size="lg" className="px-8 py-4 text-lg bg-primary hover:bg-primary/90 text-white font-semibold">
+                <Button
+                  size="lg"
+                  className="px-8 py-4 text-lg bg-primary hover:bg-primary/90 text-white font-semibold"
+                >
                   <Sparkles className="h-5 w-5 mr-2" />
                   Start Free Today
                 </Button>
               </Link>
               <Link href="/login">
-                <Button size="lg" variant="outline" className="px-8 py-4 text-lg border-gray-300 text-gray-700 hover:bg-gray-100 font-semibold">
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="px-8 py-4 text-lg border-gray-300 text-gray-700 hover:bg-gray-100 font-semibold"
+                >
                   <ArrowRight className="h-5 w-5 mr-2" />
                   Sign In
                 </Button>
@@ -403,25 +453,61 @@ export default function HomePage() {
             <div>
               <h4 className="font-semibold mb-4 text-gray-900">Product</h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="#" className="hover:text-primary">Features</Link></li>
-                <li><Link href="#" className="hover:text-primary">Templates</Link></li>
-                <li><Link href="#" className="hover:text-primary">Pricing</Link></li>
+                <li>
+                  <Link href="#" className="hover:text-primary">
+                    Features
+                  </Link>
+                </li>
+                <li>
+                  <Link href="#" className="hover:text-primary">
+                    Templates
+                  </Link>
+                </li>
+                <li>
+                  <Link href="#" className="hover:text-primary">
+                    Pricing
+                  </Link>
+                </li>
               </ul>
             </div>
             <div>
               <h4 className="font-semibold mb-4 text-gray-900">Company</h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="#" className="hover:text-primary">About</Link></li>
-                <li><Link href="#" className="hover:text-primary">Blog</Link></li>
-                <li><Link href="#" className="hover:text-primary">Contact</Link></li>
+                <li>
+                  <Link href="#" className="hover:text-primary">
+                    About
+                  </Link>
+                </li>
+                <li>
+                  <Link href="#" className="hover:text-primary">
+                    Blog
+                  </Link>
+                </li>
+                <li>
+                  <Link href="#" className="hover:text-primary">
+                    Contact
+                  </Link>
+                </li>
               </ul>
             </div>
             <div>
               <h4 className="font-semibold mb-4 text-gray-900">Support</h4>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="#" className="hover:text-primary">Help Center</Link></li>
-                <li><Link href="#" className="hover:text-primary">Community</Link></li>
-                <li><Link href="#" className="hover:text-primary">Status</Link></li>
+                <li>
+                  <Link href="#" className="hover:text-primary">
+                    Help Center
+                  </Link>
+                </li>
+                <li>
+                  <Link href="#" className="hover:text-primary">
+                    Community
+                  </Link>
+                </li>
+                <li>
+                  <Link href="#" className="hover:text-primary">
+                    Status
+                  </Link>
+                </li>
               </ul>
             </div>
           </div>
@@ -431,5 +517,5 @@ export default function HomePage() {
         </div>
       </footer>
     </div>
-  )
+  );
 }

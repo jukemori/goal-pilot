@@ -1,12 +1,21 @@
-'use client'
+"use client";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { GoalTemplate, DIFFICULTY_LEVELS } from '@/lib/templates/goal-templates'
-import { 
-  Clock, 
-  Calendar, 
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  GoalTemplate,
+  DIFFICULTY_LEVELS,
+} from "@/lib/templates/goal-templates";
+import {
+  Clock,
+  Calendar,
   Target,
   Code,
   Code2,
@@ -21,8 +30,8 @@ import {
   Music,
   BarChart3,
   Palette,
-  GraduationCap
-} from 'lucide-react'
+  GraduationCap,
+} from "lucide-react";
 
 // Icon mapping for dynamic icon rendering
 const ICON_MAP = {
@@ -40,30 +49,31 @@ const ICON_MAP = {
   BarChart3,
   Palette,
   GraduationCap,
-  Target
-} as const
+  Target,
+} as const;
 
 interface TemplateCardProps {
-  template: GoalTemplate
-  onUseTemplate: (template: GoalTemplate) => void
+  template: GoalTemplate;
+  onUseTemplate: (template: GoalTemplate) => void;
 }
 
 export function TemplateCard({ template, onUseTemplate }: TemplateCardProps) {
-  const IconComponent = ICON_MAP[template.icon as keyof typeof ICON_MAP] || Target
-  const difficultyConfig = DIFFICULTY_LEVELS[template.difficulty]
-  
+  const IconComponent =
+    ICON_MAP[template.icon as keyof typeof ICON_MAP] || Target;
+  const difficultyConfig = DIFFICULTY_LEVELS[template.difficulty];
+
   const getDifficultyBadgeVariant = (difficulty: string) => {
     switch (difficulty) {
-      case 'beginner':
-        return 'default'
-      case 'intermediate':
-        return 'secondary'
-      case 'advanced':
-        return 'destructive'
+      case "beginner":
+        return "default";
+      case "intermediate":
+        return "secondary";
+      case "advanced":
+        return "destructive";
       default:
-        return 'default'
+        return "default";
     }
-  }
+  };
 
   return (
     <Card className="h-full hover:shadow-lg transition-all duration-200 border-gray-200 shadow-sm group">
@@ -72,7 +82,10 @@ export function TemplateCard({ template, onUseTemplate }: TemplateCardProps) {
           <div className="p-2 bg-primary/10 rounded-lg group-hover:bg-primary/20 transition-colors">
             <IconComponent className="h-6 w-6 text-primary" />
           </div>
-          <Badge variant={getDifficultyBadgeVariant(template.difficulty)} className="text-xs">
+          <Badge
+            variant={getDifficultyBadgeVariant(template.difficulty)}
+            className="text-xs"
+          >
             {difficultyConfig.label}
           </Badge>
         </div>
@@ -83,7 +96,7 @@ export function TemplateCard({ template, onUseTemplate }: TemplateCardProps) {
           {template.description}
         </CardDescription>
       </CardHeader>
-      
+
       <CardContent className="space-y-4">
         {/* Duration and Time Info */}
         <div className="space-y-2 text-sm text-gray-600">
@@ -97,7 +110,13 @@ export function TemplateCard({ template, onUseTemplate }: TemplateCardProps) {
           </div>
           <div className="flex items-center gap-2">
             <Target className="h-4 w-4 text-gray-400" />
-            <span>{Object.values(template.default_weekly_schedule).filter(Boolean).length} days/week</span>
+            <span>
+              {
+                Object.values(template.default_weekly_schedule).filter(Boolean)
+                  .length
+              }{" "}
+              days/week
+            </span>
           </div>
         </div>
 
@@ -142,7 +161,7 @@ export function TemplateCard({ template, onUseTemplate }: TemplateCardProps) {
         </div>
 
         {/* Use Template Button */}
-        <Button 
+        <Button
           onClick={() => onUseTemplate(template)}
           className="w-full bg-primary hover:bg-primary/90 shadow-sm"
           size="sm"
@@ -151,5 +170,5 @@ export function TemplateCard({ template, onUseTemplate }: TemplateCardProps) {
         </Button>
       </CardContent>
     </Card>
-  )
+  );
 }

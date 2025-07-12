@@ -1,21 +1,21 @@
-"use client"
+"use client";
 
-import { motion } from "framer-motion"
+import { motion } from "framer-motion";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { CheckCircle, ArrowRight } from "lucide-react"
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { CheckCircle, ArrowRight } from "lucide-react";
 
 interface TaskGenerationDialogProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  taskCount: number
-  phaseTitle: string
-  onViewTasks: () => void
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  taskCount: number;
+  phaseTitle: string;
+  onViewTasks: () => void;
 }
 
 export function TaskGenerationDialog({
@@ -23,11 +23,11 @@ export function TaskGenerationDialog({
   onOpenChange,
   taskCount,
   phaseTitle,
-  onViewTasks
+  onViewTasks,
 }: TaskGenerationDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange} modal={true}>
-      <DialogContent 
+      <DialogContent
         className="sm:max-w-md bg-white text-gray-900 border border-gray-200 shadow-xl"
         onInteractOutside={(e) => e.preventDefault()}
       >
@@ -42,20 +42,26 @@ export function TaskGenerationDialog({
               <CheckCircle className="h-8 w-8 text-primary" />
             </div>
           </motion.div>
-          
-          <DialogTitle className="text-xl text-gray-900 text-center">Tasks Generated Successfully!</DialogTitle>
-          
+
+          <DialogTitle className="text-xl text-gray-900 text-center">
+            Tasks Generated Successfully!
+          </DialogTitle>
+
           <div className="text-center space-y-2">
             <p className="text-sm text-gray-600">
-              Generated <strong className="text-gray-900">{taskCount} tasks</strong> for the phase:
+              Generated{" "}
+              <strong className="text-gray-900">{taskCount} tasks</strong> for
+              the phase:
             </p>
             <p className="font-medium text-gray-900">"{phaseTitle}"</p>
             <p className="text-sm text-gray-600 mt-4">
-              You can view and manage your tasks in the <strong className="text-gray-900">Progress tab</strong> or continue working on your roadmap.
+              You can view and manage your tasks in the{" "}
+              <strong className="text-gray-900">Progress tab</strong> or
+              continue working on your roadmap.
             </p>
           </div>
         </DialogHeader>
-        
+
         <div className="flex flex-col sm:flex-row gap-2 mt-6">
           <Button
             variant="outline"
@@ -64,15 +70,12 @@ export function TaskGenerationDialog({
           >
             Continue Planning
           </Button>
-          <Button
-            onClick={onViewTasks}
-            className="flex-1 gap-2"
-          >
+          <Button onClick={onViewTasks} className="flex-1 gap-2">
             View Tasks
             <ArrowRight className="h-4 w-4" />
           </Button>
         </div>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

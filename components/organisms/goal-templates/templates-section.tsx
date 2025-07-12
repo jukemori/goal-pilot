@@ -1,28 +1,34 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { TemplateGrid } from './template-grid'
-import { GoalTemplate } from '@/lib/templates/goal-templates'
-import { Sparkles, ChevronDown } from 'lucide-react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { TemplateGrid } from "./template-grid";
+import { GoalTemplate } from "@/lib/templates/goal-templates";
+import { Sparkles, ChevronDown } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface TemplatesSectionProps {
-  hasActiveGoals: boolean
+  hasActiveGoals: boolean;
 }
 
 export function TemplatesSection({ hasActiveGoals }: TemplatesSectionProps) {
-  const [isExpanded, setIsExpanded] = useState(!hasActiveGoals) // Auto-expand if no active goals
-  const router = useRouter()
+  const [isExpanded, setIsExpanded] = useState(!hasActiveGoals); // Auto-expand if no active goals
+  const router = useRouter();
 
   const handleUseTemplate = (template: GoalTemplate) => {
     // Store template data in sessionStorage to pre-fill the form
-    sessionStorage.setItem('selectedTemplate', JSON.stringify(template))
+    sessionStorage.setItem("selectedTemplate", JSON.stringify(template));
     // Navigate to goal creation form
-    router.push('/goals/new?fromTemplate=true')
-  }
+    router.push("/goals/new?fromTemplate=true");
+  };
 
   return (
     <Card className="border-gray-200 shadow-sm">
@@ -45,7 +51,7 @@ export function TemplatesSection({ hasActiveGoals }: TemplatesSectionProps) {
             onClick={() => setIsExpanded(!isExpanded)}
             className="gap-2 self-start md:self-auto"
           >
-            <span>{isExpanded ? 'Hide' : 'Browse Templates'}</span>
+            <span>{isExpanded ? "Hide" : "Browse Templates"}</span>
             <motion.div
               animate={{ rotate: isExpanded ? 180 : 0 }}
               transition={{ duration: 0.2, ease: "easeInOut" }}
@@ -55,17 +61,17 @@ export function TemplatesSection({ hasActiveGoals }: TemplatesSectionProps) {
           </Button>
         </div>
       </CardHeader>
-      
+
       <AnimatePresence>
         {isExpanded && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ 
-              duration: 0.3, 
+            transition={{
+              duration: 0.3,
               ease: "easeInOut",
-              opacity: { duration: 0.2 }
+              opacity: { duration: 0.2 },
             }}
             style={{ overflow: "hidden" }}
           >
@@ -87,5 +93,5 @@ export function TemplatesSection({ hasActiveGoals }: TemplatesSectionProps) {
         )}
       </AnimatePresence>
     </Card>
-  )
+  );
 }
