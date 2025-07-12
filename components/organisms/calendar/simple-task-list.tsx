@@ -41,16 +41,16 @@ export function SimpleTaskList({
         }
 
         // Invalidate calendar queries to refresh the data
-        const today = new Date().toISOString().split("T")[0];
         const currentDate = new Date();
-        queryClient.invalidateQueries({ queryKey: ["today-tasks", today] });
         queryClient.invalidateQueries({
           queryKey: [
-            "calendar-tasks",
+            "calendar-optimized",
             currentDate.getFullYear(),
             currentDate.getMonth(),
           ],
         });
+        // Also invalidate any other task-related queries
+        queryClient.invalidateQueries({ queryKey: ["tasks"] });
       } catch {
         toast.error("Failed to update task");
       } finally {
