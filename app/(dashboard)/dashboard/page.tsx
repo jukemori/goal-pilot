@@ -42,29 +42,29 @@ export default async function DashboardPage() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid gap-3 grid-cols-2 md:gap-6 md:grid-cols-2 lg:grid-cols-4">
         <StatsCard
           title="Active Goals"
           value={goals?.filter(g => g.status === 'active').length || 0}
-          icon={<Target className="h-5 w-5" />}
+          icon={<Target className="h-4 w-4 md:h-5 md:w-5" />}
           color="blue"
         />
         <StatsCard
           title="Today's Tasks"
           value={totalTasks}
-          icon={<Clock className="h-5 w-5" />}
+          icon={<Clock className="h-4 w-4 md:h-5 md:w-5" />}
           color="purple"
         />
         <StatsCard
           title="Completed Today"
           value={completedTasks}
-          icon={<CheckCircle className="h-5 w-5" />}
+          icon={<CheckCircle className="h-4 w-4 md:h-5 md:w-5" />}
           color="green"
         />
         <StatsCard
           title="Progress Rate"
           value={totalTasks > 0 ? `${Math.round((completedTasks / totalTasks) * 100)}%` : '0%'}
-          icon={<TrendingUp className="h-5 w-5" />}
+          icon={<TrendingUp className="h-4 w-4 md:h-5 md:w-5" />}
           color="orange"
         />
       </div>
