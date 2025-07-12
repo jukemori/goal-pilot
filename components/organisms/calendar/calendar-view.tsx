@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, lazy, Suspense } from 'react'
+import { useState, useMemo, lazy, Suspense, memo, useCallback } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, CheckCircle, Clock } from 'lucide-react'
@@ -27,6 +27,172 @@ function TaskListSkeleton() {
   )
 }
 
+// Memoized Task Item component for better performance
+const CalendarTaskItem = memo(function CalendarTaskItem({ 
+  task, 
+  className = "" 
+}: { 
+  task: TaskWithRoadmap
+  className?: string 
+}) {
+  return (
+    <div
+      key={task.id}
+      className={cn(
+        "text-[7px] md:text-[10px] px-0.5 md:px-1 py-0.5 rounded bg-primary/10 text-primary overflow-hidden w-full break-words",
+        task.completed === true && "line-through opacity-60",
+        className
+      )}
+      title={task.title}
+      style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}
+    >
+      <div className="truncate w-full leading-tight">{task.title}</div>
+    </div>
+  )
+})
+
+// Memoized Task Item for desktop view
+const CalendarTaskItemDesktop = memo(function CalendarTaskItemDesktop({ 
+  task 
+}: { 
+  task: TaskWithRoadmap 
+}) {
+  return (
+    <div
+      key={task.id}
+      className={cn(
+        "text-[10px] px-1 py-0.5 rounded bg-primary/10 text-primary overflow-hidden w-full break-words",
+        task.completed === true && "line-through opacity-60"
+      )}
+      title={task.title}
+      style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}
+    >
+      <div className="truncate w-full">{task.title}</div>
+    </div>
+  )
+})
+
+// Memoized Tasks Container
+const CalendarTasksContainer = memo(function CalendarTasksContainer({ 
+  tasks 
+}: { 
+  tasks: TaskWithRoadmap[] 
+}) {
+  const firstTask = tasks[0]
+  const secondTask = tasks[1]
+  const hasMoreTasks = tasks.length > 1
+  const desktopMoreCount = tasks.length > 2 ? tasks.length - 2 : 0
+
+  if (tasks.length === 0) return null
+
+  return (
+    <div className="flex-1 space-y-0.5 md:space-y-1 min-h-0 overflow-hidden w-full">
+      {/* Show only first task on mobile, first 2 on desktop */}
+      <CalendarTaskItem task={firstTask} />
+      
+      {/* Show second task only on medium screens and up */}
+      {secondTask && (
+        <div className="hidden md:block w-full">
+          <CalendarTaskItemDesktop task={secondTask} />
+        </div>
+      )}
+      
+      {/* More indicator - different count for mobile vs desktop */}
+      {hasMoreTasks && (
+        <div className="text-[7px] md:text-[9px] text-gray-500 px-0.5 md:px-1 overflow-hidden">
+          <span className="md:hidden truncate">+{tasks.length - 1}</span>
+          <span className="hidden md:inline">{desktopMoreCount > 0 ? `+${desktopMoreCount} more` : ''}</span>
+        </div>
+      )}
+    </div>
+  )
+})
+
+// Memoized Calendar Cell component for optimal performance
+const CalendarCell = memo(function CalendarCell({
+  date,
+  tasks,
+  isSelected,
+  isToday,
+  isCurrentMonth,
+  onSelect
+}: {
+  date: Date
+  tasks: TaskWithRoadmap[]
+  isSelected: boolean
+  isToday: boolean
+  isCurrentMonth: boolean
+  onSelect: (date: string) => void
+}) {
+  const dateString = useMemo(() => {
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
+  }, [date])
+
+  const handleClick = useCallback(() => {
+    onSelect(isSelected ? '' : dateString)
+  }, [dateString, isSelected, onSelect])
+
+  return (
+    <button
+      key={dateString}
+      onClick={handleClick}
+      className={cn(
+        "p-0.5 md:p-2 text-left border rounded-lg transition-colors relative cursor-pointer flex flex-col h-full min-w-0 w-full",
+        isToday && "border-primary bg-primary/5",
+        !isCurrentMonth && "text-gray-400 bg-gray-50",
+        isSelected && "border-primary bg-primary/10",
+        tasks.length > 0 && "hover:bg-gray-50"
+      )}
+    >
+      <div className="text-[10px] md:text-sm font-medium mb-0.5 md:mb-1 flex-shrink-0">
+        {date.getDate()}
+      </div>
+      
+      <CalendarTasksContainer tasks={tasks} />
+    </button>
+  )
+})
+
+// Memoized Calendar Week component
+const CalendarWeek = memo(function CalendarWeek({
+  week,
+  tasksByDate,
+  selectedDate,
+  onDateSelect,
+  currentDate
+}: {
+  week: Date[]
+  tasksByDate: Record<string, TaskWithRoadmap[]>
+  selectedDate: string | null
+  onDateSelect: (date: string) => void
+  currentDate: Date
+}) {
+  const today = useMemo(() => new Date(), [])
+  
+  return (
+    <div className="grid grid-cols-7 gap-0.5 md:gap-1 min-w-0">
+      {week.map((date) => {
+        const dateString = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
+        const dateTasks = tasksByDate[dateString] || []
+        const isSelected = selectedDate === dateString
+        const isToday = date.toDateString() === today.toDateString()
+        const isCurrentMonth = date.getMonth() === currentDate.getMonth()
+
+        return (
+          <CalendarCell
+            key={dateString}
+            date={date}
+            tasks={dateTasks}
+            isSelected={isSelected}
+            isToday={isToday}
+            isCurrentMonth={isCurrentMonth}
+            onSelect={onDateSelect}
+          />
+        )
+      })}
+    </div>
+  )
+})
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface CalendarViewProps {
@@ -76,23 +242,6 @@ export function CalendarView(_props: CalendarViewProps) {
     setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1))
   }
 
-  const isToday = (date: Date) => {
-    const today = new Date()
-    return date.toDateString() === today.toDateString()
-  }
-
-  const isCurrentMonth = (date: Date) => {
-    return date.getMonth() === currentDate.getMonth()
-  }
-
-  const getDateString = (date: Date) => {
-    return format(date, 'yyyy-MM-dd')
-  }
-
-  const getTasksForDate = (date: Date) => {
-    return tasksByDate[getDateString(date)] || []
-  }
-
   // Memoize today's stats
   const { completedToday, totalToday, todayProgress } = useMemo(() => {
     const completed = todayTasks.filter(task => task.completed === true).length
@@ -139,75 +288,14 @@ export function CalendarView(_props: CalendarViewProps) {
               {/* Calendar grid */}
               <div className="grid grid-rows-6 gap-0.5 md:gap-1 flex-1 min-w-0">
                 {weeks.map((week, weekIndex) => (
-                  <div key={weekIndex} className="grid grid-cols-7 gap-0.5 md:gap-1 min-w-0">
-                    {week.map((date) => {
-                      const dateString = getDateString(date)
-                      const dateTasks = getTasksForDate(date)
-                      const isSelected = selectedDate === dateString
-
-                      return (
-                        <button
-                          key={dateString}
-                          onClick={() => setSelectedDate(isSelected ? null : dateString)}
-                          className={cn(
-                            "p-0.5 md:p-2 text-left border rounded-lg transition-colors relative cursor-pointer flex flex-col h-full min-w-0 w-full",
-                            isToday(date) && "border-primary bg-primary/5",
-                            !isCurrentMonth(date) && "text-gray-400 bg-gray-50",
-                            isSelected && "border-primary bg-primary/10",
-                            dateTasks.length > 0 && "hover:bg-gray-50"
-                          )}
-                        >
-                          <div className="text-[10px] md:text-sm font-medium mb-0.5 md:mb-1 flex-shrink-0">
-                            {date.getDate()}
-                          </div>
-                          
-                          {dateTasks.length > 0 && (
-                            <div className="flex-1 space-y-0.5 md:space-y-1 min-h-0 overflow-hidden w-full">
-                              {/* Show only first task on mobile, first 2 on desktop */}
-                              {dateTasks.slice(0, 1).map((task: TaskWithRoadmap) => (
-                                <div
-                                  key={task.id}
-                                  className={cn(
-                                    "text-[7px] md:text-[10px] px-0.5 md:px-1 py-0.5 rounded bg-primary/10 text-primary overflow-hidden w-full break-words",
-                                    task.completed === true && "line-through opacity-60"
-                                  )}
-                                  title={task.title}
-                                  style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}
-                                >
-                                  <div className="truncate w-full leading-tight">{task.title}</div>
-                                </div>
-                              ))}
-                              
-                              {/* Show second task only on medium screens and up */}
-                              <div className="hidden md:block w-full">
-                                {dateTasks.slice(1, 2).map((task: TaskWithRoadmap) => (
-                                  <div
-                                    key={task.id}
-                                    className={cn(
-                                      "text-[10px] px-1 py-0.5 rounded bg-primary/10 text-primary overflow-hidden w-full break-words",
-                                      task.completed === true && "line-through opacity-60"
-                                    )}
-                                    title={task.title}
-                                    style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}
-                                  >
-                                    <div className="truncate w-full">{task.title}</div>
-                                  </div>
-                                ))}
-                              </div>
-                              
-                              {/* More indicator - different count for mobile vs desktop */}
-                              {dateTasks.length > 1 && (
-                                <div className="text-[7px] md:text-[9px] text-gray-500 px-0.5 md:px-1 overflow-hidden">
-                                  <span className="md:hidden truncate">+{dateTasks.length - 1}</span>
-                                  <span className="hidden md:inline">{dateTasks.length > 2 ? `+${dateTasks.length - 2} more` : ''}</span>
-                                </div>
-                              )}
-                            </div>
-                          )}
-                        </button>
-                      )
-                    })}
-                  </div>
+                  <CalendarWeek
+                    key={weekIndex}
+                    week={week}
+                    tasksByDate={tasksByDate}
+                    selectedDate={selectedDate}
+                    onDateSelect={setSelectedDate}
+                    currentDate={currentDate}
+                  />
                 ))}
               </div>
             </div>
