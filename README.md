@@ -141,8 +141,8 @@ Open [http://localhost:3000](http://localhost:3000) to view the application.
 - **users**: User profiles and preferences
 - **goals**: User goals with scheduling preferences and AI parameters
 - **roadmaps**: AI-generated learning roadmaps linked to goals
-- **learning_phases**: Structured phases within roadmaps
-- **tasks**: Daily tasks derived from learning phases
+- **progress_stages**: Structured stages within roadmaps
+- **tasks**: Daily tasks derived from progress stages
 - **milestones**: Progress tracking milestones
 
 ### Security Features

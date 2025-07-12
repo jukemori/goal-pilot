@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
 
     // Get the stage details
     const { data: stage, error: stageError } = await supabase
-      .from("learning_phases")
+      .from("progress_stages")
       .select(
         `
         *,

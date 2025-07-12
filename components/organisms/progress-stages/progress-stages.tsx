@@ -23,11 +23,11 @@ import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { createClient } from "@/lib/supabase/client";
-import { LearningPhase } from "@/types";
+import { ProgressStage } from "@/types";
 import { TaskGenerationDialog } from "@/components/molecules/task-generation-dialog";
 import { AIGenerationOverlay } from "@/components/molecules/ai-generation-overlay";
 
-interface StageWithTasks extends LearningPhase {
+interface StageWithTasks extends ProgressStage {
   taskCount: number;
   hasGeneratedTasks: boolean;
 }
@@ -63,7 +63,7 @@ export function ProgressStages({
 
       // Get stages first
       const { data: stagesData, error: stagesError } = await supabase
-        .from("learning_phases")
+        .from("progress_stages")
         .select("*")
         .eq("roadmap_id", roadmapId)
         .order("phase_number");
@@ -95,7 +95,7 @@ export function ProgressStages({
       });
 
       // Transform the data to include task counts
-      const stagesWithTaskCounts = stagesData.map((stage: LearningPhase) => {
+      const stagesWithTaskCounts = stagesData.map((stage: ProgressStage) => {
         const taskCount = taskCountMap.get(stage.phase_id || "") || 0;
         return {
           ...stage,
@@ -138,7 +138,7 @@ export function ProgressStages({
 
   // Generate tasks for a stage
   const generateTasksMutation = useMutation({
-    mutationFn: async (stage: LearningPhase) => {
+    mutationFn: async (stage: ProgressStage) => {
       console.log("Generating tasks for stage:", stage);
       const response = await fetch("/api/tasks/generate-phase", {
         method: "POST",

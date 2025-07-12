@@ -11,7 +11,7 @@ export type {
   User,
   Task,
   Roadmap,
-  LearningPhase,
+  ProgressStage,
   UserPreferences,
   Milestone,
 } from "./database";

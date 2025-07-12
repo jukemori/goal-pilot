@@ -167,7 +167,7 @@ export async function POST(request: NextRequest) {
         `Creating ${roadmapData.phases.length} stages for roadmap ${roadmap.id}`,
       );
       try {
-        await createLearningPhases(
+        await createProgressStages(
           supabase,
           roadmap.id,
           roadmapData.phases,
@@ -213,7 +213,7 @@ interface Phase {
   tasks?: string[];
 }
 
-async function createLearningPhases(
+async function createProgressStages(
   supabase: Awaited<ReturnType<typeof createClient>>, // Supabase client type from external library
   roadmapId: string,
   stages: Phase[],
@@ -255,7 +255,7 @@ async function createLearningPhases(
   console.log("Inserting stages:", stageRecords.length, "stages");
 
   const { data, error } = await supabase
-    .from("learning_phases")
+    .from("progress_stages")
     .insert(stageRecords)
     .select();
 

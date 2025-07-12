@@ -36,15 +36,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Roadmap not found" }, { status: 404 });
     }
 
-    // Check if learning phases already exist
+    // Check if progress stages already exist
     const { data: existingPhases } = await supabase
-      .from("learning_phases")
+      .from("progress_stages")
       .select("id")
       .eq("roadmap_id", roadmapId)
       .limit(1);
 
     if (existingPhases && existingPhases.length > 0) {
-      return NextResponse.json({ message: "Learning phases already exist" });
+      return NextResponse.json({ message: "Progress stages already exist" });
     }
 
     // Extract phases from roadmap
@@ -108,7 +108,7 @@ export async function POST(request: NextRequest) {
     // Double-check for existing phases by roadmap_id and phase_id combinations
     const existingPhaseIds = new Set();
     const { data: existingPhasesDetailed } = await supabase
-      .from("learning_phases")
+      .from("progress_stages")
       .select("phase_id")
       .eq("roadmap_id", roadmapId);
 
@@ -128,7 +128,7 @@ export async function POST(request: NextRequest) {
     }
 
     const { data, error } = await supabase
-      .from("learning_phases")
+      .from("progress_stages")
       .insert(newPhases)
       .select();
 
