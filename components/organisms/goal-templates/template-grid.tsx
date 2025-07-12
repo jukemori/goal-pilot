@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { GoalTemplate, GOAL_TEMPLATES, TEMPLATE_CATEGORIES } from '@/lib/templates/goal-templates'
 import { ChevronDown, ChevronUp, Filter } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 interface TemplateGridProps {
   limit?: number
@@ -35,7 +36,7 @@ export function TemplateGrid({ limit = 6, showMore = true, onUseTemplate }: Temp
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-8 md:pb-6">
       {/* Filters */}
       <div className="flex flex-wrap items-center gap-3">
         <div className="flex items-center gap-2 text-sm text-gray-600">
@@ -45,30 +46,42 @@ export function TemplateGrid({ limit = 6, showMore = true, onUseTemplate }: Temp
         
         {/* Category Filter */}
         <div className="flex flex-wrap gap-2">
-          {Object.entries(TEMPLATE_CATEGORIES).map(([key, category]) => (
-            <Badge
-              key={key}
-              variant={selectedCategory === key ? "default" : "outline"}
-              className="cursor-pointer hover:bg-primary/10 transition-colors"
-              onClick={() => setSelectedCategory(selectedCategory === key ? null : key)}
-            >
-              {category.label}
-            </Badge>
-          ))}
+          {Object.entries(TEMPLATE_CATEGORIES).map(([key, category]) => {
+            const isActive = selectedCategory === key
+            return (
+              <Badge
+                key={key}
+                variant={isActive ? "default" : "outline"}
+                className={cn(
+                  "cursor-pointer transition-colors",
+                  isActive ? "hover:bg-primary/90" : "hover:bg-primary/10"
+                )}
+                onClick={() => setSelectedCategory(selectedCategory === key ? null : key)}
+              >
+                {category.label}
+              </Badge>
+            )
+          })}
         </div>
 
         {/* Difficulty Filter */}
         <div className="flex flex-wrap gap-2">
-          {['beginner', 'intermediate', 'advanced'].map((difficulty) => (
-            <Badge
-              key={difficulty}
-              variant={selectedDifficulty === difficulty ? "default" : "outline"}
-              className="cursor-pointer hover:bg-primary/10 transition-colors capitalize"
-              onClick={() => setSelectedDifficulty(selectedDifficulty === difficulty ? null : difficulty)}
-            >
-              {difficulty}
-            </Badge>
-          ))}
+          {['beginner', 'intermediate', 'advanced'].map((difficulty) => {
+            const isActive = selectedDifficulty === difficulty
+            return (
+              <Badge
+                key={difficulty}
+                variant={isActive ? "default" : "outline"}
+                className={cn(
+                  "cursor-pointer transition-colors capitalize",
+                  isActive ? "hover:bg-primary/90" : "hover:bg-primary/10"
+                )}
+                onClick={() => setSelectedDifficulty(selectedDifficulty === difficulty ? null : difficulty)}
+              >
+                {difficulty}
+              </Badge>
+            )
+          })}
         </div>
 
         {/* Clear Filters */}
