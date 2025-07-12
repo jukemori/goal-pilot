@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { openai, AI_MODELS } from '@/lib/ai/openai'
 import { generateRoadmapPrompt, ROADMAP_SYSTEM_PROMPT } from '@/lib/ai/prompts'
-import { Json } from '@/types/database'
+import { Json, TablesInsert, Goal } from '@/types/database'
 
 export async function POST(request: NextRequest) {
   try {
@@ -10,34 +10,35 @@ export async function POST(request: NextRequest) {
 
     const supabase = await createClient()
 
+    // Combine user authentication and goal fetch in parallel
+    const [userResult, goalResult] = await Promise.all([
+      supabase.auth.getUser(),
+      supabase.from('goals').select('*').eq('id', goalId).single(),
+    ])
+
     const {
       data: { user },
-    } = await supabase.auth.getUser()
-
+    } = userResult
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Get the goal details
-    const { data: goal, error: goalError } = await supabase
-      .from('goals')
-      .select('*')
-      .eq('id', goalId)
-      .eq('user_id', user.id)
-      .single()
-
-    if (goalError || !goal) {
+    const { data: goal, error: goalError } = goalResult
+    if (goalError || !goal || goal.user_id !== user.id) {
       return NextResponse.json({ error: 'Goal not found' }, { status: 404 })
     }
 
+    // Type the goal properly
+    const typedGoal: Goal = goal
+
     // Generate the roadmap using OpenAI with retry logic
     const prompt = generateRoadmapPrompt(
-      goal.title,
-      goal.current_level || 'beginner',
-      goal.daily_time_commitment || 30,
-      goal.target_date,
-      goal.weekly_schedule as Record<string, boolean>,
-      goal.start_date,
+      typedGoal.title,
+      typedGoal.current_level || 'beginner',
+      typedGoal.daily_time_commitment || 30,
+      typedGoal.target_date,
+      typedGoal.weekly_schedule as Record<string, boolean>,
+      typedGoal.start_date,
     )
 
     // Retry logic for reliability
@@ -61,10 +62,10 @@ export async function POST(request: NextRequest) {
             ],
             response_format: { type: 'json_object' },
             temperature: 0.7,
-            max_tokens: 12000, // Increased from 3000 to allow for 6-12 detailed stages
+            max_tokens: 8000, // Optimized for faster generation while maintaining quality
           },
           {
-            timeout: 120000, // 2 minutes timeout
+            timeout: 60000, // 1 minute timeout for better performance
           },
         )
 
@@ -75,8 +76,8 @@ export async function POST(request: NextRequest) {
         lastError = error
 
         if (attempt < maxRetries) {
-          // Exponential backoff: wait 2^attempt seconds
-          const waitTime = Math.pow(2, attempt) * 1000
+          // Optimized backoff: shorter delays for faster retries
+          const waitTime = attempt * 500 // 500ms, 1000ms delays instead of 2s, 4s
           console.log(`Retrying in ${waitTime}ms...`)
           await new Promise((resolve) => setTimeout(resolve, waitTime))
         }
@@ -94,22 +95,23 @@ export async function POST(request: NextRequest) {
       let content = completion.choices[0].message.content!
       console.log('API - Raw AI response length:', content.length)
 
-      // Clean up common JSON issues
+      // Optimized JSON cleanup
       content = content.trim()
 
-      // Remove any text before the JSON starts
-      const jsonStart = content.indexOf('{')
-      if (jsonStart > 0) {
-        content = content.substring(jsonStart)
+      // Fast path for clean JSON
+      if (content.startsWith('{') && content.endsWith('}')) {
+        roadmapData = JSON.parse(content)
+      } else {
+        // Fallback cleanup for malformed responses
+        const jsonStart = content.indexOf('{')
+        const jsonEnd = content.lastIndexOf('}')
+        if (jsonStart >= 0 && jsonEnd > jsonStart) {
+          content = content.substring(jsonStart, jsonEnd + 1)
+          roadmapData = JSON.parse(content)
+        } else {
+          throw new Error('No valid JSON found in response')
+        }
       }
-
-      // Remove any text after the JSON ends
-      const jsonEnd = content.lastIndexOf('}')
-      if (jsonEnd > 0 && jsonEnd < content.length - 1) {
-        content = content.substring(0, jsonEnd + 1)
-      }
-
-      roadmapData = JSON.parse(content)
 
       // Validate that we have a complete response
       if (
@@ -141,16 +143,24 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Prepare stage data in parallel while saving roadmap
+    const stageCreationPromise =
+      roadmapData.phases && roadmapData.phases.length > 0
+        ? prepareStageData(roadmapData.phases, typedGoal.start_date)
+        : null
+
     // Save the roadmap to database
+    const roadmapInsert: TablesInsert<'roadmaps'> = {
+      goal_id: goalId,
+      ai_generated_plan: roadmapData as unknown as Json,
+      milestones: (roadmapData.milestones || []) as unknown as Json,
+      ai_model: AI_MODELS.roadmap,
+      prompt_version: 'v1',
+    }
+
     const { data: roadmap, error: roadmapError } = await supabase
       .from('roadmaps')
-      .insert({
-        goal_id: goalId,
-        ai_generated_plan: roadmapData as unknown as Json,
-        milestones: (roadmapData.milestones || []) as unknown as Json,
-        ai_model: AI_MODELS.roadmap,
-        prompt_version: 'v1',
-      })
+      .insert(roadmapInsert)
       .select()
       .single()
 
@@ -162,16 +172,16 @@ export async function POST(request: NextRequest) {
     }
 
     // Create stage records only (no tasks initially)
-    if (roadmapData.phases && roadmapData.phases.length > 0) {
+    if (stageCreationPromise) {
       console.log(
         `Creating ${roadmapData.phases.length} stages for roadmap ${roadmap.id}`,
       )
       try {
-        await createProgressStages(
+        const stageRecords = await stageCreationPromise
+        await createProgressStagesFromRecords(
           supabase,
           roadmap.id,
-          roadmapData.phases,
-          goal.start_date,
+          stageRecords,
         )
         console.log('Stages created successfully')
       } catch (stageError) {
@@ -193,7 +203,8 @@ export async function POST(request: NextRequest) {
   }
 }
 
-interface Phase {
+// Type for AI-generated phase data (before database insertion)
+interface AIGeneratedPhase {
   id?: string
   title: string
   description: string
@@ -213,14 +224,16 @@ interface Phase {
   tasks?: string[]
 }
 
-async function createProgressStages(
-  supabase: Awaited<ReturnType<typeof createClient>>, // Supabase client type from external library
-  roadmapId: string,
-  stages: Phase[],
+// Type for database stage record preparation
+type StageRecordForInsert = Omit<TablesInsert<'progress_stages'>, 'roadmap_id'>
+
+// Optimized function to prepare stage data without database calls
+async function prepareStageData(
+  stages: AIGeneratedPhase[],
   startDate: string,
-) {
+): Promise<StageRecordForInsert[]> {
   let weekOffset = 0
-  const stageRecords = []
+  const stageRecords: StageRecordForInsert[] = []
 
   for (let i = 0; i < stages.length; i++) {
     const stage = stages[i]
@@ -232,7 +245,6 @@ async function createProgressStages(
     stageEndDate.setDate(stageEndDate.getDate() + durationWeeks * 7 - 1)
 
     stageRecords.push({
-      roadmap_id: roadmapId,
       phase_id: stage.id || `stage-${i + 1}`,
       phase_number: i + 1,
       title: stage.title,
@@ -252,11 +264,27 @@ async function createProgressStages(
     weekOffset += durationWeeks
   }
 
-  console.log('Inserting stages:', stageRecords.length, 'stages')
+  return stageRecords
+}
+
+// Optimized function to insert pre-prepared stage records
+async function createProgressStagesFromRecords(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  roadmapId: string,
+  stageRecords: StageRecordForInsert[],
+) {
+  // Add roadmap_id to each record
+  const recordsWithRoadmapId: TablesInsert<'progress_stages'>[] =
+    stageRecords.map((record) => ({
+      ...record,
+      roadmap_id: roadmapId,
+    }))
+
+  console.log('Inserting stages:', recordsWithRoadmapId.length, 'stages')
 
   const { data, error } = await supabase
     .from('progress_stages')
-    .insert(stageRecords)
+    .insert(recordsWithRoadmapId)
     .select()
 
   if (error) {
