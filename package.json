@@ -11,6 +11,8 @@
     "supabase:reset": "supabase db reset",
     "supabase:dev": "supabase start && bun run dev:local",
     "build": "next build",
+    "build:analyze": "ANALYZE=true next build",
+    "analyze": "bun run build:analyze",
     "start": "next start",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
@@ -58,6 +60,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@next/bundle-analyzer": "^15.3.5",
     "@tailwindcss/postcss": "^4",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
@@ -73,6 +76,7 @@
     "tailwindcss": "^4",
     "tw-animate-css": "^1.3.5",
     "typescript": "^5.8.3",
-    "vitest": "^3.2.4"
+    "vitest": "^3.2.4",
+    "webpack-bundle-analyzer": "^4.10.2"
   }
 }

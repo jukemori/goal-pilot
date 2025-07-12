@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Provider } from 'jotai'
 import { Toaster } from '@/components/ui/sonner'
 import { useState } from 'react'
+import { PerformanceProvider } from './performance-provider'
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -29,8 +30,10 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <Provider>
       <QueryClientProvider client={queryClient}>
-        {children}
-        <Toaster />
+        <PerformanceProvider>
+          {children}
+          <Toaster />
+        </PerformanceProvider>
       </QueryClientProvider>
     </Provider>
   )
