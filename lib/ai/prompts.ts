@@ -752,7 +752,7 @@ Total Sessions Needed: ${totalSessions}
 
 TASK GENERATION REQUIREMENTS:
 - Create SPECIFIC, ACTIONABLE tasks that clearly tell users exactly what to do
-- Generate exactly ${Object.values(weeklySchedule).filter(Boolean).length} task templates per week (one for each available day)
+- Generate exactly ${Object.values(weeklySchedule).filter(Boolean).length} UNIQUE task templates per week (one for each available day)
 - Each task should be achievable in ${timeCommitment} minutes
 - Tasks should progress logically through difficulty levels
 - IMPORTANT: Include SPECIFIC resources, tools, apps, websites, or materials
@@ -762,6 +762,7 @@ TASK GENERATION REQUIREMENTS:
 - Tasks should be CONCRETE, not abstract (e.g., "Complete Lesson 1-3 on Duolingo" not "Study vocabulary")
 - Include specific websites, apps, books, or tools when relevant
 - Mention specific quantities, timeframes, or metrics when possible
+- 🚨 CRITICAL: NEVER CREATE DUPLICATE TASKS - Each task must have a unique title and different content
 
 🚨 CRITICAL: TASKS MUST BE EXTREMELY SPECIFIC TO THE STAGE CONTENT 🚨
 If the stage is about "Present Tense -ar Verbs & Basic Introductions", tasks should be:
@@ -784,11 +785,11 @@ If the stage is about "Present Tense -ar Verbs & Basic Introductions", tasks sho
 - "Watch Conjuguemos.com tutorial on -ar verbs and complete 20 practice questions"
 
 PATTERN APPROACH FOR LONG STAGES:
-- Week 1-4: Foundation pattern (basic level)
-- Week 5-8: Development pattern (intermediate level)  
-- Week 9-12: Application pattern (advanced level)
-- Week 13+: Mastery pattern (expert level)
-- Each pattern repeats with increasing complexity
+- Week 1-4: Foundation pattern (basic level) - Each week must have COMPLETELY DIFFERENT tasks
+- Week 5-8: Development pattern (intermediate level) - Each week must have COMPLETELY DIFFERENT tasks  
+- Week 9-12: Application pattern (advanced level) - Each week must have COMPLETELY DIFFERENT tasks
+- Week 13+: Mastery pattern (expert level) - Each week must have COMPLETELY DIFFERENT tasks
+- 🚨 CRITICAL: NEVER repeat the same task across different weeks - vary topics, methods, resources, and complexity
 
 TASK TYPES TO INCLUDE:
 - Study: Learning new concepts, reading, watching tutorials
@@ -824,26 +825,65 @@ MUSIC (for "Basic Open Chords & Strumming Patterns" stage):
 - "Learn down-down-up-up-down-up strumming pattern in 4/4 time using metronome at 60 BPM"
 - "Play simple chord progression G-C-D-G for 'Wonderwall' intro using Simply Guitar app"
 
-JSON format:
+JSON format - IMPORTANT: Create DIFFERENT tasks for each week, DO NOT repeat patterns:
 {
   "stage_summary": "Brief summary of what this stage accomplishes",
   "task_patterns": [
     {
-      "pattern_name": "Foundation Pattern (Weeks 1-4)",
-      "weeks_duration": 4,
+      "pattern_name": "Week 1 Tasks",
+      "weeks_duration": 1,
       "weekly_tasks": [
         {
           "day_of_week": 1,
-          "title": "Complete Duolingo Spanish Lessons 1-3",
-          "description": "Open Duolingo app, complete lessons 1-3 in the Spanish basics course. Focus on pronunciation and repeat each word 3 times.",
+          "title": "Complete Duolingo Spanish Lessons 1-3: Basic Greetings",
+          "description": "Open Duolingo app, complete lessons 1-3 focusing on greetings (Hola, Buenos días, ¿Cómo estás?). Practice pronunciation.",
           "estimated_minutes": ${timeCommitment},
-          "type": "study|practice|exercise|review|project|assessment",
-          "skills_practiced": ["basic vocabulary", "pronunciation"],
-          "materials_needed": ["Duolingo app", "smartphone/computer", "headphones for pronunciation"],
-          "success_criteria": "All 3 lessons completed with 80% accuracy or higher, pronunciation score above 75%",
-          "specific_instructions": "Download Duolingo from app store, create account, select Spanish course, complete lessons with pronunciation enabled",
-          "resources": ["https://duolingo.com", "Duolingo mobile app", "SpanishDict.com for reference"],
-          "variations": ["Week 1: Lessons 1-3 (greetings)", "Week 2: Lessons 4-6 (family)", "Week 3: Lessons 7-9 (colors)", "Week 4: Lessons 10-12 (numbers)"]
+          "type": "study",
+          "week_specific_focus": "Introduction to basic greetings"
+        },
+        {
+          "day_of_week": 2,
+          "title": "Practice Greeting Pronunciation with SpanishDict",
+          "description": "Use SpanishDict.com pronunciation tool to practice 10 common greetings. Record yourself and compare.",
+          "estimated_minutes": ${timeCommitment},
+          "type": "practice",
+          "week_specific_focus": "Pronunciation of greetings"
+        }
+      ]
+    },
+    {
+      "pattern_name": "Week 2 Tasks",
+      "weeks_duration": 1,
+      "weekly_tasks": [
+        {
+          "day_of_week": 1,
+          "title": "Learn Family Vocabulary with Memrise",
+          "description": "Complete Memrise Spanish family vocabulary course: madre, padre, hermano, hermana, etc. (15 new words)",
+          "estimated_minutes": ${timeCommitment},
+          "type": "study",
+          "week_specific_focus": "Family vocabulary acquisition"
+        },
+        {
+          "day_of_week": 2,
+          "title": "Create Family Tree in Spanish",
+          "description": "Draw your family tree and label each member in Spanish. Practice saying 'Mi madre es...' sentences.",
+          "estimated_minutes": ${timeCommitment},
+          "type": "exercise",
+          "week_specific_focus": "Applying family vocabulary"
+        }
+      ]
+    },
+    {
+      "pattern_name": "Week 3 Tasks",
+      "weeks_duration": 1,
+      "weekly_tasks": [
+        {
+          "day_of_week": 1,
+          "title": "Master Color Vocabulary with Conjuguemos",
+          "description": "Learn 12 Spanish colors using Conjuguemos flashcards. Practice 'El coche es rojo' sentence patterns.",
+          "estimated_minutes": ${timeCommitment},
+          "type": "study",
+          "week_specific_focus": "Color vocabulary and basic sentences"
         }
       ]
     }
@@ -852,5 +892,13 @@ JSON format:
   "progression_notes": "How difficulty increases across patterns"
 }
 
-Create tasks that build systematically through the stage, ensuring comprehensive coverage of all skills and concepts.`
+Create tasks that build systematically through the stage, ensuring comprehensive coverage of all skills and concepts.
+
+🚨 FINAL REMINDER: AVOID DUPLICATE TASKS AT ALL COSTS! 🚨
+- Each task must have a unique title across ALL WEEKS
+- No two tasks should have the same content or instructions  
+- Vary the activities, resources, and approaches
+- If you're repeating a concept, use different methods, tools, or complexity levels
+- Create separate task_patterns for each week with completely different tasks
+- NEVER repeat the same task title or content from previous weeks`
 }

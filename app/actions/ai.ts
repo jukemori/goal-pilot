@@ -593,15 +593,8 @@ export async function generateRoadmapStages(roadmapId: string) {
     throw new Error('Failed to update roadmap with stages')
   }
 
-  // Generate tasks for all phases
-  if (stagesData.phases && stagesData.phases.length > 0) {
-    await generateAllTasks(
-      roadmapId,
-      stagesData.phases as RoadmapPlan['phases'],
-      goal?.start_date,
-      goal?.weekly_schedule as Record<string, boolean>,
-    )
-  }
+  // Tasks will be generated per-stage on demand via the generate-phase API
+  // This prevents duplicate task generation
 
   return updatedRoadmap
 }

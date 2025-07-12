@@ -45,20 +45,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Stage not found' }, { status: 404 })
     }
 
-    // Check if tasks already exist for this stage
-    const { data: existingTasks } = await supabase
-      .from('tasks')
-      .select('id')
-      .eq('roadmap_id', roadmapId)
-      .eq('phase_id', stage.phase_id)
-      .limit(1)
-
-    if (existingTasks && existingTasks.length > 0) {
-      return NextResponse.json({
-        message: 'Tasks already generated for this stage',
-        tasksCount: existingTasks.length,
-      })
-    }
 
     // Extract stage data from the roadmap - cast to Json then parse
     const aiPlan = stage.roadmaps.ai_generated_plan as Json
