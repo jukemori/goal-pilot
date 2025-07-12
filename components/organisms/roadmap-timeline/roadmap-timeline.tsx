@@ -266,7 +266,7 @@ export function RoadmapTimeline({ roadmapId, goalId: _goalId }: RoadmapTimelineP
               </div>
 
               {/* Compact Phase card */}
-              <div className="flex-1 bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors">
+              <div className="flex-1 bg-gray-50 rounded-lg p-4">
                 <div className="flex items-start justify-between gap-4 mb-2">
                   <h3 className="text-base font-semibold text-gray-900">{phase.name}</h3>
                   <span className="text-xs text-gray-500">{phase.duration} weeks</span>
