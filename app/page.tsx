@@ -238,13 +238,13 @@ export default function HomePage() {
                   <BookOpen className="h-8 w-8 text-primary" />
                 </div>
                 <CardTitle className="text-xl font-bold text-gray-900">
-                  Expert Templates
+                  Ready-to-Use Templates
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-gray-600 text-base leading-relaxed">
-                  Choose from 500+ professionally designed learning paths for
-                  programming, languages, fitness, business skills, and more.
+                  Get started quickly with our curated collection of learning templates
+                  for programming, languages, fitness, business skills, and more.
                 </CardDescription>
               </CardContent>
             </Card>
@@ -255,14 +255,13 @@ export default function HomePage() {
                   <Users className="h-8 w-8 text-primary" />
                 </div>
                 <CardTitle className="text-xl font-bold text-gray-900">
-                  Community Support
+                  Personal Achievement
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-gray-600 text-base leading-relaxed">
-                  Connect with fellow learners, share progress, get motivation,
-                  and celebrate achievements together in our supportive
-                  community.
+                  Stay motivated with personal progress tracking, milestone celebrations,
+                  and a clear view of your learning journey from start to finish.
                 </CardDescription>
               </CardContent>
             </Card>
@@ -365,7 +364,7 @@ export default function HomePage() {
               {
                 question: "What types of goals can I create?",
                 answer:
-                  "Goal Pilot supports learning goals across programming, languages, fitness, business skills, creative pursuits, and academic subjects with pre-built templates.",
+                  "Goal Pilot supports learning goals across programming, languages, fitness, business skills, creative pursuits, and academic subjects. You can use our templates or create custom goals.",
               },
               {
                 question: "How does progress tracking work?",
@@ -500,7 +499,7 @@ export default function HomePage() {
                 </li>
                 <li>
                   <Link href="#" className="hover:text-primary">
-                    Community
+                    Documentation
                   </Link>
                 </li>
                 <li>
