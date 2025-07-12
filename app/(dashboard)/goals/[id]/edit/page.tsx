@@ -76,11 +76,13 @@ export default async function EditGoalPage({ params }: EditGoalPageProps) {
       </div>
 
       {/* Form Container - Full Width */}
-      <GoalForm 
-        onSubmit={handleUpdate} 
-        defaultValues={defaultValues}
-        isEdit={true}
-      />
+      <div className="px-4 md:px-8">
+        <GoalForm 
+          onSubmit={handleUpdate} 
+          defaultValues={defaultValues}
+          isEdit={true}
+        />
+      </div>
     </div>
   )
 }

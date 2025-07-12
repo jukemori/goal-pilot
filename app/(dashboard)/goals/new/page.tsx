@@ -138,7 +138,9 @@ export default function NewGoalPage() {
           </div>
         </div>
       ) : (
-        <GoalForm onSubmit={createGoal} defaultValues={templateDefaults} />
+        <div className="px-4 md:px-8">
+          <GoalForm onSubmit={createGoal} defaultValues={templateDefaults} />
+        </div>
       )}
     </div>
   )
