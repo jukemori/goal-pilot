@@ -18,17 +18,42 @@ export const goalsHandlers = [
   }),
 
   // Get single goal
-  http.get(`${SUPABASE_URL}/rest/v1/goals/:id`, ({ params }) => {
-    const goal = mockGoals.find(g => g.id === params.id)
+  http.get(`${SUPABASE_URL}/rest/v1/goals`, ({ request }) => {
+    const url = new URL(request.url)
+    const id = url.searchParams.get('id')
     
-    if (!goal) {
-      return HttpResponse.json(
-        { error: 'Goal not found' },
-        { status: 404 }
-      )
+    if (id && id.startsWith('eq.')) {
+      const goalId = id.replace('eq.', '')
+      const goal = mockGoals.find(g => g.id === goalId)
+      
+      if (!goal) {
+        return HttpResponse.json(
+          { error: 'Goal not found' },
+          { status: 404 }
+        )
+      }
+      
+      // Return single goal with roadmap relationships
+      return HttpResponse.json({
+        ...goal,
+        roadmaps: [{
+          id: 'roadmap-1',
+          ai_generated_plan: { overview: 'Test plan' },
+          milestones: [],
+          created_at: '2024-01-01T00:00:00.000Z',
+          tasks: []
+        }]
+      })
     }
     
-    return HttpResponse.json(goal)
+    // Default behavior for listing goals
+    const userId = url.searchParams.get('user_id')
+    if (userId) {
+      const userGoals = mockGoals.filter(goal => goal.user_id === userId)
+      return HttpResponse.json(userGoals)
+    }
+    
+    return HttpResponse.json(mockGoals)
   }),
 
   // Create goal
