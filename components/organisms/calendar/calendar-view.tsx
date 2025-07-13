@@ -297,7 +297,7 @@ export function CalendarView(_props: CalendarViewProps) {
   }, [todayTasks])
 
   return (
-    <div className="grid h-[600px] grid-cols-1 gap-4 lg:grid-cols-3">
+    <div className="grid h-[600px] grid-cols-1 gap-4 lg:grid-cols-3 lg:items-start">
       {/* Calendar */}
       <div className="lg:col-span-2">
         <Card className="flex h-full flex-col">
