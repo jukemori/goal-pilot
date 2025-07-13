@@ -24,7 +24,7 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { toast } from 'sonner'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { LoadingSpinner, PulsingDots } from '@/components/ui/loading-spinner'
@@ -38,13 +38,13 @@ interface GoalFormProps {
 }
 
 const weekDays = [
+  { id: 'sunday', label: 'Sunday' },
   { id: 'monday', label: 'Monday' },
   { id: 'tuesday', label: 'Tuesday' },
   { id: 'wednesday', label: 'Wednesday' },
   { id: 'thursday', label: 'Thursday' },
   { id: 'friday', label: 'Friday' },
   { id: 'saturday', label: 'Saturday' },
-  { id: 'sunday', label: 'Sunday' },
 ]
 
 export function GoalForm({
@@ -56,16 +56,16 @@ export function GoalForm({
   const router = useRouter()
 
   // Use a stable default date in local timezone to avoid hydration mismatches
-  const today =
-    typeof window !== 'undefined'
-      ? (() => {
-          const now = new Date()
-          const year = now.getFullYear()
-          const month = String(now.getMonth() + 1).padStart(2, '0')
-          const day = String(now.getDate()).padStart(2, '0')
-          return `${year}-${month}-${day}`
-        })()
-      : ''
+  const today = useMemo(() => {
+    if (typeof window !== 'undefined') {
+      const now = new Date()
+      const year = now.getFullYear()
+      const month = String(now.getMonth() + 1).padStart(2, '0')
+      const day = String(now.getDate()).padStart(2, '0')
+      return `${year}-${month}-${day}`
+    }
+    return ''
+  }, [])
 
   const form = useForm<GoalFormData>({
     resolver: zodResolver(goalFormSchema),
@@ -89,9 +89,14 @@ export function GoalForm({
     },
   })
 
+  // Track if we've processed the current defaultValues to prevent infinite loops
+  const defaultValuesRef = useRef(defaultValues)
+
   // Update form values when defaultValues change (e.g., when template is loaded)
   useEffect(() => {
-    if (defaultValues) {
+    if (defaultValues && defaultValues !== defaultValuesRef.current) {
+      defaultValuesRef.current = defaultValues
+
       const formDefaults = {
         title: defaultValues.title || '',
         description: defaultValues.description || '',
@@ -113,7 +118,7 @@ export function GoalForm({
       // Reset form with new values
       form.reset(formDefaults)
     }
-  }, [defaultValues, form, today])
+  }, [defaultValues, today, form])
 
   async function handleSubmit(values: GoalFormData) {
     setIsLoading(true)
@@ -342,13 +347,12 @@ export function GoalForm({
                             render={({ field }) => (
                               <FormItem className="flex items-center space-x-0">
                                 <FormControl>
-                                  <div
+                                  <label
                                     className={`relative flex cursor-pointer items-center justify-center rounded-md border-2 px-3 py-1.5 transition-all ${
                                       field.value
                                         ? 'border-primary bg-primary text-white shadow-sm'
                                         : 'border-gray-200 bg-gray-50 hover:border-gray-300 hover:bg-gray-100'
                                     } `}
-                                    onClick={() => field.onChange(!field.value)}
                                   >
                                     <Checkbox
                                       checked={!!field.value}
@@ -358,7 +362,7 @@ export function GoalForm({
                                     <span className="text-xs font-medium">
                                       {day.label.slice(0, 3)}
                                     </span>
-                                  </div>
+                                  </label>
                                 </FormControl>
                               </FormItem>
                             )}
