@@ -20,12 +20,63 @@ Transform your long-term goals into manageable daily actions through intelligent
 - OpenAI gpt-4o-mini for roadmap generation
 - Bun for package management
 
+**Testing**
+
+- Vitest with jsdom for unit and integration testing
+- MSW (Mock Service Worker) for API mocking
+- Testing Library for React component testing
+
 ## Key Features
 
 - **AI-Powered Goal Planning**: Intelligent roadmap generation with personalized learning paths
 - **Smart Scheduling**: Adaptive time management with calendar integration
 - **Progress Tracking**: Visual dashboard with completion analytics and milestone tracking
 - **Responsive Design**: Mobile-first approach with performance optimization
+
+## Quick Start
+
+```bash
+# Install dependencies
+bun install
+
+# Set up environment variables
+cp .env.local.example .env.local
+
+# Start development server
+bun run dev
+```
+
+## Development Commands
+
+```bash
+# Development
+bun run dev              # Start development server
+bun run build           # Build for production
+bun run start           # Start production server
+
+# Code Quality
+bun run lint            # Run ESLint
+bun run format          # Format with Prettier
+bun run type-check      # TypeScript checking
+
+# Testing
+bun run test            # Run all tests once
+
+
+# Database (with Supabase CLI)
+bun run supabase:start  # Start local Supabase
+bun run supabase:reset  # Reset local database
+```
+
+## Environment Variables
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+OPENAI_API_KEY=your_openai_api_key
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+```
 
 ## Project Structure
 
@@ -68,43 +119,43 @@ goal-pilot/
 - **tasks**: Daily tasks derived from progress stages
 - **milestones**: Progress tracking milestones
 
-## Quick Start
+## Testing
+
+This project uses **Vitest** as the test runner with a comprehensive testing setup:
+
+### Test Framework
+
+- **Vitest**: Fast unit test runner with native TypeScript support
+- **jsdom**: Browser environment simulation for React component testing
+- **MSW**: Mock Service Worker for API mocking
+- **Testing Library**: React component testing utilities
+
+### Test Structure
+
+```
+tests/
+├── components/          # Component tests
+│   ├── ui/             # UI component tests
+│   └── organisms/      # Complex component tests
+├── hooks/              # Custom hook tests
+├── pages/api/          # API route tests
+├── mocks/              # MSW mock handlers and data
+│   ├── handlers/       # API mock handlers
+│   └── data/           # Mock data using database types
+└── utils/              # Test utilities and helpers
+```
+
+### Running Tests
 
 ```bash
-# Install dependencies
-bun install
-
-# Set up environment variables
-cp .env.local.example .env.local
-
-# Start development server
-bun run dev
+# Run all tests once
+bun run test
 ```
 
-## Development Commands
+### Test Features
 
-```bash
-# Development
-bun run dev              # Start development server
-bun run build           # Build for production
-bun run start           # Start production server
-
-# Code Quality
-bun run lint            # Run ESLint
-bun run format          # Format with Prettier
-bun run type-check      # TypeScript checking
-
-# Database (with Supabase CLI)
-bun run supabase:start  # Start local Supabase
-bun run supabase:reset  # Reset local database
-```
-
-## Environment Variables
-
-```env
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
-OPENAI_API_KEY=your_openai_api_key
-NEXT_PUBLIC_APP_URL=http://localhost:3000
-```
+- **Type Safety**: All tests use generated database types from `/types/database.ts`
+- **API Mocking**: MSW handles all API calls during testing
+- **Environment**: Test environment variables are configured in `vitest.config.mts`
+- **React Testing**: Custom render utility with providers setup
+- **Database Types**: Mock data factories using actual database schemas
