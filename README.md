@@ -171,10 +171,9 @@ goal-pilot/
 │   ├── api/                # API routes for external integrations
 │   └── auth/               # Auth callback and error handlers
 ├── components/             # React Components (Atomic Design)
-│   ├── atoms/              # Basic UI building blocks
+│   ├── atoms/              # Basic UI building blocks (shadcn/ui components)
 │   ├── molecules/          # Composite components
 │   ├── organisms/          # Complex feature components
-│   ├── ui/                 # shadcn/ui component library
 │   └── providers/          # React Context providers
 ├── lib/                    # Utilities and configurations
 │   ├── ai/                 # OpenAI integration and prompts
@@ -217,7 +216,8 @@ This project uses **Vitest** as the test runner with a comprehensive testing set
 ```
 tests/
 ├── components/          # Component tests
-│   ├── ui/             # UI component tests
+│   ├── atoms/          # Atomic UI component tests
+│   ├── molecules/      # Molecule component tests
 │   └── organisms/      # Complex component tests
 ├── hooks/              # Custom hook tests
 ├── pages/api/          # API route tests
