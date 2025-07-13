@@ -2,6 +2,12 @@
 
 Transform your long-term goals into manageable daily actions through intelligent roadmap generation, smart scheduling, and comprehensive progress tracking.
 
+## Live Demo
+
+**[Try Goal Pilot →](https://goal-pilot-ai.vercel.app)**
+
+Experience the full functionality with our interactive demo deployment.
+
 ## Tech Stack
 
 **Frontend**
@@ -32,6 +38,82 @@ Transform your long-term goals into manageable daily actions through intelligent
 - **Smart Scheduling**: Adaptive time management with calendar integration
 - **Progress Tracking**: Visual dashboard with completion analytics and milestone tracking
 - **Responsive Design**: Mobile-first approach with performance optimization
+
+## Demo Screenshots
+
+<div align="center">
+
+### Dashboard & Overview
+
+<table>
+<tr>
+<td width="50%" align="center" valign="top">
+<img src="public/dashboard-demo.png" alt="Dashboard Overview" width="400"/>
+<br/>
+<em>Main dashboard with goal overview and progress tracking</em>
+</td>
+<td width="50%" align="center" valign="top">
+<img src="public/progress-demo.png" alt="Progress Tracking" width="400"/>
+<br/>
+<em>Detailed progress analytics and milestone tracking</em>
+</td>
+</tr>
+</table>
+
+### Goal Creation & Roadmap
+
+<table>
+<tr>
+<td width="50%" align="center" valign="top">
+<img src="public/goal-form-demo.png" alt="Goal Creation Form" width="400"/>
+<br/>
+<em>Interactive goal creation with scheduling preferences</em>
+</td>
+<td width="50%" align="center" valign="top">
+<img src="public/roadmap-demo.png" alt="AI-Generated Roadmap" width="400"/>
+<br/>
+<em>AI-powered roadmap generation with learning stages</em>
+</td>
+</tr>
+</table>
+
+### Stages & Templates
+
+<table>
+<tr>
+<td width="50%" align="center" valign="top">
+<img src="public/stages-demo.png" alt="Progress Stages" width="400"/>
+<br/>
+<em>Structured learning stages with detailed breakdown</em>
+</td>
+<td width="50%" align="center" valign="top">
+<img src="public/template-demo.png" alt="Goal Templates" width="400"/>
+<br/>
+<em>Pre-built goal templates for quick start</em>
+</td>
+</tr>
+</table>
+
+### AI-powered daily task generation from progress stages
+
+<table>
+<tr>
+<td width="50%" align="center" valign="top">
+<img src="public/generate-task2-demo.png" alt="Enhanced Task Generation" width="400"/>
+</td>
+<td width="50%" align="center" valign="top">
+<img src="public/generate-task-demo.png" alt="Task Generation" width="400"/>
+</td>
+</tr>
+</table>
+
+### Smart calendar integration with task scheduling
+
+<div align="center">
+<img src="public/calendar-demo.png" alt="Calendar View" width="400"/>
+</div>
+
+</div>
 
 ## Quick Start
 
