@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { Card, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardHeader, CardTitle } from '@/components/atoms/card'
 import {
   Clock,
   Target,

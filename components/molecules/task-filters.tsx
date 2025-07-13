@@ -1,12 +1,12 @@
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { Button } from '@/components/atoms/button'
+import { Input } from '@/components/atoms/input'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
+} from '@/components/atoms/select'
 import { Search, Filter } from 'lucide-react'
 
 interface TaskFiltersProps {

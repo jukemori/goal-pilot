@@ -5,9 +5,9 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
+} from '@/components/atoms/card'
+import { Button } from '@/components/atoms/button'
+import { Badge } from '@/components/atoms/badge'
 import Link from 'next/link'
 import {
   Plus,

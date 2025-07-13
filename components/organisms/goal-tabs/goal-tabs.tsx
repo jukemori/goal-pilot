@@ -1,6 +1,6 @@
 'use client'
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/atoms/tabs'
 import { BarChart3, BookOpen, TrendingUp, Target } from 'lucide-react'
 import { useQueryState } from 'nuqs'
 import { NuqsAdapter } from 'nuqs/adapters/next/app'

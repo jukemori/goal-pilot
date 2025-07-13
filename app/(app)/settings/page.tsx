@@ -7,12 +7,12 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Switch } from '@/components/ui/switch'
-import { Separator } from '@/components/ui/separator'
+} from '@/components/atoms/card'
+import { Button } from '@/components/atoms/button'
+import { Input } from '@/components/atoms/input'
+import { Label } from '@/components/atoms/label'
+import { Switch } from '@/components/atoms/switch'
+import { Separator } from '@/components/atoms/separator'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
 import { Loader2, Settings, Eye, EyeOff, Lock } from 'lucide-react'
@@ -27,7 +27,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/components/ui/alert-dialog'
+} from '@/components/atoms/alert-dialog'
 
 export default function SettingsPage() {
   const router = useRouter()

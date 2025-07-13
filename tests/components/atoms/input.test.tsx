@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@/tests/utils/test-utils'
 import userEvent from '@testing-library/user-event'
-import { Input } from '@/components/ui/input'
+import { Input } from '@/components/atoms/input'
 
 describe('Input Component', () => {
   it('renders with default props', () => {

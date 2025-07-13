@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { render, screen } from '@/tests/utils/test-utils'
-import { Badge } from '@/components/ui/badge'
+import { Badge } from '@/components/atoms/badge'
 
 describe('Badge Component', () => {
   it('renders with default props', () => {

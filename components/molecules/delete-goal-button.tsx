@@ -1,11 +1,11 @@
 'use client'
 
 import { useState } from 'react'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/atoms/button'
 import { Trash2 } from 'lucide-react'
 import { deleteGoal } from '@/app/actions/goals'
 import { motion, AnimatePresence } from 'framer-motion'
-import { LoadingSpinner } from '@/components/ui/loading-spinner'
+import { LoadingSpinner } from '@/components/atoms/loading-spinner'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -16,7 +16,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/components/ui/alert-dialog'
+} from '@/components/atoms/alert-dialog'
 
 interface DeleteGoalButtonProps {
   goalId: string

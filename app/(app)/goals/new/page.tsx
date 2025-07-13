@@ -2,8 +2,8 @@
 
 import { createGoal } from '@/app/actions/goals'
 import { GoalForm } from '@/components/organisms/goal-form/goal-form'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/atoms/button'
+import { Badge } from '@/components/atoms/badge'
 import { ArrowLeft, Target, Sparkles } from 'lucide-react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'

@@ -2,7 +2,7 @@
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Provider } from 'jotai'
-import { Toaster } from '@/components/ui/sonner'
+import { Toaster } from '@/components/atoms/sonner'
 import { useState } from 'react'
 import { PerformanceProvider } from './performance-provider'
 

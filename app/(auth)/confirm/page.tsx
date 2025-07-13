@@ -5,8 +5,8 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
+} from '@/components/atoms/card'
+import { Button } from '@/components/atoms/button'
 import { Mail, ArrowLeft } from 'lucide-react'
 
 export default function ConfirmPage() {

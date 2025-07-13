@@ -1,13 +1,13 @@
 import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/atoms/button'
+import { Badge } from '@/components/atoms/badge'
 import { CheckCircle, Clock, MoreHorizontal } from 'lucide-react'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+} from '@/components/atoms/dropdown-menu'
 import {
   completeTask,
   uncompleteTask,

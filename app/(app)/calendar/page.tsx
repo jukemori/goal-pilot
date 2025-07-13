@@ -1,7 +1,7 @@
 import { Calendar } from 'lucide-react'
 import { CalendarErrorBoundary } from '@/components/error-boundary'
 import dynamic from 'next/dynamic'
-import { CalendarSkeleton } from '@/components/ui/skeletons'
+import { CalendarSkeleton } from '@/components/atoms/skeletons'
 
 // Lazy load CalendarView for better performance
 const LazyCalendarView = dynamic(

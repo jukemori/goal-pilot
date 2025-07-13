@@ -2,8 +2,8 @@
 
 import { useState } from 'react'
 import { TemplateCard } from './template-card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/atoms/button'
+import { Badge } from '@/components/atoms/badge'
 import {
   GoalTemplate,
   GOAL_TEMPLATES,

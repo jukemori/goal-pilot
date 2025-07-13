@@ -5,9 +5,9 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
+} from '@/components/atoms/card'
+import { Button } from '@/components/atoms/button'
+import { Badge } from '@/components/atoms/badge'
 import { GoalTabs } from '@/components/organisms/goal-tabs/goal-tabs'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
@@ -35,7 +35,7 @@ import {
   ProgressChartSkeleton,
   ProgressStagesSkeleton,
   RoadmapTimelineSkeleton,
-} from '@/components/ui/skeletons'
+} from '@/components/atoms/skeletons'
 import { StatsCard } from '@/components/molecules/stats-card'
 
 // Component prop types for proper TypeScript handling

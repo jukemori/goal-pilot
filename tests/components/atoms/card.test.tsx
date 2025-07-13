@@ -8,7 +8,7 @@ import {
   CardContent,
   CardFooter,
   CardAction,
-} from '@/components/ui/card'
+} from '@/components/atoms/card'
 
 describe('Card Components', () => {
   describe('Card', () => {

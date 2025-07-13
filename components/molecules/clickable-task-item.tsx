@@ -1,7 +1,7 @@
 'use client'
 
 import { CheckCircle, Clock } from 'lucide-react'
-import { Badge } from '@/components/ui/badge'
+import { Badge } from '@/components/atoms/badge'
 import { cn } from '@/lib/utils'
 import { useCompleteTask, useUncompleteTask } from '@/lib/hooks/use-tasks'
 import { Task } from '@/types/database'

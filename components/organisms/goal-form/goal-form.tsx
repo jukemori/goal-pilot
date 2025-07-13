@@ -3,9 +3,9 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { goalFormSchema, type GoalFormData } from '@/lib/validations/goal'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
+import { Button } from '@/components/atoms/button'
+import { Input } from '@/components/atoms/input'
+import { Textarea } from '@/components/atoms/textarea'
 import {
   Form,
   FormControl,
@@ -14,20 +14,20 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
-import { Checkbox } from '@/components/ui/checkbox'
+} from '@/components/atoms/form'
+import { Checkbox } from '@/components/atoms/checkbox'
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card'
+} from '@/components/atoms/card'
 import { toast } from 'sonner'
 import { useState, useEffect, useMemo, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { LoadingSpinner, PulsingDots } from '@/components/ui/loading-spinner'
+import { LoadingSpinner, PulsingDots } from '@/components/atoms/loading-spinner'
 import { AIGenerationOverlay } from '@/components/molecules/ai-generation-overlay'
 import { Target, Calendar } from 'lucide-react'
 

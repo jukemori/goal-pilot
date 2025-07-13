@@ -5,14 +5,14 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
+} from '@/components/atoms/card'
+import { Button } from '@/components/atoms/button'
 import Link from 'next/link'
 import { Plus, Clock, Target, Calendar } from 'lucide-react'
 import { Tables } from '@/types/database'
 import dynamic from 'next/dynamic'
 import { ErrorBoundary } from '@/components/error-boundary'
-import { TemplatesSkeleton } from '@/components/ui/skeletons'
+import { TemplatesSkeleton } from '@/components/atoms/skeletons'
 
 // Type for GoalCard component props
 type GoalCardGoalType = Tables<'goals'> & {

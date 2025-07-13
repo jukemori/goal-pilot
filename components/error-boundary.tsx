@@ -1,8 +1,8 @@
 'use client'
 
 import { Component, type PropsWithChildren, type ErrorInfo } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms/card'
+import { Button } from '@/components/atoms/button'
 import { AlertTriangle, RefreshCw } from 'lucide-react'
 
 interface ErrorBoundaryState {

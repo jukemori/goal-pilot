@@ -1,4 +1,4 @@
-import { Badge } from '@/components/ui/badge'
+import { Badge } from '@/components/atoms/badge'
 import { TaskItem } from './task-item'
 import { Tables } from '@/types/database'
 import { format, parseISO } from 'date-fns'
