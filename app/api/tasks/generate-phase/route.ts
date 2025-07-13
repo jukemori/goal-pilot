@@ -121,7 +121,7 @@ export async function POST(request: NextRequest) {
             ],
             response_format: { type: 'json_object' },
             temperature: 0.7,
-            max_tokens: 2500, // Optimized for faster generation
+            max_tokens: 4000, // Increased from 2500 to handle longer responses
           },
           {
             timeout: 45000, // 45 seconds timeout
@@ -158,6 +158,39 @@ export async function POST(request: NextRequest) {
       // Optimized JSON cleanup with fast path
       content = content.trim()
 
+      // Check for truncated response
+      const isTruncated = !content.endsWith('}') && content.includes('{')
+      if (isTruncated) {
+        console.warn('Detected truncated AI response, attempting repair...')
+
+        // Try to repair truncated JSON by finding the last complete object
+        let repairedContent = content
+
+        // Find the last complete object/array structure
+        let braceCount = 0
+        let lastCompletePos = -1
+
+        for (let i = 0; i < content.length; i++) {
+          if (content[i] === '{') braceCount++
+          else if (content[i] === '}') {
+            braceCount--
+            if (braceCount === 0) {
+              lastCompletePos = i
+            }
+          }
+        }
+
+        if (lastCompletePos > 0) {
+          repairedContent = content.substring(0, lastCompletePos + 1)
+          console.log(
+            'Repaired JSON by truncating at position:',
+            lastCompletePos + 1,
+          )
+        }
+
+        content = repairedContent
+      }
+
       // Fast path for clean JSON
       if (content.startsWith('{') && content.endsWith('}')) {
         taskData = JSON.parse(content)
@@ -177,10 +210,11 @@ export async function POST(request: NextRequest) {
     } catch (parseError) {
       console.error('Failed to parse AI task generation response:', parseError)
       console.error('Raw AI content:', completion.choices[0].message.content)
-      return NextResponse.json(
-        { error: 'Failed to generate tasks' },
-        { status: 500 },
-      )
+
+      // If parsing fails, fall back to using the existing fallback tasks
+      // instead of returning an error
+      console.log('Using fallback tasks due to JSON parsing error')
+      taskData = { task_patterns: [] }
     }
 
     // Pre-calculate available days for efficient scheduling
