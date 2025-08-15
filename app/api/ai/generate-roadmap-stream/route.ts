@@ -2,20 +2,14 @@ import { NextRequest } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { openai, AI_MODELS } from '@/lib/ai/openai'
 import { generateRoadmapPrompt, ROADMAP_SYSTEM_PROMPT } from '@/lib/ai/prompts'
-import { Json, TablesInsert, Goal, Roadmap } from '@/types/database'
-import { Phase, RoadmapPlan } from '@/types'
+import { Json, TablesInsert, Goal } from '@/types/database'
+import { RoadmapPlan } from '@/types'
 
 interface RequestBody {
   goalId: string
 }
 
-interface StreamMessage {
-  type: 'status' | 'progress' | 'complete' | 'error'
-  message?: string
-  phaseCount?: number
-  roadmap?: Roadmap
-  error?: string
-}
+// Removed unused StreamMessage interface
 
 export async function POST(request: NextRequest) {
   try {
