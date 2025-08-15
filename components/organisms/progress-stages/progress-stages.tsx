@@ -140,7 +140,7 @@ export function ProgressStages({
   const generateTasksMutation = useMutation({
     mutationFn: async (stage: ProgressStage) => {
       console.log('Generating tasks for stage:', stage)
-      const response = await fetch('/api/tasks/generate-phase', {
+      const response = await fetch('/api/tasks/generate-phase-fast', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

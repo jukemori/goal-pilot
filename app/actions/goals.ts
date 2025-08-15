@@ -4,7 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { goalFormSchema } from '@/lib/validations/goal'
-import { generateRoadmap } from './ai'
+import { generateRoadmapAsync } from './ai-async'
 import { ensureUserProfile } from './auth'
 
 export async function createGoal(formData: FormData) {
@@ -57,13 +57,10 @@ export async function createGoal(formData: FormData) {
     throw new Error(`Failed to create goal: ${error.message}`)
   }
 
-  // Generate AI roadmap
-  try {
-    await generateRoadmap(goal.id)
-  } catch (error) {
-    console.error('Failed to generate roadmap:', error)
-    // Don't throw here - let the user see their goal even if AI fails
-  }
+  // Start AI roadmap generation asynchronously - don't wait for it
+  generateRoadmapAsync(goal.id).catch((error) => {
+    console.error('Background roadmap generation failed:', error)
+  })
 
   revalidatePath('/dashboard')
   return { success: true, goalId: goal.id }
