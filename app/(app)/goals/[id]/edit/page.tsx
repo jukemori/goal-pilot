@@ -5,6 +5,7 @@ import { Button } from '@/components/atoms/button'
 import { ArrowLeft, Edit3 } from 'lucide-react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { Tables } from '@/types/database'
 
 interface EditGoalPageProps {
   params: Promise<{ id: string }>
@@ -14,11 +15,13 @@ export default async function EditGoalPage({ params }: EditGoalPageProps) {
   const { id } = await params
   const supabase = await createClient()
 
-  const { data: goal, error } = await supabase
+  const { data: goalData, error } = await supabase
     .from('goals')
     .select('*')
     .eq('id', id)
     .single()
+
+  const goal = goalData as Tables<'goals'> | null
 
   if (error || !goal) {
     notFound()

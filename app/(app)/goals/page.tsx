@@ -37,10 +37,14 @@ const TemplatesSection = dynamic(
 export default async function GoalsPage() {
   const supabase = await createClient()
 
-  const { data: goals } = await supabase
+  const { data: goalsData } = await supabase
     .from('goals')
     .select('*, roadmaps(id)')
     .order('created_at', { ascending: false })
+
+  const goals = goalsData as (Tables<'goals'> & {
+    roadmaps: { id: string }[]
+  })[] | null
 
   const activeGoals = goals?.filter((g) => g.status === 'active') || []
   const completedGoals = goals?.filter((g) => g.status === 'completed') || []

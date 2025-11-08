@@ -131,7 +131,7 @@ export default async function GoalPage({ params }: GoalPageProps) {
   const supabase = await createClient()
 
   // Get goal with roadmap and tasks
-  const { data: goal, error } = await supabase
+  const { data: goalData, error } = await supabase
     .from('goals')
     .select(
       `
@@ -156,6 +156,14 @@ export default async function GoalPage({ params }: GoalPageProps) {
     )
     .eq('id', id)
     .single()
+
+  type GoalWithRoadmapsAndTasks = Tables<'goals'> & {
+    roadmaps: (Tables<'roadmaps'> & {
+      tasks: Tables<'tasks'>[]
+    })[]
+  }
+
+  const goal = goalData as GoalWithRoadmapsAndTasks | null
 
   if (error || !goal) {
     notFound()

@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { Tables } from '@/types/database'
 import {
   Card,
   CardContent,
@@ -40,18 +41,25 @@ export default async function DashboardPage() {
   const supabase = await createClient()
 
   // Get user's goals
-  const { data: goals } = await supabase
+  const { data: goalsData } = await supabase
     .from('goals')
     .select('*, roadmaps(id)')
     .order('created_at', { ascending: false })
     .limit(3)
 
+  // Type the goals with roadmaps relationship
+  const goals = goalsData as (Tables<'goals'> & {
+    roadmaps: { id: string }[]
+  })[] | null
+
   // Get today's tasks
   const today = new Date().toISOString().split('T')[0]
-  const { data: todayTasks } = await supabase
+  const { data: tasksData } = await supabase
     .from('tasks')
     .select('*')
     .eq('scheduled_date', today)
+
+  const todayTasks = tasksData as Tables<'tasks'>[] | null
 
   const completedTasks =
     todayTasks?.filter((task) => task.completed).length || 0
