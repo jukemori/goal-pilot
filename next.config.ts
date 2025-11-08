@@ -7,9 +7,6 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 const PerformanceAnalysisPlugin = require('./lib/webpack/performance-plugin.js')
 
 const nextConfig: NextConfig = {
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
   experimental: {
     optimizePackageImports: [
       '@radix-ui/react-dropdown-menu',
