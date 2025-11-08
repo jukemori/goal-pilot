@@ -6,14 +6,14 @@ export async function DELETE() {
 
   const {
     data: { user },
-  } = await (supabase as any).auth.getUser()
+  } = await supabase.auth.getUser()
   if (!user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
   try {
     // Delete all user data (cascades through foreign keys)
-    const { error: deleteError } = await (supabase as any)
+    const { error: deleteError } = await supabase
       .from('users')
       .delete()
       .eq('id', user.id)
@@ -23,7 +23,7 @@ export async function DELETE() {
     }
 
     // Sign out the user first
-    await (supabase as any).auth.signOut()
+    await supabase.auth.signOut()
 
     // Note: Deleting the auth user requires admin privileges
     // In production, you would typically:

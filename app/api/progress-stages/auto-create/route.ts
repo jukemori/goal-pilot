@@ -115,7 +115,7 @@ export async function POST(request: NextRequest) {
       .eq('roadmap_id', roadmapId)
 
     if (existingPhasesDetailed) {
-      existingPhasesDetailed.forEach((p) => existingPhaseIds.add(p.phase_id))
+      existingPhasesDetailed.forEach((p: any) => existingPhaseIds.add(p.phase_id))
     }
 
     // Filter out phases that already exist

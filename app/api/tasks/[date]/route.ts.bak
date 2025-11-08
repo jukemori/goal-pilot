@@ -11,13 +11,13 @@ export async function GET(
 
     const {
       data: { user },
-    } = await (supabase as any).auth.getUser()
+    } = await supabase.auth.getUser()
 
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { data: tasks, error } = await (supabase as any)
+    const { data: tasks, error } = await supabase
       .from('tasks')
       .select(
         `

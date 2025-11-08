@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
     // In production, you might want to use API keys or tokens
     const {
       data: { user },
-    } = await (supabase as any).auth.getUser()
+    } = await supabase.auth.getUser()
 
     // If no user in session, we'll still try to export (useful for testing)
     // In production, you should enforce authentication
