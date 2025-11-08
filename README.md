@@ -12,19 +12,20 @@ Experience the full functionality with our interactive demo deployment.
 
 **Frontend**
 
-- Next.js 15 with App Router & Turbopack
-- TypeScript + Tailwind CSS + shadcn/ui
+- Next.js 16 with App Router & Turbopack (enabled by default)
+- TypeScript + Tailwind CSS 4 + shadcn/ui
 - Jotai + React Query for state management
 
 **Backend & Database**
 
 - Supabase (PostgreSQL) with Row Level Security
 - Supabase Auth for authentication
+- @supabase/supabase-js 2.50.3 (pinned for type stability)
 
 **AI & Tools**
 
 - OpenAI gpt-4o-mini for roadmap generation
-- pnpm for package management
+- pnpm 9.x for package management
 
 **Testing**
 
