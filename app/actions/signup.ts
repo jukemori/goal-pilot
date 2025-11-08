@@ -11,7 +11,7 @@ export async function signup(formData: FormData) {
   const password = formData.get('password') as string
   const name = formData.get('name') as string
 
-  const { data: authData, error } = await (supabase as any).auth.signUp({
+  const { data: authData, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
@@ -29,7 +29,7 @@ export async function signup(formData: FormData) {
   // If user is created and session exists (email confirmation disabled)
   if (authData.user && authData.session) {
     // Create user profile
-    const { error: profileError } = await (supabase as any).from('users').insert({
+    const { error: profileError } = await supabase.from('users').insert({
       id: authData.user.id,
       email: authData.user.email!,
       name,

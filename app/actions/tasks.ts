@@ -9,13 +9,13 @@ export async function completeTask(taskId: string) {
   const {
     data: { user },
     error: userError,
-  } = await (supabase as any).auth.getUser()
+  } = await supabase.auth.getUser()
 
   if (userError || !user) {
     throw new Error('Unauthorized')
   }
 
-  const { error } = await (supabase as any)
+  const { error } = await supabase
     .from('tasks')
     .update({
       completed: true,
@@ -37,13 +37,13 @@ export async function uncompleteTask(taskId: string) {
   const {
     data: { user },
     error: userError,
-  } = await (supabase as any).auth.getUser()
+  } = await supabase.auth.getUser()
 
   if (userError || !user) {
     throw new Error('Unauthorized')
   }
 
-  const { error } = await (supabase as any)
+  const { error } = await supabase
     .from('tasks')
     .update({
       completed: false,
@@ -65,14 +65,14 @@ export async function rescheduleTask(taskId: string, newDate: string) {
   const {
     data: { user },
     error: userError,
-  } = await (supabase as any).auth.getUser()
+  } = await supabase.auth.getUser()
 
   if (userError || !user) {
     throw new Error('Unauthorized')
   }
 
   // Get current task to increment reschedule count
-  const { data: task, error: fetchError } = await (supabase as any)
+  const { data: task, error: fetchError } = await supabase
     .from('tasks')
     .select('rescheduled_count')
     .eq('id', taskId)
@@ -82,7 +82,7 @@ export async function rescheduleTask(taskId: string, newDate: string) {
     throw new Error('Task not found')
   }
 
-  const { error } = await (supabase as any)
+  const { error } = await supabase
     .from('tasks')
     .update({
       scheduled_date: newDate,
@@ -106,13 +106,13 @@ export async function updateTaskDuration(
   const {
     data: { user },
     error: userError,
-  } = await (supabase as any).auth.getUser()
+  } = await supabase.auth.getUser()
 
   if (userError || !user) {
     throw new Error('Unauthorized')
   }
 
-  const { error } = await (supabase as any)
+  const { error } = await supabase
     .from('tasks')
     .update({
       actual_duration: actualDuration,

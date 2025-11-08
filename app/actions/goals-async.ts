@@ -37,13 +37,13 @@ export async function createGoalAsync(formData: FormData) {
   }
 
   // Create the goal
-  const { data: goal, error } = await (supabase as any)
+  const { data: goal, error } = await supabase
     .from('goals')
     .insert({
       user_id: user.id,
       ...goalData,
     })
-    .select()
+    .select('*')
     .single()
 
   if (error) {

@@ -88,10 +88,10 @@ async function generateFromEnhancedTemplate(
     prompt_version: 'v6-enhanced',
   }
 
-  const { data: roadmap } = await (supabase as any)
+  const { data: roadmap } = await supabase
     .from('roadmaps')
     .insert(roadmapInsert)
-    .select()
+    .select('*')
     .single()
 
   if (roadmap) {
@@ -125,7 +125,7 @@ async function generateFromEnhancedTemplate(
       }
     })
 
-    await (supabase as any).from('progress_stages').insert(stages)
+    await supabase.from('progress_stages').insert(stages)
   }
 
   return roadmap
@@ -232,10 +232,10 @@ export async function generateRoadmapAsync(goalId: string) {
       prompt_version: 'v3-async',
     }
 
-    const { data: roadmapData, error: roadmapError } = await (supabase as any)
+    const { data: roadmapData, error: roadmapError } = await supabase
       .from('roadmaps')
       .insert(roadmapInsert)
-      .select()
+      .select('*')
       .single()
 
     const roadmap = roadmapData as Tables<'roadmaps'> | null
@@ -248,7 +248,7 @@ export async function generateRoadmapAsync(goalId: string) {
     void generateStagesAsync(roadmap.id, goal, roadmapOverview).catch((error) => {
       console.error('Failed to generate stages:', error)
       // Update status to indicate failure
-      void (supabase as any)
+      void supabase
         .from('roadmaps')
         .update({
           ai_generated_plan: {
@@ -318,7 +318,7 @@ async function generateStagesAsync(
       generation_status: 'completed',
     }
 
-    await (supabase as any)
+    await supabase
       .from('roadmaps')
       .update({
         ai_generated_plan: completeRoadmapData as unknown as Json,
@@ -347,7 +347,7 @@ async function generateStagesAsync(
       ),
     }))
 
-    await (supabase as any).from('progress_stages').insert(stages)
+    await supabase.from('progress_stages').insert(stages)
   } catch (error) {
     console.error('Stage generation failed:', error)
     throw error

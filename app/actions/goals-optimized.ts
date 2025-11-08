@@ -41,13 +41,13 @@ export async function createGoalOptimized(formData: FormData) {
   }
 
   // Create the goal
-  const { data: goal, error } = await (supabase as any)
+  const { data: goal, error } = await supabase
     .from('goals')
     .insert({
       user_id: user.id,
       ...goalData,
     })
-    .select()
+    .select('*')
     .single()
 
   if (error) {
@@ -106,10 +106,10 @@ export async function createGoalOptimized(formData: FormData) {
         prompt_version: 'v5-instant',
       }
 
-      const { data: roadmap } = await (supabase as any)
+      const { data: roadmap } = await supabase
         .from('roadmaps')
         .insert(roadmapInsert)
-        .select()
+        .select('*')
         .single()
 
       if (roadmap) {
@@ -136,7 +136,7 @@ export async function createGoalOptimized(formData: FormData) {
           }
         })
 
-        await (supabase as any).from('progress_stages').insert(stages)
+        await supabase.from('progress_stages').insert(stages)
         
         revalidatePath('/dashboard')
         return { success: true, goalId: goal.id, instant: true }

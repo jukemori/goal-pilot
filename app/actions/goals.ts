@@ -43,18 +43,18 @@ export async function createGoal(formData: FormData) {
   })
 
   // Create the goal
-  const { data: goal, error } = await (supabase as any)
+  const { data: goal, error } = await supabase
     .from('goals')
     .insert({
       user_id: user.id,
       ...goalData,
     })
-    .select()
+    .select('*')
     .single()
 
-  if (error) {
+  if (error || !goal) {
     console.error('Supabase error creating goal:', error)
-    throw new Error(`Failed to create goal: ${error.message}`)
+    throw new Error(`Failed to create goal: ${error}`)
   }
 
   // Start AI roadmap generation asynchronously - don't wait for it
@@ -72,7 +72,7 @@ export async function updateGoal(goalId: string, formData: FormData) {
   const {
     data: { user },
     error: userError,
-  } = await (supabase as any).auth.getUser()
+  } = await supabase.auth.getUser()
 
   if (userError || !user) {
     throw new Error('Unauthorized')
@@ -101,7 +101,7 @@ export async function updateGoal(goalId: string, formData: FormData) {
         : null,
   }
 
-  const { error } = await (supabase as any)
+  const { error } = await supabase
     .from('goals')
     .update(goalData)
     .eq('id', goalId)
@@ -122,13 +122,13 @@ export async function deleteGoal(goalId: string) {
   const {
     data: { user },
     error: userError,
-  } = await (supabase as any).auth.getUser()
+  } = await supabase.auth.getUser()
 
   if (userError || !user) {
     throw new Error('Unauthorized')
   }
 
-  const { error } = await (supabase as any)
+  const { error } = await supabase
     .from('goals')
     .delete()
     .eq('id', goalId)
