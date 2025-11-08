@@ -1,6 +1,6 @@
 {
-  "installCommand": "bun install",
-  "buildCommand": "bun run build",
+  "installCommand": "pnpm install",
+  "buildCommand": "pnpm run build",
   "functions": {
     "app/api/ai/generate-roadmap/route.ts": {
       "maxDuration": 300
