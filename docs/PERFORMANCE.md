@@ -10,7 +10,7 @@ Analyze bundle sizes and dependencies to identify optimization opportunities.
 
 ```bash
 # Run bundle analysis
-bun run analyze
+pnpm run analyze
 
 # This will:
 # 1. Build the application with analysis enabled
@@ -96,7 +96,7 @@ const RoadmapView = dynamic(() => import('@/components/organisms/roadmap-view/ro
 1. **Monitor Bundle Size**
 
    ```bash
-   bun run analyze  # Run this regularly
+   pnpm run analyze  # Run this regularly
    ```
 
 2. **Use Performance Widget**
@@ -142,7 +142,7 @@ const RoadmapView = dynamic(() => import('@/components/organisms/roadmap-view/ro
 
 ### Before Each Release
 
-- [ ] Run `bun run analyze` and review bundle sizes
+- [ ] Run `pnpm run analyze` and review bundle sizes
 - [ ] Check for new large dependencies
 - [ ] Verify code splitting is working correctly
 - [ ] Test performance on slower devices
@@ -178,13 +178,13 @@ const RoadmapView = dynamic(() => import('@/components/organisms/roadmap-view/ro
 
 ```bash
 # Local performance testing
-bun run dev  # Enable performance widget with Ctrl+Shift+P
+pnpm run dev  # Enable performance widget with Ctrl+Shift+P
 
 # Bundle analysis
-bun run analyze
+pnpm run analyze
 
 # Build and analyze
-bun run build && bun run analyze
+pnpm run build && pnpm run analyze
 ```
 
 ## 📚 Additional Resources

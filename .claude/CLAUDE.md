@@ -25,23 +25,23 @@ This is a Next.js application that uses:
 - React Query + Jotai for state management
 - OpenAI GPT-3.5 for roadmap generation
 - Vitest for testing
-- Bun as package manager
+- pnpm as package manager
 
 ## Development Commands
 
-- `bun run dev` - Start development server with turbo
-- `bun run dev:local` - Start with local environment
-- `bun run dev:production` - Start with production environment
-- `bun run build` - Build for production
-- `bun run lint` - Run ESLint
-- `bun run lint:fix` - Fix linting issues
-- `bun run format` - Format code with Prettier
-- `bun run test` - Run tests
-- `bun run type-check` - Run TypeScript checks
+- `pnpm run dev` - Start development server with turbo
+- `pnpm run dev:local` - Start with local environment
+- `pnpm run dev:production` - Start with production environment
+- `pnpm run build` - Build for production
+- `pnpm run lint` - Run ESLint
+- `pnpm run lint:fix` - Fix linting issues
+- `pnpm run format` - Format code with Prettier
+- `pnpm run test` - Run tests
+- `pnpm run type-check` - Run TypeScript checks
 
 ## Code Quality Standards
 
-- Always run `bun run lint` and `bun run type-check` after making changes
+- Always run `pnpm run lint` and `pnpm run type-check` after making changes
 - Use Prettier for consistent formatting
 - Follow TypeScript strict mode practices
 - Write tests for new features using Vitest
@@ -80,7 +80,7 @@ This is a Next.js application that uses:
 ## Database & Backend
 
 - Use Supabase for database operations
-- Test database changes with `bun run supabase:reset`
+- Test database changes with `pnpm run supabase:reset`
 - Use React Query for data fetching and caching
 - Implement proper Row-Level Security (RLS) policies
 

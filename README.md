@@ -24,7 +24,7 @@ Experience the full functionality with our interactive demo deployment.
 **AI & Tools**
 
 - OpenAI gpt-4o-mini for roadmap generation
-- Bun for package management
+- pnpm for package management
 
 **Testing**
 
@@ -119,35 +119,35 @@ Experience the full functionality with our interactive demo deployment.
 
 ```bash
 # Install dependencies
-bun install
+pnpm install
 
 # Set up environment variables
 cp .env.local.example .env.local
 
 # Start development server
-bun run dev
+pnpm run dev
 ```
 
 ## Development Commands
 
 ```bash
 # Development
-bun run dev              # Start development server
-bun run build           # Build for production
-bun run start           # Start production server
+pnpm run dev              # Start development server
+pnpm run build           # Build for production
+pnpm run start           # Start production server
 
 # Code Quality
-bun run lint            # Run ESLint
-bun run format          # Format with Prettier
-bun run type-check      # TypeScript checking
+pnpm run lint            # Run ESLint
+pnpm run format          # Format with Prettier
+pnpm run type-check      # TypeScript checking
 
 # Testing
-bun run test            # Run all tests once
+pnpm run test            # Run all tests once
 
 
 # Database (with Supabase CLI)
-bun run supabase:start  # Start local Supabase
-bun run supabase:reset  # Reset local database
+pnpm run supabase:start  # Start local Supabase
+pnpm run supabase:reset  # Reset local database
 ```
 
 ## Environment Variables
@@ -231,7 +231,7 @@ tests/
 
 ```bash
 # Run all tests once
-bun run test
+pnpm run test
 ```
 
 ### Test Features
