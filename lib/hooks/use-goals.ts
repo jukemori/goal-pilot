@@ -10,7 +10,7 @@ export function useGoals() {
   return useQuery({
     queryKey: ['goals'],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('goals')
         .select('*, roadmaps(id)')
         .order('created_at', { ascending: false })
@@ -27,7 +27,7 @@ export function useGoal(id: string) {
   return useQuery({
     queryKey: ['goals', id],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('goals')
         .select(
           `
@@ -66,7 +66,7 @@ export function useDeleteGoal() {
 
   return useMutation({
     mutationFn: async (goalId: string) => {
-      const { error } = await supabase.from('goals').delete().eq('id', goalId)
+      const { error } = await (supabase as any).from('goals').delete().eq('id', goalId)
 
       if (error) throw error
     },
@@ -92,7 +92,7 @@ export function useUpdateGoalStatus() {
       goalId: string
       status: string
     }) => {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('goals')
         .update({ status })
         .eq('id', goalId)

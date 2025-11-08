@@ -78,7 +78,7 @@ export function ProgressStages({
       }
 
       // Get task counts for all stages in a single query using OR conditions
-      const stageIds = stagesData.map((p) => p.phase_id)
+      const stageIds = stagesData.map((p: any) => p.phase_id)
       const { data: taskCounts } = await supabase
         .from('tasks')
         .select('phase_id')
@@ -87,7 +87,7 @@ export function ProgressStages({
 
       // Count tasks per stage
       const taskCountMap = new Map<string, number>()
-      taskCounts?.forEach((task) => {
+      taskCounts?.forEach((task: any) => {
         if (task.phase_id) {
           const count = taskCountMap.get(task.phase_id) || 0
           taskCountMap.set(task.phase_id, count + 1)
