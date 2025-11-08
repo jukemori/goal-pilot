@@ -28,11 +28,13 @@ export async function generateRoadmapLegacy(goalId: string) {
     const supabase = await createClient()
 
     // Get the goal details
-    const { data: goal, error: goalError } = await supabase
+    const { data: goalData, error: goalError } = await (supabase as any)
       .from('goals')
       .select('*')
       .eq('id', goalId)
       .single()
+
+    const goal = goalData as Goal | null
 
     if (goalError || !goal) {
       throw new Error('Goal not found')
@@ -158,7 +160,7 @@ export async function generateRoadmapLegacy(goalId: string) {
     }
 
     // Save the roadmap to database
-    const { data: roadmap, error: roadmapError } = await supabase
+    const { data: roadmap, error: roadmapError } = await (supabase as any)
       .from('roadmaps')
       .insert({
         goal_id: goalId,
@@ -269,7 +271,7 @@ async function generateAllTasks(
 
   // Insert all tasks
   if (allTasks.length > 0) {
-    const { error } = await supabase.from('tasks').insert(allTasks)
+    const { error } = await (supabase as any).from('tasks').insert(allTasks)
 
     if (error) {
       console.error('Failed to create tasks:', error)
@@ -309,7 +311,7 @@ export async function generateRoadmapOverview(goalId: string) {
   const supabase = await createClient()
 
   // Get the goal details
-  const { data: goal, error: goalError } = await supabase
+  const { data: goal, error: goalError } = await (supabase as any)
     .from('goals')
     .select('*')
     .eq('id', goalId)
@@ -411,7 +413,7 @@ export async function generateRoadmapOverview(goalId: string) {
   }
 
   // Save the roadmap overview to database
-  const { data: roadmap, error: roadmapError } = await supabase
+  const { data: roadmap, error: roadmapError } = await (supabase as any)
     .from('roadmaps')
     .insert({
       goal_id: goalId,
@@ -438,7 +440,7 @@ export async function generateRoadmapStages(roadmapId: string) {
   const supabase = await createClient()
 
   // Get the roadmap and goal details
-  const { data: roadmap, error: roadmapError } = await supabase
+  const { data: roadmap, error: roadmapError } = await (supabase as any)
     .from('roadmaps')
     .select(
       `
@@ -578,7 +580,7 @@ export async function generateRoadmapStages(roadmapId: string) {
     stages_generated: true,
   }
 
-  const { data: updatedRoadmap, error: updateError } = await supabase
+  const { data: updatedRoadmap, error: updateError } = await (supabase as any)
     .from('roadmaps')
     .update({
       ai_generated_plan: completeRoadmapData as unknown as Json,

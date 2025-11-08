@@ -44,7 +44,7 @@ interface EnhancedTemplate {
 async function generateFromEnhancedTemplate(
   goal: Goal,
   template: EnhancedTemplate,
-  supabase: SupabaseClient<Database>
+  supabase: SupabaseClient<Database, 'public', any>
 ) {
   const totalWeeks = template.phases.reduce((sum: number, phase: EnhancedPhase) => sum + phase.weeks, 0)
   
@@ -88,7 +88,7 @@ async function generateFromEnhancedTemplate(
     prompt_version: 'v6-enhanced',
   }
 
-  const { data: roadmap } = await supabase
+  const { data: roadmap } = await (supabase as any)
     .from('roadmaps')
     .insert(roadmapInsert)
     .select()
@@ -125,7 +125,7 @@ async function generateFromEnhancedTemplate(
       }
     })
 
-    await supabase.from('progress_stages').insert(stages)
+    await (supabase as any).from('progress_stages').insert(stages)
   }
 
   return roadmap
@@ -156,11 +156,13 @@ export async function generateRoadmapAsync(goalId: string) {
   const supabase = await createClient()
 
   // Get the goal details
-  const { data: goal, error: goalError } = await supabase
+  const { data: goalData, error: goalError } = await supabase
     .from('goals')
     .select('*')
     .eq('id', goalId)
     .single()
+
+  const goal = goalData as Tables<'goals'> | null
 
   if (goalError || !goal) {
     throw new Error('Goal not found')
@@ -218,31 +220,35 @@ export async function generateRoadmapAsync(goalId: string) {
     const roadmapOverview = JSON.parse(overviewContent)
 
     // Save the roadmap overview immediately
-    const { data: roadmap, error: roadmapError } = await supabase
+    const roadmapInsert: TablesInsert<'roadmaps'> = {
+      goal_id: goalId,
+      ai_generated_plan: {
+        overview_generated: true,
+        generation_status: 'generating_stages',
+        ...roadmapOverview,
+      } as unknown as Json,
+      milestones: (roadmapOverview.milestones || []) as unknown as Json,
+      ai_model: AI_MODELS.roadmap,
+      prompt_version: 'v3-async',
+    }
+
+    const { data: roadmapData, error: roadmapError } = await (supabase as any)
       .from('roadmaps')
-      .insert({
-        goal_id: goalId,
-        ai_generated_plan: {
-          overview_generated: true,
-          generation_status: 'generating_stages',
-          ...roadmapOverview,
-        } as unknown as Json,
-        milestones: (roadmapOverview.milestones || []) as unknown as Json,
-        ai_model: AI_MODELS.roadmap,
-        prompt_version: 'v3-async',
-      })
+      .insert(roadmapInsert)
       .select()
       .single()
 
-    if (roadmapError) {
+    const roadmap = roadmapData as Tables<'roadmaps'> | null
+
+    if (roadmapError || !roadmap) {
       throw new Error('Failed to save roadmap overview')
     }
 
     // Step 2: Generate stages asynchronously
-    generateStagesAsync(roadmap.id, goal, roadmapOverview).catch((error) => {
+    void generateStagesAsync(roadmap.id, goal, roadmapOverview).catch((error) => {
       console.error('Failed to generate stages:', error)
       // Update status to indicate failure
-      supabase
+      void (supabase as any)
         .from('roadmaps')
         .update({
           ai_generated_plan: {
@@ -252,7 +258,6 @@ export async function generateRoadmapAsync(goalId: string) {
           } as unknown as Json,
         })
         .eq('id', roadmap.id)
-        .then(() => {})
     })
 
     return roadmap
@@ -313,7 +318,7 @@ async function generateStagesAsync(
       generation_status: 'completed',
     }
 
-    await supabase
+    await (supabase as any)
       .from('roadmaps')
       .update({
         ai_generated_plan: completeRoadmapData as unknown as Json,
@@ -342,7 +347,7 @@ async function generateStagesAsync(
       ),
     }))
 
-    await supabase.from('progress_stages').insert(stages)
+    await (supabase as any).from('progress_stages').insert(stages)
   } catch (error) {
     console.error('Stage generation failed:', error)
     throw error

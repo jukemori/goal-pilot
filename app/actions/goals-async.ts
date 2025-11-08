@@ -37,7 +37,7 @@ export async function createGoalAsync(formData: FormData) {
   }
 
   // Create the goal
-  const { data: goal, error } = await supabase
+  const { data: goal, error } = await (supabase as any)
     .from('goals')
     .insert({
       user_id: user.id,

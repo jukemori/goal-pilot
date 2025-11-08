@@ -43,7 +43,7 @@ export async function createGoal(formData: FormData) {
   })
 
   // Create the goal
-  const { data: goal, error } = await supabase
+  const { data: goal, error } = await (supabase as any)
     .from('goals')
     .insert({
       user_id: user.id,
@@ -72,7 +72,7 @@ export async function updateGoal(goalId: string, formData: FormData) {
   const {
     data: { user },
     error: userError,
-  } = await supabase.auth.getUser()
+  } = await (supabase as any).auth.getUser()
 
   if (userError || !user) {
     throw new Error('Unauthorized')
@@ -101,7 +101,7 @@ export async function updateGoal(goalId: string, formData: FormData) {
         : null,
   }
 
-  const { error } = await supabase
+  const { error } = await (supabase as any)
     .from('goals')
     .update(goalData)
     .eq('id', goalId)
@@ -122,13 +122,13 @@ export async function deleteGoal(goalId: string) {
   const {
     data: { user },
     error: userError,
-  } = await supabase.auth.getUser()
+  } = await (supabase as any).auth.getUser()
 
   if (userError || !user) {
     throw new Error('Unauthorized')
   }
 
-  const { error } = await supabase
+  const { error } = await (supabase as any)
     .from('goals')
     .delete()
     .eq('id', goalId)

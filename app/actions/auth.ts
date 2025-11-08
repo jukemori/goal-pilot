@@ -9,14 +9,14 @@ export async function ensureUserProfile() {
   const {
     data: { user },
     error: userError,
-  } = await supabase.auth.getUser()
+  } = await (supabase as any).auth.getUser()
 
   if (userError || !user) {
     throw new Error('Unauthorized')
   }
 
   // Check if user profile exists in our users table
-  const { data: existingProfile } = await supabase
+  const { data: existingProfile } = await (supabase as any)
     .from('users')
     .select('id')
     .eq('id', user.id)
@@ -26,7 +26,7 @@ export async function ensureUserProfile() {
   if (!existingProfile) {
     console.log('Creating user profile for:', user.id)
 
-    const { error: insertError } = await supabase.from('users').insert({
+    const { error: insertError } = await (supabase as any).from('users').insert({
       id: user.id,
       email: user.email!,
       name: user.user_metadata?.name || user.email?.split('@')[0] || 'User',
