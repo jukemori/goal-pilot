@@ -18,7 +18,7 @@ The app solves goal abandonment by providing structured learning paths, personal
 
 This is a Next.js application that uses:
 
-- Next.js 15 with Turbo
+- Next.js 16 with Turbopack (enabled by default)
 - TypeScript
 - Tailwind CSS + shadcn/ui
 - Supabase for backend (PostgreSQL)
