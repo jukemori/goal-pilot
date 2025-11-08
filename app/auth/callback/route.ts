@@ -10,11 +10,11 @@ export async function GET(request: NextRequest) {
   if (code) {
     const supabase = await createClient()
 
-    const { data, error } = await (supabase as any).auth.exchangeCodeForSession(code)
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code)
 
     if (!error && data.user) {
       // Create user profile if it doesn't exist
-      const { error: profileError } = await (supabase as any)
+      const { error: profileError } = await supabase
         .from('users')
         .insert({
           id: data.user.id,
@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
             data.user.email?.split('@')[0] ||
             'User',
         })
-        .select()
+        .select('*')
         .single()
 
       // Ignore error if user already exists

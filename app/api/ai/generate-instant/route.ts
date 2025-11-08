@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
           ai_model: 'template',
           prompt_version: 'v5-instant',
         })
-        .select()
+        .select('*')
         .single()
 
       if (roadmapError) {

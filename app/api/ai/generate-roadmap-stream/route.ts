@@ -114,7 +114,7 @@ export async function POST(request: NextRequest) {
           const { data: roadmap, error: roadmapError } = await supabase
             .from('roadmaps')
             .insert(roadmapInsert)
-            .select()
+            .select('*')
             .single()
           
           if (roadmapError) {

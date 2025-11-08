@@ -115,7 +115,7 @@ export async function POST(request: NextRequest) {
       .eq('roadmap_id', roadmapId)
 
     if (existingPhasesDetailed) {
-      existingPhasesDetailed.forEach((p: any) => existingPhaseIds.add(p.phase_id))
+      existingPhasesDetailed.forEach((p) => existingPhaseIds.add(p.phase_id))
     }
 
     // Filter out phases that already exist
@@ -132,7 +132,7 @@ export async function POST(request: NextRequest) {
     const { data, error } = await supabase
       .from('progress_stages')
       .insert(newPhases)
-      .select()
+      .select('*')
 
     if (error) {
       console.error('Failed to create learning phases:', error)

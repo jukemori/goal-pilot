@@ -140,7 +140,7 @@ export async function POST(request: NextRequest) {
 
     // Batch insert
     if (tasks.length > 0) {
-      const { error } = await (supabase as any).from('tasks').insert(tasks)
+      const { error } = await supabase.from('tasks').insert(tasks)
 
       if (error) {
         console.error('Failed to create tasks:', error)

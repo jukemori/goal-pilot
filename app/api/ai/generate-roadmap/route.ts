@@ -161,7 +161,7 @@ export async function POST(request: NextRequest) {
     const { data: roadmap, error: roadmapError } = await supabase
       .from('roadmaps')
       .insert(roadmapInsert)
-      .select()
+      .select('*')
       .single()
 
     if (roadmapError) {
@@ -285,7 +285,7 @@ async function createProgressStagesFromRecords(
   const { data, error } = await supabase
     .from('progress_stages')
     .insert(recordsWithRoadmapId)
-    .select()
+    .select('*')
 
   if (error) {
     console.error('Failed to create stages:', error)

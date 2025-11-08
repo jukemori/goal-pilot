@@ -8,7 +8,7 @@ export async function GET() {
     const {
       data: { user },
       error: authError,
-    } = await (supabase as any).auth.getUser()
+    } = await supabase.auth.getUser()
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
@@ -23,7 +23,7 @@ export async function GET() {
     }
 
     // Check if the table exists by attempting a query
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('user_preferences')
       .select(
         'user_id, push_notifications, email_notifications, daily_reminders, weekly_reports',
@@ -72,7 +72,7 @@ export async function PUT(request: NextRequest) {
 
   const {
     data: { user },
-  } = await (supabase as any).auth.getUser()
+  } = await supabase.auth.getUser()
   if (!user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
@@ -81,7 +81,7 @@ export async function PUT(request: NextRequest) {
 
   try {
     // Attempt to upsert preferences
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('user_preferences')
       .upsert({
         user_id: user.id,
@@ -89,7 +89,7 @@ export async function PUT(request: NextRequest) {
         updated_at: new Date().toISOString(),
       })
       .eq('user_id', user.id)
-      .select()
+      .select('*')
       .single()
 
     if (error) {
