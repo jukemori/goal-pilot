@@ -110,17 +110,15 @@ export function RoadmapTimeline({
         throw roadmapError
       }
 
-      const roadmapTyped = roadmap as any
-
-      if (!roadmapTyped?.ai_generated_plan) {
+      if (!roadmap?.ai_generated_plan) {
         return {
           roadmapPhases: [],
           milestones: [],
-          goal: roadmapTyped.goals,
+          goal: roadmap.goals,
         }
       }
 
-      const aiPlan = roadmapTyped.ai_generated_plan as {
+      const aiPlan = roadmap.ai_generated_plan as {
         overview: string
         phases: Array<{
           title: string
@@ -200,7 +198,7 @@ export function RoadmapTimeline({
           id: `roadmap-${i + 1}`,
           name: phaseName,
           iconComponent: phaseIconComponent,
-          description: createPhaseDescription(phaseName, roadmapTyped.goals.title),
+          description: createPhaseDescription(phaseName, roadmap.goals.title),
           duration: phaseDuration,
           key_activities: keyActivities.slice(0, 2), // Max 2 activities
           success_metrics: successMetrics.slice(0, 1), // Max 1 success metric
@@ -209,7 +207,7 @@ export function RoadmapTimeline({
 
       return {
         roadmapPhases,
-        goal: roadmapTyped.goals,
+        goal: roadmap.goals,
         overview: aiPlan.overview,
         totalHours: aiPlan.total_hours_required,
         completionDate: aiPlan.estimated_completion_date,
