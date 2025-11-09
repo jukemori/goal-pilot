@@ -18,6 +18,9 @@ export function useGoals() {
       if (error) throw error
       return data
     },
+    staleTime: 2 * 60 * 1000, // 2 minutes - goals don't change frequently
+    gcTime: 10 * 60 * 1000, // 10 minutes
+    refetchOnWindowFocus: false,
   })
 }
 
@@ -57,6 +60,9 @@ export function useGoal(id: string) {
       return data
     },
     enabled: !!id,
+    staleTime: 1 * 60 * 1000, // 1 minute - goal details may change more frequently
+    gcTime: 10 * 60 * 1000, // 10 minutes
+    refetchOnWindowFocus: true, // Refetch when user returns to tab (for task updates)
   })
 }
 

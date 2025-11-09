@@ -62,6 +62,9 @@ export function useTasks(date?: string) {
       return data
     },
     enabled: true,
+    staleTime: 30 * 1000, // 30 seconds - tasks change frequently (completion, rescheduling)
+    gcTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnWindowFocus: true, // Refetch when user returns to ensure fresh task status
   })
 }
 
@@ -164,11 +167,35 @@ export function useRescheduleTask() {
   return useMutation({
     mutationFn: ({ taskId, newDate }: { taskId: string; newDate: string }) =>
       rescheduleTask(taskId, newDate),
+    onMutate: async ({ taskId, newDate }) => {
+      // Cancel outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ['tasks'] })
+
+      // Snapshot previous values
+      const previousTasks = queryClient.getQueryData(['tasks'])
+
+      // Optimistically update cache
+      queryClient.setQueriesData(
+        { queryKey: ['tasks'] },
+        (old: Task[] | undefined) => {
+          if (!old) return old
+          return old.map((task) =>
+            task.id === taskId
+              ? { ...task, scheduled_date: newDate }
+              : task,
+          )
+        },
+      )
+
+      return { previousTasks }
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tasks'] })
       toast.success('Task rescheduled')
     },
-    onError: () => {
+    onError: (_err, _variables, context) => {
+      // Rollback on error
+      queryClient.setQueryData(['tasks'], context?.previousTasks)
       toast.error('Failed to reschedule task')
     },
   })
@@ -180,11 +207,35 @@ export function useUpdateTaskDuration() {
   return useMutation({
     mutationFn: ({ taskId, duration }: { taskId: string; duration: number }) =>
       updateTaskDuration(taskId, duration),
+    onMutate: async ({ taskId, duration }) => {
+      // Cancel outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ['tasks'] })
+
+      // Snapshot previous values
+      const previousTasks = queryClient.getQueryData(['tasks'])
+
+      // Optimistically update cache
+      queryClient.setQueriesData(
+        { queryKey: ['tasks'] },
+        (old: Task[] | undefined) => {
+          if (!old) return old
+          return old.map((task) =>
+            task.id === taskId
+              ? { ...task, estimated_duration: duration }
+              : task,
+          )
+        },
+      )
+
+      return { previousTasks }
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tasks'] })
       toast.success('Task duration updated')
     },
-    onError: () => {
+    onError: (_err, _variables, context) => {
+      // Rollback on error
+      queryClient.setQueryData(['tasks'], context?.previousTasks)
       toast.error('Failed to update task duration')
     },
   })
