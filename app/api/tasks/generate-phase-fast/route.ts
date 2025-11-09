@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { openai, AI_MODELS } from '@/lib/ai/openai'
 import { TablesInsert } from '@/types/database'
+import { logger } from '@/lib/utils/logger'
 
 type TaskInsert = TablesInsert<'tasks'>
 
@@ -143,7 +144,7 @@ export async function POST(request: NextRequest) {
       const { error } = await supabase.from('tasks').insert(tasks)
 
       if (error) {
-        console.error('Failed to create tasks:', error)
+        logger.error('Failed to create tasks', { error })
         return NextResponse.json(
           { error: 'Failed to create tasks' },
           { status: 500 },
@@ -156,7 +157,7 @@ export async function POST(request: NextRequest) {
       tasksCount: tasks.length,
     })
   } catch (error) {
-    console.error('Error generating tasks:', error)
+    logger.error('Error generating tasks', { error })
     return NextResponse.json(
       { error: 'Failed to generate tasks' },
       { status: 500 },

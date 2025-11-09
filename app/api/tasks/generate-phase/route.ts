@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { openai, AI_MODELS } from '@/lib/ai/openai'
+import { logger } from '@/lib/utils/logger'
 import {
   generateTasksForPhasePrompt,
   TASK_GENERATION_SYSTEM_PROMPT,
@@ -98,7 +99,7 @@ export async function POST(request: NextRequest) {
       goal.title,
     )
 
-    console.log('Generating tasks with AI for stage:', stage.title)
+    logger.debug('Generating tasks with AI for stage', { stageTitle: stage.title })
 
     // AI generation with retry logic for reliability
     let completion
@@ -107,7 +108,7 @@ export async function POST(request: NextRequest) {
 
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
-        console.log(`AI task generation attempt ${attempt}/${maxRetries}`)
+        logger.debug(`AI task generation attempt ${attempt}/${maxRetries}`)
 
         completion = await openai.chat.completions.create(
           {
@@ -131,20 +132,20 @@ export async function POST(request: NextRequest) {
         // If we get here, the request succeeded
         break
       } catch (error) {
-        console.error(`AI task generation attempt ${attempt} failed:`, error)
+        logger.error(`AI task generation attempt ${attempt} failed`, { error, attempt, maxRetries })
         lastError = error
 
         if (attempt < maxRetries) {
           // Linear backoff for faster retries
           const waitTime = attempt * 300 // 300ms, 600ms delays
-          console.log(`Retrying in ${waitTime}ms...`)
+          logger.debug(`Retrying AI generation`, { waitTime, attempt })
           await new Promise((resolve) => setTimeout(resolve, waitTime))
         }
       }
     }
 
     if (!completion) {
-      console.error('All AI task generation attempts failed')
+      logger.error('All AI task generation attempts failed', { lastError })
       throw (
         lastError || new Error('AI task generation failed after all retries')
       )
@@ -153,7 +154,7 @@ export async function POST(request: NextRequest) {
     let taskData
     try {
       let content = completion.choices[0].message.content!
-      console.log('AI task generation response length:', content.length)
+      logger.debug('Received AI task response', { length: content.length })
 
       // Optimized JSON cleanup with fast path
       content = content.trim()
@@ -161,7 +162,7 @@ export async function POST(request: NextRequest) {
       // Check for truncated response
       const isTruncated = !content.endsWith('}') && content.includes('{')
       if (isTruncated) {
-        console.warn('Detected truncated AI response, attempting repair...')
+        logger.warn('Detected truncated AI response, attempting repair')
 
         // Try to repair truncated JSON by finding the last complete object
         let repairedContent = content
@@ -182,10 +183,7 @@ export async function POST(request: NextRequest) {
 
         if (lastCompletePos > 0) {
           repairedContent = content.substring(0, lastCompletePos + 1)
-          console.log(
-            'Repaired JSON by truncating at position:',
-            lastCompletePos + 1,
-          )
+          logger.debug('Repaired JSON by truncating at position', { position: lastCompletePos + 1 })
         }
 
         content = repairedContent
@@ -206,14 +204,16 @@ export async function POST(request: NextRequest) {
         }
       }
 
-      console.log('Successfully parsed AI task data:', taskData)
+      logger.debug('Successfully parsed AI task data', { taskCount: taskData?.task_patterns?.length || 0 })
     } catch (parseError) {
-      console.error('Failed to parse AI task generation response:', parseError)
-      console.error('Raw AI content:', completion.choices[0].message.content)
+      logger.error('Failed to parse AI task generation response', {
+        error: parseError,
+        rawContent: completion.choices[0].message.content
+      })
 
       // If parsing fails, fall back to using the existing fallback tasks
       // instead of returning an error
-      console.log('Using fallback tasks due to JSON parsing error')
+      logger.debug('Using fallback tasks due to JSON parsing error')
       taskData = { task_patterns: [] }
     }
 
@@ -222,8 +222,8 @@ export async function POST(request: NextRequest) {
       .filter(([_, available]) => available)
       .map(([day]) => getDayNumber(day))
 
-    console.log('Available days (0=Sun, 1=Mon, etc):', availableDays)
-    console.log('Weekly schedule:', weeklySchedule)
+    logger.debug('Available scheduling days', { availableDays })
+    logger.debug('Weekly schedule', { weeklySchedule })
 
     // Pre-calculate all available dates for the stage period
     const availableDates = calculateAvailableDates(
@@ -232,9 +232,7 @@ export async function POST(request: NextRequest) {
       availableDays,
     )
 
-    console.log(
-      `Pre-calculated ${availableDates.length} available dates for scheduling`,
-    )
+    logger.debug('Pre-calculated available dates for scheduling', { count: availableDates.length })
 
     const tasks: TablesInsert<'tasks'>[] = []
 
@@ -279,7 +277,7 @@ export async function POST(request: NextRequest) {
 
     // If no AI tasks generated, use fallback
     if (allTasks.length === 0) {
-      console.log('No AI tasks found, using fallback tasks')
+      logger.debug('No AI tasks found, using fallback tasks')
       allTasks = [
         {
           title: 'Practice vocabulary',
@@ -330,17 +328,21 @@ export async function POST(request: NextRequest) {
       })
     })
 
-    console.log(`Generated ${tasks.length} tasks for stage: ${stage.title}`)
-    console.log(
-      `Date range: ${tasks[0]?.scheduled_date} to ${tasks[tasks.length - 1]?.scheduled_date}`,
-    )
+    logger.debug('Generated tasks for stage', {
+      taskCount: tasks.length,
+      stageTitle: stage.title,
+      dateRange: {
+        start: tasks[0]?.scheduled_date,
+        end: tasks[tasks.length - 1]?.scheduled_date
+      }
+    })
 
     // Insert tasks
     if (tasks.length > 0) {
       const { error } = await supabase.from('tasks').insert(tasks)
 
       if (error) {
-        console.error('Failed to create tasks:', error)
+        logger.error('Failed to create tasks', { error })
         return NextResponse.json(
           { error: 'Failed to create tasks' },
           { status: 500 },
@@ -353,7 +355,7 @@ export async function POST(request: NextRequest) {
       tasksCount: tasks.length,
     })
   } catch (error) {
-    console.error('Error generating stage tasks:', error)
+    logger.error('Error generating stage tasks', { error })
     return NextResponse.json(
       { error: 'Failed to generate tasks' },
       { status: 500 },
