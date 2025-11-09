@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
+import { logger } from '@/lib/utils/logger'
 
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url)
@@ -29,7 +30,7 @@ export async function GET(request: NextRequest) {
 
       // Ignore error if user already exists
       if (profileError && !profileError.message.includes('duplicate key')) {
-        console.error('Profile creation error:', profileError)
+        logger.error('Profile creation error', { error: profileError, userId: data.user.id })
       }
 
       const forwardedHost = request.headers.get('x-forwarded-host')
