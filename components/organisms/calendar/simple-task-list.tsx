@@ -14,7 +14,7 @@ import { completeTask, uncompleteTask } from '@/app/actions/tasks'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import { useQueryClient } from '@tanstack/react-query'
-import type { TaskWithRoadmap } from '@/lib/hooks/use-tasks'
+import type { TaskWithRoadmap } from '@/features/tasks/hooks/use-tasks'
 
 interface SimpleTaskListProps {
   tasks: TaskWithRoadmap[]

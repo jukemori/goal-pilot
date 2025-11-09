@@ -19,7 +19,7 @@ import {
 import {
   useOptimizedCalendarTasks,
   type TaskWithRoadmap,
-} from '@/lib/hooks/use-tasks'
+} from '@/features/tasks/hooks/use-tasks'
 import { format, parseISO } from 'date-fns'
 
 // Lazy load heavy components
