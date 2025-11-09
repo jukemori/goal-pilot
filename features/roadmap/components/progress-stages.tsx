@@ -26,6 +26,7 @@ import { AIGenerationOverlay } from '@/components/molecules/ai-generation-overla
 import { useProgressStages } from '../hooks/use-progress-stages'
 import { useAutoCreateStages } from '../hooks/use-auto-create-stages'
 import { useGenerateTasks } from '../hooks/use-generate-tasks'
+import { logger } from '@/lib/utils/logger'
 
 interface ProgressStagesProps {
   roadmapId: string
@@ -111,12 +112,10 @@ export function ProgressStages({
     )
   }
 
-  console.log(
-    'Rendering stages:',
-    stages.length,
-    'stages for roadmap:',
-    roadmapId,
-  )
+  logger.debug('Rendering stages', {
+    stageCount: stages.length,
+    roadmapId
+  })
 
   return (
     <>
