@@ -1,4 +1,5 @@
 'use client'
+import { logger } from '@/lib/utils/logger'
 
 import { useState } from 'react'
 import Link from 'next/link'
@@ -54,7 +55,7 @@ export default function ForgotPasswordPage() {
       toast.success('Password reset email sent!')
     } catch (err) {
       setError('Network error. Please check your connection and try again.')
-      console.error('Password reset error:', err)
+      logger.error('Password reset error', { error: err })
     } finally {
       setIsLoading(false)
     }

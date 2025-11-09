@@ -1,4 +1,5 @@
 'use client'
+import { logger } from '@/lib/utils/logger'
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -100,7 +101,7 @@ export default function RegisterPage() {
       }
     } catch (err) {
       setError('Network error. Please check your connection and try again.')
-      console.error('Registration error:', err)
+      logger.error('Registration error', { error: err })
     } finally {
       setIsLoading(false)
     }
@@ -122,13 +123,13 @@ export default function RegisterPage() {
 
       if (authError) {
         setError('Failed to sign in with Google. Please try again.')
-        console.error('Google sign in error:', authError)
+        logger.error('Google sign in error', { error: authError })
       }
 
       // Note: For OAuth, the redirect happens automatically, so we don't handle success here
     } catch (err) {
       setError('Network error. Please check your connection and try again.')
-      console.error('Google sign in error:', err)
+      logger.error('Google sign in error', { error: err })
     } finally {
       setIsGoogleLoading(false)
     }

@@ -1,4 +1,5 @@
 'use client'
+import { logger } from '@/lib/utils/logger'
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
@@ -121,7 +122,7 @@ export default function ResetPasswordPage() {
       }, 2000)
     } catch (err) {
       setError('Network error. Please check your connection and try again.')
-      console.error('Password reset error:', err)
+      logger.error('Password reset error', { error: err })
     } finally {
       setIsLoading(false)
     }
