@@ -3,13 +3,14 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { ProgressStage } from '@/types'
+import { logger } from '@/lib/utils/logger'
 
 export function useGenerateTasks(roadmapId: string) {
   const queryClient = useQueryClient()
 
   return useMutation({
     mutationFn: async (stage: ProgressStage) => {
-      console.log('Generating tasks for stage:', stage)
+      logger.debug('Generating tasks for stage', { stageId: stage.id, stageTitle: stage.title })
       const response = await fetch('/api/tasks/generate-phase-fast', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

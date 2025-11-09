@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react'
+import { logger } from '@/lib/utils/logger'
 
 interface StreamingProgress {
   message: string
@@ -92,7 +93,7 @@ export function useSSEGeneration(options: UseSSEGenerationOptions = {}) {
                   break
               }
             } catch (e) {
-              console.error('Failed to parse SSE data:', e)
+              logger.error('Failed to parse SSE data', { error: e, line })
             }
           }
         }
@@ -102,7 +103,7 @@ export function useSSEGeneration(options: UseSSEGenerationOptions = {}) {
       }
 
     } catch (error) {
-      console.error('Generation error:', error)
+      logger.error('SSE generation error', { error, endpoint })
       setIsGenerating(false)
       options.onError?.(error instanceof Error ? error.message : 'Generation failed')
     }

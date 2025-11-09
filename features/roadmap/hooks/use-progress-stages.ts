@@ -3,6 +3,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabase/client'
 import { ProgressStage } from '@/types'
+import { logger } from '@/lib/utils/logger'
 
 interface StageWithTasks extends ProgressStage {
   taskCount: number
@@ -15,7 +16,7 @@ export function useProgressStages(roadmapId: string) {
   return useQuery<StageWithTasks[]>({
     queryKey: ['progress-stages', roadmapId],
     queryFn: async () => {
-      console.log('Fetching stages for roadmap:', roadmapId)
+      logger.debug('Fetching stages for roadmap', { roadmapId })
 
       // Get stages first
       const { data: stagesData, error: stagesError } = await supabase
@@ -25,7 +26,7 @@ export function useProgressStages(roadmapId: string) {
         .order('phase_number')
 
       if (stagesError) {
-        console.error('Error fetching stages:', stagesError)
+        logger.error('Failed to fetch stages', { error: stagesError, roadmapId })
         throw stagesError
       }
 
@@ -60,7 +61,10 @@ export function useProgressStages(roadmapId: string) {
         }
       })
 
-      console.log('Stages with task counts:', stagesWithTaskCounts)
+      logger.debug('Fetched stages with task counts', {
+        roadmapId,
+        stageCount: stagesWithTaskCounts.length
+      })
       return stagesWithTaskCounts
     },
     staleTime: 5 * 60 * 1000, // 5 minutes

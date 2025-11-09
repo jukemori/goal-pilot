@@ -3,6 +3,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabase/client'
 import { BookOpen, Target, Zap, Award, LucideIcon } from 'lucide-react'
+import { logger } from '@/lib/utils/logger'
 
 interface RoadmapPhase {
   id: string
@@ -85,7 +86,7 @@ export function useRoadmapVisual(roadmapId: string) {
   return useQuery<RoadmapVisualData>({
     queryKey: ['roadmap-visual', roadmapId],
     queryFn: async () => {
-      console.log('Fetching roadmap for visual view:', roadmapId)
+      logger.debug('Fetching roadmap for visual view', { roadmapId })
 
       // Get roadmap with AI plan and goal details
       const { data: roadmap, error: roadmapError } = await supabase
@@ -106,7 +107,7 @@ export function useRoadmapVisual(roadmapId: string) {
         .single()
 
       if (roadmapError) {
-        console.error('Error fetching roadmap:', roadmapError)
+        logger.error('Failed to fetch roadmap', { error: roadmapError, roadmapId })
         throw roadmapError
       }
 
