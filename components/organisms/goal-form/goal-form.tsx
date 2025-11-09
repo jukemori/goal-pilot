@@ -24,7 +24,7 @@ import {
   CardTitle,
 } from '@/components/atoms/card'
 import { toast } from 'sonner'
-import { useState, useEffect, useMemo, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { LoadingSpinner, PulsingDots } from '@/components/atoms/loading-spinner'
@@ -56,16 +56,17 @@ export function GoalForm({
   const router = useRouter()
 
   // Use a stable default date in local timezone to avoid hydration mismatches
-  const today = useMemo(() => {
-    if (typeof window !== 'undefined') {
-      const now = new Date()
-      const year = now.getFullYear()
-      const month = String(now.getMonth() + 1).padStart(2, '0')
-      const day = String(now.getDate()).padStart(2, '0')
-      return `${year}-${month}-${day}`
-    }
-    return ''
-  }, [])
+  // Optimized by React Compiler
+  const today =
+    typeof window !== 'undefined'
+      ? (() => {
+          const now = new Date()
+          const year = now.getFullYear()
+          const month = String(now.getMonth() + 1).padStart(2, '0')
+          const day = String(now.getDate()).padStart(2, '0')
+          return `${year}-${month}-${day}`
+        })()
+      : ''
 
   const form = useForm<GoalFormData>({
     resolver: zodResolver(goalFormSchema),

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/atoms/button'
 import { Badge } from '@/components/atoms/badge'
 import { Input } from '@/components/atoms/input'
@@ -63,73 +63,67 @@ export function TaskList({
     'all' | 'today' | 'week' | 'overdue'
   >('all')
 
-  // Filter and search tasks
-  const filteredTasks = useMemo(() => {
-    let filtered = tasks
+  // Filter and search tasks - Optimized by React Compiler
+  let filteredTasks = tasks
 
-    // Search filter
-    if (searchQuery) {
-      filtered = filtered.filter(
-        (task) =>
-          task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          task.description?.toLowerCase().includes(searchQuery.toLowerCase()),
-      )
-    }
-
-    // Status filter
-    if (statusFilter !== 'all') {
-      filtered = filtered.filter((task) =>
-        statusFilter === 'completed' ? task.completed : !task.completed,
-      )
-    }
-
-    // Priority filter
-    if (priorityFilter !== 'all') {
-      filtered = filtered.filter(
-        (task) => task.priority === parseInt(priorityFilter),
-      )
-    }
-
-    // Date filter
-    if (dateFilter !== 'all') {
-      const today = new Date().toISOString().split('T')[0]
-      const weekFromNow = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
-        .toISOString()
-        .split('T')[0]
-
-      filtered = filtered.filter((task) => {
-        switch (dateFilter) {
-          case 'today':
-            return task.scheduled_date === today
-          case 'week':
-            return (
-              task.scheduled_date >= today && task.scheduled_date <= weekFromNow
-            )
-          case 'overdue':
-            return task.scheduled_date < today && !task.completed
-          default:
-            return true
-        }
-      })
-    }
-
-    return filtered
-  }, [tasks, searchQuery, statusFilter, priorityFilter, dateFilter])
-
-  // Group filtered tasks by date
-  const groupedTasks = useMemo(() => {
-    return filteredTasks.reduce(
-      (acc, task) => {
-        const date = task.scheduled_date
-        if (!acc[date]) {
-          acc[date] = []
-        }
-        acc[date].push(task)
-        return acc
-      },
-      {} as Record<string, Task[]>,
+  // Search filter
+  if (searchQuery) {
+    filteredTasks = filteredTasks.filter(
+      (task) =>
+        task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        task.description?.toLowerCase().includes(searchQuery.toLowerCase()),
     )
-  }, [filteredTasks])
+  }
+
+  // Status filter
+  if (statusFilter !== 'all') {
+    filteredTasks = filteredTasks.filter((task) =>
+      statusFilter === 'completed' ? task.completed : !task.completed,
+    )
+  }
+
+  // Priority filter
+  if (priorityFilter !== 'all') {
+    filteredTasks = filteredTasks.filter(
+      (task) => task.priority === parseInt(priorityFilter),
+    )
+  }
+
+  // Date filter
+  if (dateFilter !== 'all') {
+    const today = new Date().toISOString().split('T')[0]
+    const weekFromNow = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+      .toISOString()
+      .split('T')[0]
+
+    filteredTasks = filteredTasks.filter((task) => {
+      switch (dateFilter) {
+        case 'today':
+          return task.scheduled_date === today
+        case 'week':
+          return (
+            task.scheduled_date >= today && task.scheduled_date <= weekFromNow
+          )
+        case 'overdue':
+          return task.scheduled_date < today && !task.completed
+        default:
+          return true
+      }
+    })
+  }
+
+  // Group filtered tasks by date - Optimized by React Compiler
+  const groupedTasks = filteredTasks.reduce(
+    (acc, task) => {
+      const date = task.scheduled_date
+      if (!acc[date]) {
+        acc[date] = []
+      }
+      acc[date].push(task)
+      return acc
+    },
+    {} as Record<string, Task[]>,
+  )
 
   // Sort dates and paginate
   const sortedDates = Object.keys(groupedTasks).sort()
