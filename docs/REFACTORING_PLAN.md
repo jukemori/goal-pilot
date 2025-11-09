@@ -1,8 +1,30 @@
 # Goal Pilot - Comprehensive Refactoring Plan
 
+> **⚠️ THIS IS THE MASTER REFERENCE DOCUMENT**
+>
+> **For current progress and status** → See **[REFACTORING_PROGRESS.md](./REFACTORING_PROGRESS.md)**
+>
+> **For quick overview** → See **[docs/README.md](./README.md)**
+
 **Generated:** 2025-11-09
+**Last Updated:** 2025-01-09
 **Version:** 1.0
-**Status:** Planning Phase
+**Status:** In Progress (Phase 2)
+
+---
+
+## 📊 Current Status At-A-Glance
+
+| Phase | Status | Details |
+|-------|--------|---------|
+| Phase 1: Code Quality | ✅ **COMPLETE** | See [Progress Doc](./REFACTORING_PROGRESS.md#phase-1-code-quality) |
+| Phase 2: Architecture | 🔄 **60% Done** | See [Progress Doc](./REFACTORING_PROGRESS.md#phase-2-architecture) |
+| Phase 3: Performance | ✅ **COMPLETE** | See [Progress Doc](./REFACTORING_PROGRESS.md#phase-3-performance) |
+| Phase 4: DevEx | ⏳ **Planned** | See [Progress Doc](./REFACTORING_PROGRESS.md#phase-4-developer-experience) |
+
+**👉 [View Detailed Progress Tracker](./REFACTORING_PROGRESS.md)**
+
+---
 
 ## Executive Summary
 
