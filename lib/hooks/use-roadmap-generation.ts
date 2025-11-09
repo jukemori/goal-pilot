@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 
@@ -18,7 +18,8 @@ export function useRoadmapGeneration() {
   })
   const router = useRouter()
 
-  const generateRoadmap = useCallback(async (goalId: string) => {
+  // Optimized by React Compiler
+  const generateRoadmap = async (goalId: string) => {
     setGenerationStatus({
       status: 'generating-overview',
       progress: 10,
@@ -76,7 +77,7 @@ export function useRoadmapGeneration() {
       toast.error('Failed to generate roadmap')
       throw error
     }
-  }, [router])
+  }
 
   return {
     generateRoadmap,
