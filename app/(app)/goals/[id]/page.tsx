@@ -104,7 +104,7 @@ const ProgressChart = dynamic(
 
 const ProgressStages = dynamic(
   () =>
-    import('@/components/organisms/progress-stages/progress-stages').then(
+    import('@/features/roadmap/components/progress-stages').then(
       (mod) => ({ default: mod.ProgressStages }),
     ),
   {
