@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { logger } from '@/lib/utils/logger'
 
 export async function DELETE() {
   const supabase = await createClient()
@@ -33,7 +34,7 @@ export async function DELETE() {
 
     return NextResponse.json({ success: true })
   } catch (error) {
-    console.error('Error deleting user:', error)
+    logger.error('Error deleting user', { error })
     return NextResponse.json(
       {
         error:

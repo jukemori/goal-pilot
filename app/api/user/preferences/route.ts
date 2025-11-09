@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { logger } from '@/lib/utils/logger'
 
 export async function GET() {
   try {
@@ -55,7 +56,7 @@ export async function GET() {
       },
     )
   } catch (error) {
-    console.warn('User preferences error:', error)
+    logger.warn('User preferences error', { error })
     const defaultPreferences = {
       user_id: 'unknown',
       push_notifications: true,
@@ -95,7 +96,7 @@ export async function PUT(request: NextRequest) {
     if (error) {
       if (error.code === '42P01') {
         // Table doesn't exist yet
-        console.warn('User preferences table not yet available')
+        logger.warn('User preferences table not yet available')
         return NextResponse.json({
           data: {
             user_id: user.id,
@@ -109,7 +110,7 @@ export async function PUT(request: NextRequest) {
 
     return NextResponse.json({ data })
   } catch (error) {
-    console.error('Error updating preferences:', error)
+    logger.error('Error updating preferences', { error })
     return NextResponse.json(
       {
         error:

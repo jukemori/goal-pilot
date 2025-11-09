@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { Task } from '@/types'
+import { logger } from '@/lib/utils/logger'
 
 export async function GET(request: NextRequest) {
   try {
@@ -54,12 +55,13 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    console.log(`Calendar export: Found ${tasks?.length || 0} tasks`)
-    if (tasks && tasks.length > 0) {
-      console.log(
-        `Date range: ${tasks[0].scheduled_date} to ${tasks[tasks.length - 1].scheduled_date}`,
-      )
-    }
+    logger.debug('Calendar export: Found tasks', {
+      count: tasks?.length || 0,
+      dateRange: tasks && tasks.length > 0 ? {
+        start: tasks[0].scheduled_date,
+        end: tasks[tasks.length - 1].scheduled_date
+      } : null
+    })
 
     if (format === 'ics') {
       const icsContent = generateICS(tasks || [])
@@ -73,7 +75,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ error: 'Unsupported format' }, { status: 400 })
   } catch (error) {
-    console.error('Calendar export error:', error)
+    logger.error('Calendar export error', { error })
     return NextResponse.json(
       { error: 'Failed to export calendar' },
       { status: 500 },

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { Json } from '@/types/database'
+import { logger } from '@/lib/utils/logger'
 
 export async function POST(request: NextRequest) {
   try {
@@ -135,7 +136,7 @@ export async function POST(request: NextRequest) {
       .select('*')
 
     if (error) {
-      console.error('Failed to create learning phases:', error)
+      logger.error('Failed to create learning phases', { error })
       return NextResponse.json(
         { error: 'Failed to create learning phases' },
         { status: 500 },
@@ -147,7 +148,7 @@ export async function POST(request: NextRequest) {
       phases: data,
     })
   } catch (error) {
-    console.error('Auto-create learning phases error:', error)
+    logger.error('Auto-create learning phases error', { error })
     return NextResponse.json(
       { error: 'Failed to create learning phases' },
       { status: 500 },

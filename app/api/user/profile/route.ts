@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { logger } from '@/lib/utils/logger'
 
 export async function GET() {
   try {
@@ -33,7 +34,7 @@ export async function GET() {
       },
     )
   } catch (error) {
-    console.error('Profile API error:', error)
+    logger.error('Profile API error', { error })
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 },
