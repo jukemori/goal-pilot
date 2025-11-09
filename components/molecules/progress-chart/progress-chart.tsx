@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import {
   Calendar,
   Target,
@@ -81,8 +81,8 @@ export function ProgressChart({ tasks }: ProgressChartProps) {
   const overallProgress =
     totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0
 
-  // Calculate streak
-  const getStreak = useCallback(() => {
+  // Calculate streak - Optimized by React Compiler
+  const getStreak = () => {
     if (tasks.length === 0) return 0
 
     const sortedTasks = tasks
@@ -115,13 +115,14 @@ export function ProgressChart({ tasks }: ProgressChartProps) {
     }
 
     return streak
-  }, [tasks])
+  }
 
   useEffect(() => {
     if (isClient) {
       setCurrentStreak(getStreak())
     }
-  }, [isClient, tasks, getStreak])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isClient, tasks])
 
   return (
     <div className="space-y-8">

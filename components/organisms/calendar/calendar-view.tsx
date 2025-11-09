@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, lazy, Suspense, memo, useCallback } from 'react'
+import { useState, lazy, Suspense } from 'react'
 import {
   Card,
   CardContent,
@@ -46,8 +46,8 @@ function TaskListSkeleton() {
   )
 }
 
-// Memoized Task Item component for better performance
-const CalendarTaskItem = memo(function CalendarTaskItem({
+// Task Item component - Optimized by React Compiler
+function CalendarTaskItem({
   task,
   className = '',
 }: {
@@ -71,10 +71,10 @@ const CalendarTaskItem = memo(function CalendarTaskItem({
       <div className="w-full truncate leading-tight">{task.title}</div>
     </div>
   )
-})
+}
 
-// Memoized Task Item for desktop view
-const CalendarTaskItemDesktop = memo(function CalendarTaskItemDesktop({
+// Task Item for desktop view - Optimized by React Compiler
+function CalendarTaskItemDesktop({
   task,
 }: {
   task: TaskWithRoadmap
@@ -95,10 +95,10 @@ const CalendarTaskItemDesktop = memo(function CalendarTaskItemDesktop({
       <div className="w-full truncate">{task.title}</div>
     </div>
   )
-})
+}
 
-// Memoized Tasks Container
-const CalendarTasksContainer = memo(function CalendarTasksContainer({
+// Tasks Container - Optimized by React Compiler
+function CalendarTasksContainer({
   tasks,
 }: {
   tasks: TaskWithRoadmap[]
@@ -133,10 +133,10 @@ const CalendarTasksContainer = memo(function CalendarTasksContainer({
       )}
     </div>
   )
-})
+}
 
-// Memoized Calendar Cell component for optimal performance
-const CalendarCell = memo(function CalendarCell({
+// Calendar Cell component - Optimized by React Compiler
+function CalendarCell({
   date,
   tasks,
   isSelected,
@@ -151,13 +151,11 @@ const CalendarCell = memo(function CalendarCell({
   isCurrentMonth: boolean
   onSelect: (date: string) => void
 }) {
-  const dateString = useMemo(() => {
-    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
-  }, [date])
+  const dateString = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
 
-  const handleClick = useCallback(() => {
+  const handleClick = () => {
     onSelect(isSelected ? '' : dateString)
-  }, [dateString, isSelected, onSelect])
+  }
 
   return (
     <button
@@ -178,10 +176,10 @@ const CalendarCell = memo(function CalendarCell({
       <CalendarTasksContainer tasks={tasks} />
     </button>
   )
-})
+}
 
-// Memoized Calendar Week component
-const CalendarWeek = memo(function CalendarWeek({
+// Calendar Week component - Optimized by React Compiler
+function CalendarWeek({
   week,
   tasksByDate,
   selectedDate,
@@ -194,7 +192,7 @@ const CalendarWeek = memo(function CalendarWeek({
   onDateSelect: (date: string) => void
   currentDate: Date
 }) {
-  const today = useMemo(() => new Date(), [])
+  const today = new Date()
 
   return (
     <div className="grid min-w-0 grid-cols-7 gap-0.5 md:gap-1">
@@ -219,7 +217,7 @@ const CalendarWeek = memo(function CalendarWeek({
       })}
     </div>
   )
-})
+}
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface CalendarViewProps {
@@ -237,38 +235,34 @@ export function CalendarView(_props: CalendarViewProps) {
 
   const selectedDateTasks = selectedDate ? tasksByDate[selectedDate] || [] : []
 
-  // Memoize calendar date calculations
-  const { weeks } = useMemo(() => {
-    const monthStart = new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth(),
-      1,
-    )
-    const monthEnd = new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth() + 1,
-      0,
-    )
-    const startDate = new Date(monthStart)
-    startDate.setDate(startDate.getDate() - startDate.getDay()) // Start from Sunday
+  // Calendar date calculations - Optimized by React Compiler
+  const monthStart = new Date(
+    currentDate.getFullYear(),
+    currentDate.getMonth(),
+    1,
+  )
+  const monthEnd = new Date(
+    currentDate.getFullYear(),
+    currentDate.getMonth() + 1,
+    0,
+  )
+  const startDate = new Date(monthStart)
+  startDate.setDate(startDate.getDate() - startDate.getDay()) // Start from Sunday
 
-    const endDate = new Date(monthEnd)
-    endDate.setDate(endDate.getDate() + (6 - monthEnd.getDay())) // End on Saturday
+  const endDate = new Date(monthEnd)
+  endDate.setDate(endDate.getDate() + (6 - monthEnd.getDay())) // End on Saturday
 
-    const dateRange = []
-    const currentDateIterator = new Date(startDate)
-    while (currentDateIterator <= endDate) {
-      dateRange.push(new Date(currentDateIterator))
-      currentDateIterator.setDate(currentDateIterator.getDate() + 1)
-    }
+  const dateRange = []
+  const currentDateIterator = new Date(startDate)
+  while (currentDateIterator <= endDate) {
+    dateRange.push(new Date(currentDateIterator))
+    currentDateIterator.setDate(currentDateIterator.getDate() + 1)
+  }
 
-    const weeks = []
-    for (let i = 0; i < dateRange.length; i += 7) {
-      weeks.push(dateRange.slice(i, i + 7))
-    }
-
-    return { weeks }
-  }, [currentDate])
+  const weeks = []
+  for (let i = 0; i < dateRange.length; i += 7) {
+    weeks.push(dateRange.slice(i, i + 7))
+  }
 
   const goToPreviousMonth = () => {
     setCurrentDate(
@@ -282,19 +276,12 @@ export function CalendarView(_props: CalendarViewProps) {
     )
   }
 
-  // Memoize today's stats
-  const { completedToday, totalToday, todayProgress } = useMemo(() => {
-    const completed = todayTasks.filter(
-      (task) => task.completed === true,
-    ).length
-    const total = todayTasks.length
-    const progress = total > 0 ? Math.round((completed / total) * 100) : 0
-    return {
-      completedToday: completed,
-      totalToday: total,
-      todayProgress: progress,
-    }
-  }, [todayTasks])
+  // Today's stats - Optimized by React Compiler
+  const completedToday = todayTasks.filter(
+    (task) => task.completed === true,
+  ).length
+  const totalToday = todayTasks.length
+  const todayProgress = totalToday > 0 ? Math.round((completedToday / totalToday) * 100) : 0
 
   return (
     <div className="grid h-[600px] grid-cols-1 gap-4 lg:grid-cols-3 lg:items-start">

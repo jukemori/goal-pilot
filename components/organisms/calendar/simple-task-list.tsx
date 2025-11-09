@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, useCallback, memo } from 'react'
+import { useState } from 'react'
 import { Button } from '@/components/atoms/button'
 import { Badge } from '@/components/atoms/badge'
 import { CheckCircle, Clock, MoreHorizontal } from 'lucide-react'
@@ -28,73 +28,66 @@ export function SimpleTaskList({
   const [loadingTaskId, setLoadingTaskId] = useState<string | null>(null)
   const queryClient = useQueryClient()
 
-  const handleToggleComplete = useCallback(
-    async (task: TaskWithRoadmap) => {
-      setLoadingTaskId(task.id)
-      try {
-        if (task.completed) {
-          await uncompleteTask(task.id)
-          toast.success('Task marked as incomplete')
-        } else {
-          await completeTask(task.id)
-          toast.success('Task completed!')
-        }
-
-        // Invalidate calendar queries to refresh the data
-        const currentDate = new Date()
-        queryClient.invalidateQueries({
-          queryKey: [
-            'calendar-optimized',
-            currentDate.getFullYear(),
-            currentDate.getMonth(),
-          ],
-        })
-        // Also invalidate any other task-related queries
-        queryClient.invalidateQueries({
-          queryKey: ['tasks'],
-        })
-      } catch {
-        toast.error('Failed to update task')
-      } finally {
-        setLoadingTaskId(null)
+  const handleToggleComplete = async (task: TaskWithRoadmap) => {
+    setLoadingTaskId(task.id)
+    try {
+      if (task.completed) {
+        await uncompleteTask(task.id)
+        toast.success('Task marked as incomplete')
+      } else {
+        await completeTask(task.id)
+        toast.success('Task completed!')
       }
-    },
-    [queryClient],
-  )
 
-  const { getPriorityColor, getPriorityLabel } = useMemo(
-    () => ({
-      getPriorityColor: (priority: number) => {
-        switch (priority) {
-          case 5:
-            return 'bg-red-100 text-red-800'
-          case 4:
-            return 'bg-orange-100 text-orange-800'
-          case 3:
-            return 'bg-yellow-100 text-yellow-800'
-          case 2:
-            return 'bg-primary/10 text-primary'
-          default:
-            return 'bg-gray-100 text-gray-800'
-        }
-      },
-      getPriorityLabel: (priority: number) => {
-        switch (priority) {
-          case 5:
-            return 'Critical'
-          case 4:
-            return 'High'
-          case 3:
-            return 'Medium'
-          case 2:
-            return 'Low'
-          default:
-            return 'Lowest'
-        }
-      },
-    }),
-    [],
-  )
+      // Invalidate calendar queries to refresh the data
+      const currentDate = new Date()
+      queryClient.invalidateQueries({
+        queryKey: [
+          'calendar-optimized',
+          currentDate.getFullYear(),
+          currentDate.getMonth(),
+        ],
+      })
+      // Also invalidate any other task-related queries
+      queryClient.invalidateQueries({
+        queryKey: ['tasks'],
+      })
+    } catch {
+      toast.error('Failed to update task')
+    } finally {
+      setLoadingTaskId(null)
+    }
+  }
+
+  const getPriorityColor = (priority: number) => {
+    switch (priority) {
+      case 5:
+        return 'bg-red-100 text-red-800'
+      case 4:
+        return 'bg-orange-100 text-orange-800'
+      case 3:
+        return 'bg-yellow-100 text-yellow-800'
+      case 2:
+        return 'bg-primary/10 text-primary'
+      default:
+        return 'bg-gray-100 text-gray-800'
+    }
+  }
+
+  const getPriorityLabel = (priority: number) => {
+    switch (priority) {
+      case 5:
+        return 'Critical'
+      case 4:
+        return 'High'
+      case 3:
+        return 'Medium'
+      case 2:
+        return 'Low'
+      default:
+        return 'Lowest'
+    }
+  }
 
   if (tasks.length === 0) {
     return (
@@ -204,22 +197,16 @@ export function SimpleTaskList({
   )
 }
 
-// Memoized TaskStatistics component
-const TaskStatistics = memo(function TaskStatistics({
-  tasks,
-}: {
-  tasks: TaskWithRoadmap[]
-}) {
-  const stats = useMemo(() => {
-    const today = new Date().toISOString().split('T')[0]
-    return {
-      total: tasks.length,
-      completed: tasks.filter((t) => t.completed === true).length,
-      overdue: tasks.filter(
-        (t) => t.completed !== true && t.scheduled_date < today,
-      ).length,
-    }
-  }, [tasks])
+// TaskStatistics component - Optimized by React Compiler
+function TaskStatistics({ tasks }: { tasks: TaskWithRoadmap[] }) {
+  const today = new Date().toISOString().split('T')[0]
+  const stats = {
+    total: tasks.length,
+    completed: tasks.filter((t) => t.completed === true).length,
+    overdue: tasks.filter(
+      (t) => t.completed !== true && t.scheduled_date < today,
+    ).length,
+  }
 
   return (
     <div className="grid grid-cols-2 gap-4 rounded-lg bg-gray-50 p-4 md:grid-cols-4">
@@ -247,4 +234,4 @@ const TaskStatistics = memo(function TaskStatistics({
       </div>
     </div>
   )
-})
+}
