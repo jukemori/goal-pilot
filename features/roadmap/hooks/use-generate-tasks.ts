@@ -31,18 +31,16 @@ export function useGenerateTasks(roadmapId: string) {
       toast.error(error.message)
     },
     onSuccess: () => {
-      // Delay query invalidations to avoid re-render conflicts
-      setTimeout(() => {
-        queryClient.invalidateQueries({
-          queryKey: ['progress-stages', roadmapId],
-        })
-        queryClient.invalidateQueries({
-          queryKey: ['tasks', roadmapId],
-        })
-        queryClient.invalidateQueries({
-          queryKey: ['goals'],
-        })
-      }, 100)
+      // Invalidate related queries - React Query will batch these automatically
+      queryClient.invalidateQueries({
+        queryKey: ['progress-stages', roadmapId],
+      })
+      queryClient.invalidateQueries({
+        queryKey: ['tasks', roadmapId],
+      })
+      queryClient.invalidateQueries({
+        queryKey: ['goals'],
+      })
     },
   })
 }
