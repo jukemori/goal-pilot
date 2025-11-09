@@ -11,6 +11,8 @@ import {
 import type { Json, Tables, TablesInsert, Database } from '@/types/database'
 import type { SupabaseClient } from '@supabase/supabase-js'
 
+import { logger } from '@/lib/utils/logger'
+
 type Goal = Tables<'goals'>
 type RoadmapInsert = TablesInsert<'roadmaps'>
 type ProgressStageInsert = TablesInsert<'progress_stages'>
@@ -173,7 +175,7 @@ export async function generateRoadmapAsync(goalId: string) {
   const baseTemplate = findEnhancedTemplate(goal.title)
   
   if (baseTemplate) {
-    console.log('Using enhanced template for roadmap generation:', goal.title)
+    logger.debug('Using enhanced template for roadmap generation', { goalTitle: goal.title })
     
     // Personalize template based on user context
     const personalizedTemplate = personalizeTemplate(baseTemplate, {
@@ -246,7 +248,7 @@ export async function generateRoadmapAsync(goalId: string) {
 
     // Step 2: Generate stages asynchronously
     void generateStagesAsync(roadmap.id, goal, roadmapOverview).catch((error) => {
-      console.error('Failed to generate stages:', error)
+      logger.error('Failed to generate stages', { error, roadmapId: roadmap.id })
       // Update status to indicate failure
       void supabase
         .from('roadmaps')
@@ -262,7 +264,7 @@ export async function generateRoadmapAsync(goalId: string) {
 
     return roadmap
   } catch (error) {
-    console.error('OpenAI API error:', error)
+    logger.error('OpenAI API error in async roadmap generation', { error })
     throw new Error('Failed to generate roadmap')
   }
 }
@@ -349,7 +351,7 @@ async function generateStagesAsync(
 
     await supabase.from('progress_stages').insert(stages)
   } catch (error) {
-    console.error('Stage generation failed:', error)
+    logger.error('Stage generation failed', { error, roadmapId })
     throw error
   }
 }

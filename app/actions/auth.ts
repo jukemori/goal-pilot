@@ -1,6 +1,7 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
+import { logger } from '@/lib/utils/logger'
 
 export async function ensureUserProfile() {
   const supabase = await createClient()
@@ -24,7 +25,7 @@ export async function ensureUserProfile() {
 
   // If profile doesn't exist, create it
   if (!existingProfile) {
-    console.log('Creating user profile for:', user.id)
+    logger.debug('Creating user profile', { userId: user.id })
 
     const { error: insertError } = await supabase.from('users').insert({
       id: user.id,
@@ -33,7 +34,7 @@ export async function ensureUserProfile() {
     })
 
     if (insertError) {
-      console.error('Failed to create user profile:', insertError)
+      logger.error('Failed to create user profile', { error: insertError, userId: user.id })
       throw new Error(`Failed to create user profile: ${insertError.message}`)
     }
   }

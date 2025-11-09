@@ -12,6 +12,8 @@ import {
 import type { RoadmapPlan } from '@/types'
 import { Json, Goal } from '@/types/database'
 
+import { logger } from '@/lib/utils/logger'
+
 interface RoadmapOverview {
   milestones?: unknown
   [key: string]: unknown
@@ -57,7 +59,7 @@ export async function generateRoadmapLegacy(goalId: string) {
 
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
-        console.log(`AI generation attempt ${attempt}/${maxRetries}`)
+        logger.debug(`AI generation attempt ${attempt}/${maxRetries}`)
 
         completion = await openai.chat.completions.create(
           {
@@ -81,20 +83,20 @@ export async function generateRoadmapLegacy(goalId: string) {
         // If we get here, the request succeeded
         break
       } catch (error) {
-        console.error(`AI generation attempt ${attempt} failed:`, error)
+        logger.error(`AI generation attempt ${attempt} failed`, { error, attempt, maxRetries })
         lastError = error
 
         if (attempt < maxRetries) {
           // Exponential backoff: wait 2^attempt seconds
           const waitTime = Math.pow(2, attempt) * 1000
-          console.log(`Retrying in ${waitTime}ms...`)
+          logger.debug(`Retrying AI generation`, { waitTime, attempt })
           await new Promise((resolve) => setTimeout(resolve, waitTime))
         }
       }
     }
 
     if (!completion) {
-      console.error('All AI generation attempts failed')
+      logger.error('All AI generation attempts failed', { lastError })
       throw lastError || new Error('AI generation failed after all retries')
     }
 
@@ -109,8 +111,10 @@ export async function generateRoadmapLegacy(goalId: string) {
 
     try {
       let content = completion.choices[0].message.content!
-      console.log('Raw AI response length:', content.length)
-      console.log('Raw AI response preview:', content.substring(0, 200) + '...')
+      logger.debug('Received AI roadmap response', {
+        length: content.length,
+        preview: content.substring(0, 200)
+      })
 
       // Clean up common JSON issues
       content = content.trim()
@@ -127,7 +131,7 @@ export async function generateRoadmapLegacy(goalId: string) {
         content = content.substring(0, jsonEnd + 1)
       }
 
-      console.log('Cleaned content preview:', content.substring(0, 200) + '...')
+      logger.debug('Cleaned AI content', { preview: content.substring(0, 200) })
       roadmapData = JSON.parse(content)
 
       // Validate that we have a complete response
@@ -136,24 +140,23 @@ export async function generateRoadmapLegacy(goalId: string) {
         !Array.isArray(roadmapData.phases) ||
         roadmapData.phases.length < 3
       ) {
-        console.error(
-          'Incomplete response: only',
-          roadmapData.phases?.length || 0,
-          'phases generated',
-        )
+        logger.error('Incomplete AI roadmap response', {
+          phasesGenerated: roadmapData.phases?.length || 0,
+          expected: '6-12'
+        })
         throw new Error(
           `Incomplete AI response: only ${roadmapData.phases?.length || 0} phases generated, expected 6-12`,
         )
       }
 
-      console.log(
-        'Complete response validated:',
-        roadmapData.phases.length,
-        'phases generated',
-      )
+      logger.debug('AI roadmap response validated', {
+        phasesGenerated: roadmapData.phases.length
+      })
     } catch (parseError) {
-      console.error('JSON parsing error:', parseError)
-      console.error('Raw content:', completion.choices[0].message.content)
+      logger.error('Failed to parse AI response as JSON', {
+        error: parseError,
+        rawContent: completion.choices[0].message.content
+      })
       throw new Error(
         'Failed to parse AI response as JSON. The response may be incomplete or malformed.',
       )
@@ -188,7 +191,7 @@ export async function generateRoadmapLegacy(goalId: string) {
 
     return roadmap
   } catch (error) {
-    console.error('OpenAI API error:', error)
+    logger.error('OpenAI API error in roadmap generation', { error })
     throw new Error('Failed to generate roadmap')
   }
 }
@@ -274,9 +277,9 @@ async function generateAllTasks(
     const { error } = await supabase.from('tasks').insert(allTasks)
 
     if (error) {
-      console.error('Failed to create tasks:', error)
+      logger.error('Failed to create tasks', { error, roadmapId })
     } else {
-      console.log(`Generated ${allTasks.length} tasks for roadmap`)
+      logger.debug('Generated tasks for roadmap', { taskCount: allTasks.length, roadmapId })
     }
   }
 }
@@ -338,7 +341,7 @@ export async function generateRoadmapOverview(goalId: string) {
 
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
-      console.log(`AI overview generation attempt ${attempt}/${maxRetries}`)
+      logger.debug(`AI overview generation attempt ${attempt}/${maxRetries}`)
 
       completion = await openai.chat.completions.create(
         {
@@ -362,20 +365,20 @@ export async function generateRoadmapOverview(goalId: string) {
       // If we get here, the request succeeded
       break
     } catch (error) {
-      console.error(`AI overview generation attempt ${attempt} failed:`, error)
+      logger.error(`AI overview generation attempt ${attempt} failed`, { error, attempt, maxRetries })
       lastError = error
 
       if (attempt < maxRetries) {
         // Exponential backoff: wait 2^attempt seconds
         const waitTime = Math.pow(2, attempt) * 1000
-        console.log(`Retrying in ${waitTime}ms...`)
+        logger.debug(`Retrying AI generation`, { waitTime, attempt })
         await new Promise((resolve) => setTimeout(resolve, waitTime))
       }
     }
   }
 
   if (!completion) {
-    console.error('All AI overview generation attempts failed')
+    logger.error('All AI overview generation attempts failed', { lastError })
     throw (
       lastError || new Error('AI overview generation failed after all retries')
     )
@@ -385,7 +388,7 @@ export async function generateRoadmapOverview(goalId: string) {
 
   try {
     let content = completion.choices[0].message.content!
-    console.log('Raw AI overview response length:', content.length)
+    logger.debug('Received AI overview response', { length: content.length })
 
     // Clean up common JSON issues
     content = content.trim()
@@ -403,10 +406,12 @@ export async function generateRoadmapOverview(goalId: string) {
     }
 
     roadmapOverview = JSON.parse(content)
-    console.log('Overview generated successfully')
+    logger.debug('Overview generated successfully')
   } catch (parseError) {
-    console.error('JSON parsing error:', parseError)
-    console.error('Raw content:', completion.choices[0].message.content)
+    logger.error('Failed to parse overview JSON', {
+      error: parseError,
+      rawContent: completion.choices[0].message.content
+    })
     throw new Error(
       'Failed to parse AI response as JSON. The response may be incomplete or malformed.',
     )
@@ -478,7 +483,7 @@ export async function generateRoadmapStages(roadmapId: string) {
 
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
-      console.log(`AI stages generation attempt ${attempt}/${maxRetries}`)
+      logger.debug(`AI stages generation attempt ${attempt}/${maxRetries}`)
 
       completion = await openai.chat.completions.create(
         {
@@ -502,20 +507,20 @@ export async function generateRoadmapStages(roadmapId: string) {
       // If we get here, the request succeeded
       break
     } catch (error) {
-      console.error(`AI stages generation attempt ${attempt} failed:`, error)
+      logger.error(`AI stages generation attempt ${attempt} failed`, { error, attempt, maxRetries })
       lastError = error
 
       if (attempt < maxRetries) {
         // Exponential backoff: wait 2^attempt seconds
         const waitTime = Math.pow(2, attempt) * 1000
-        console.log(`Retrying in ${waitTime}ms...`)
+        logger.debug(`Retrying AI generation`, { waitTime, attempt })
         await new Promise((resolve) => setTimeout(resolve, waitTime))
       }
     }
   }
 
   if (!completion) {
-    console.error('All AI stages generation attempts failed')
+    logger.error('All AI stages generation attempts failed', { lastError })
     throw (
       lastError || new Error('AI stages generation failed after all retries')
     )
@@ -525,7 +530,7 @@ export async function generateRoadmapStages(roadmapId: string) {
 
   try {
     let content = completion.choices[0].message.content!
-    console.log('Raw AI stages response length:', content.length)
+    logger.debug('Received AI stages response', { length: content.length })
 
     // Clean up common JSON issues
     content = content.trim()
@@ -550,24 +555,23 @@ export async function generateRoadmapStages(roadmapId: string) {
       !Array.isArray(stagesData.phases) ||
       stagesData.phases.length < 3
     ) {
-      console.error(
-        'Incomplete stages response: only',
-        stagesData.phases?.length || 0,
-        'phases generated',
-      )
+      logger.error('Incomplete AI stages response', {
+        phasesGenerated: stagesData.phases?.length || 0,
+        expected: '6-12'
+      })
       throw new Error(
         `Incomplete AI response: only ${stagesData.phases?.length || 0} phases generated, expected 6-12`,
       )
     }
 
-    console.log(
-      'Complete stages response validated:',
-      stagesData.phases.length,
-      'phases generated',
-    )
+    logger.debug('AI stages response validated', {
+      phasesGenerated: stagesData.phases.length
+    })
   } catch (parseError) {
-    console.error('JSON parsing error:', parseError)
-    console.error('Raw content:', completion.choices[0].message.content)
+    logger.error('Failed to parse stages JSON', {
+      error: parseError,
+      rawContent: completion.choices[0].message.content
+    })
     throw new Error(
       'Failed to parse AI response as JSON. The response may be incomplete or malformed.',
     )

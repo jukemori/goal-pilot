@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import { logger } from '@/lib/utils/logger'
 
 export async function signup(formData: FormData) {
   const supabase = await createClient()
@@ -22,7 +23,7 @@ export async function signup(formData: FormData) {
   })
 
   if (error) {
-    console.error('Signup error:', error)
+    logger.error('Signup error', { error, email })
     redirect('/error')
   }
 
@@ -36,7 +37,7 @@ export async function signup(formData: FormData) {
     })
 
     if (profileError) {
-      console.error('Profile creation error:', profileError)
+      logger.error('Profile creation error', { error: profileError, userId: authData.user.id })
       // Continue to dashboard even if profile creation fails
       // The dashboard layout will handle creating it
     }
