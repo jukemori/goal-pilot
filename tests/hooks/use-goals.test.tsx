@@ -4,7 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import React, { ReactNode } from 'react'
 import { server } from '@/tests/mocks/server'
 import { http, HttpResponse } from 'msw'
-import { useGoals, useGoal, useDeleteGoal, useUpdateGoalStatus } from '@/lib/hooks/use-goals'
+import { useGoals, useGoal, useDeleteGoal, useUpdateGoalStatus } from '@/features/goals/hooks/use-goals'
 
 // Mock sonner toast
 vi.mock('sonner', () => ({

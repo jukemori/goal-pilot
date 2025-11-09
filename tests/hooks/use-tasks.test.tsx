@@ -3,7 +3,7 @@ import { renderHook, waitFor } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import React, { ReactNode } from 'react'
 import { server } from '@/tests/mocks/server'
-import { useTasksByGoal } from '@/lib/hooks/use-tasks'
+import { useTasksByGoal } from '@/features/tasks/hooks/use-tasks'
 
 // Create a test wrapper with QueryClient
 const createWrapper = () => {
