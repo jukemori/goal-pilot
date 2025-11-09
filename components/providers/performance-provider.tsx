@@ -1,4 +1,5 @@
 'use client'
+import { logger } from '@/lib/utils/logger'
 
 import { PerformanceWidget } from '@/lib/utils/performance-monitor'
 import { useEffect } from 'react'
@@ -16,7 +17,7 @@ export function PerformanceProvider({
         for (const entry of list.getEntries()) {
           if (entry.entryType === 'navigation') {
             const nav = entry as PerformanceNavigationTiming
-            console.log('[Performance] Navigation Timing:', {
+            logger.debug('[Performance] Navigation Timing', {
               domContentLoaded: `${nav.domContentLoadedEventEnd - nav.domContentLoadedEventStart}ms`,
               loadComplete: `${nav.loadEventEnd - nav.loadEventStart}ms`,
               firstByte: `${nav.responseStart - nav.requestStart}ms`,
@@ -25,14 +26,13 @@ export function PerformanceProvider({
           }
 
           if (entry.entryType === 'paint') {
-            console.log(
-              `[Performance] ${entry.name}:`,
-              `${entry.startTime.toFixed(2)}ms`,
-            )
+            logger.debug(`[Performance] ${entry.name}`, {
+              time: `${entry.startTime.toFixed(2)}ms`
+            })
           }
 
           if (entry.entryType === 'largest-contentful-paint') {
-            console.log('[Performance] LCP:', `${entry.startTime.toFixed(2)}ms`)
+            logger.debug('[Performance] LCP', { time: `${entry.startTime.toFixed(2)}ms` })
           }
         }
       })
@@ -52,10 +52,9 @@ export function PerformanceProvider({
           0,
         )
 
-        console.log(
-          '[Performance] JavaScript Bundle Size:',
-          `${(totalJSSize / 1024).toFixed(2)}KB`,
-        )
+        logger.debug('[Performance] JavaScript Bundle Size', {
+          size: `${(totalJSSize / 1024).toFixed(2)}KB`
+        })
       }
 
       return () => observer.disconnect()

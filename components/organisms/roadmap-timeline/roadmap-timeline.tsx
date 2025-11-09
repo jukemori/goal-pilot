@@ -1,4 +1,5 @@
 'use client'
+import { logger } from '@/lib/utils/logger'
 
 import React from 'react'
 import { Card, CardHeader, CardTitle } from '@/components/atoms/card'
@@ -85,7 +86,7 @@ export function RoadmapTimeline({
   } = useQuery({
     queryKey: ['roadmap-visual', roadmapId],
     queryFn: async () => {
-      console.log('Fetching roadmap for visual view:', roadmapId)
+      logger.debug('Fetching roadmap for visual view', { roadmapId })
 
       // Get roadmap with AI plan and goal details
       const { data: roadmap, error: roadmapError } = await supabase
@@ -106,7 +107,7 @@ export function RoadmapTimeline({
         .single()
 
       if (roadmapError) {
-        console.error('Error fetching roadmap:', roadmapError)
+        logger.error('Error fetching roadmap', { error: roadmapError })
         throw roadmapError
       }
 

@@ -1,4 +1,5 @@
 'use client'
+import { logger } from '@/lib/utils/logger'
 
 import { Component, type PropsWithChildren, type ErrorInfo } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms/card'
@@ -32,7 +33,7 @@ export class ErrorBoundary extends Component<
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('Error caught by boundary:', error, errorInfo)
+    logger.error('Error caught by boundary', { error, errorInfo })
     this.props.onError?.(error, errorInfo)
   }
 

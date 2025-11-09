@@ -1,4 +1,5 @@
 'use client'
+import { logger } from '@/lib/utils/logger'
 
 import { useState } from 'react'
 import { Button } from '@/components/atoms/button'
@@ -31,7 +32,7 @@ export function DeleteGoalButton({ goalId, goalTitle }: DeleteGoalButtonProps) {
     try {
       await deleteGoal(goalId)
     } catch (error) {
-      console.error('Failed to delete goal:', error)
+      logger.error('Failed to delete goal', { error })
       setIsDeleting(false)
     }
   }
