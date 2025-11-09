@@ -1,6 +1,7 @@
 import { Sidebar } from '@/components/organisms/sidebar/sidebar'
 import { redirect } from 'next/navigation'
 import { ensureUserProfile } from '@/app/actions/auth'
+import { logger } from '@/lib/utils/logger'
 
 export default async function DashboardLayout({
   children,
@@ -11,7 +12,7 @@ export default async function DashboardLayout({
     // This will check auth and ensure user profile exists
     await ensureUserProfile()
   } catch (error) {
-    console.error('Auth error:', error)
+    logger.error('Auth error', { error })
     redirect('/login')
   }
 

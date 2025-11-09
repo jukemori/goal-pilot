@@ -1,4 +1,5 @@
 'use client'
+import { logger } from '@/lib/utils/logger'
 
 import { useState, useEffect } from 'react'
 import {
@@ -76,7 +77,7 @@ export default function SettingsPage() {
             }
           })
           .catch((error) => {
-            console.error('Error fetching profile:', error)
+            logger.error('Error fetching profile', { error })
           })
 
         // Handle preferences data as soon as it loads
@@ -91,13 +92,13 @@ export default function SettingsPage() {
             }
           })
           .catch((error) => {
-            console.error('Error fetching preferences:', error)
+            logger.error('Error fetching preferences', { error })
           })
 
         // Wait for both to complete before removing main loading state
         await Promise.allSettled([profilePromise, prefsPromise])
       } catch (error) {
-        console.error('Error fetching user data:', error)
+        logger.error('Error fetching user data', { error })
         toast.error('Failed to load user data')
       } finally {
         setLoading(false)
@@ -206,7 +207,7 @@ export default function SettingsPage() {
       toast.success('Password updated successfully')
     } catch (error) {
       toast.error('Failed to update password. Please try again.')
-      console.error('Password change error:', error)
+      logger.error('Password change error', { error })
     } finally {
       setChangingPassword(false)
     }

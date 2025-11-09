@@ -1,4 +1,5 @@
 'use client'
+import { logger } from '@/lib/utils/logger'
 
 import { createGoal } from '@/app/actions/goals'
 import { GoalForm } from '@/components/organisms/goal-form/goal-form'
@@ -59,7 +60,7 @@ export default function NewGoalPage() {
           sessionStorage.removeItem('selectedTemplate')
         }
       } catch (error) {
-        console.error('Error loading template:', error)
+        logger.error('Error loading template', { error })
       } finally {
         setIsLoadingTemplate(false)
       }
