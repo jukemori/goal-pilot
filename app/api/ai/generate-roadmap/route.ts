@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { openai, AI_MODELS } from '@/lib/ai/openai'
 import { generateRoadmapPrompt, ROADMAP_SYSTEM_PROMPT } from '@/lib/ai/prompts'
 import { Json, TablesInsert, Goal } from '@/types/database'
+import { logger } from '@/lib/utils/logger'
 
 export async function POST(request: NextRequest) {
   try {
@@ -48,7 +49,7 @@ export async function POST(request: NextRequest) {
 
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
-        console.log(`AI generation attempt ${attempt}/${maxRetries}`)
+        logger.debug(`AI generation attempt ${attempt}/${maxRetries}`)
 
         completion = await openai.chat.completions.create(
           {
@@ -72,20 +73,20 @@ export async function POST(request: NextRequest) {
         // If we get here, the request succeeded
         break
       } catch (error) {
-        console.error(`AI generation attempt ${attempt} failed:`, error)
+        logger.error(`AI generation attempt ${attempt} failed`, { error, attempt, maxRetries })
         lastError = error
 
         if (attempt < maxRetries) {
           // Optimized backoff: shorter delays for faster retries
           const waitTime = attempt * 500 // 500ms, 1000ms delays instead of 2s, 4s
-          console.log(`Retrying in ${waitTime}ms...`)
+          logger.debug(`Retrying AI generation`, { waitTime, attempt })
           await new Promise((resolve) => setTimeout(resolve, waitTime))
         }
       }
     }
 
     if (!completion) {
-      console.error('All AI generation attempts failed')
+      logger.error('All AI generation attempts failed', { lastError })
       throw lastError || new Error('AI generation failed after all retries')
     }
 
@@ -93,7 +94,7 @@ export async function POST(request: NextRequest) {
 
     try {
       let content = completion.choices[0].message.content!
-      console.log('API - Raw AI response length:', content.length)
+      logger.debug('API - Received AI response', { length: content.length })
 
       // Optimized JSON cleanup
       content = content.trim()
@@ -119,24 +120,21 @@ export async function POST(request: NextRequest) {
         !Array.isArray(roadmapData.phases) ||
         roadmapData.phases.length < 3
       ) {
-        console.error(
-          'API - Incomplete response: only',
-          roadmapData.phases?.length || 0,
-          'phases generated',
-        )
+        logger.error('API - Incomplete AI response', {
+          phasesGenerated: roadmapData.phases?.length || 0,
+          expected: '6-12'
+        })
         throw new Error(
           `Incomplete AI response: only ${roadmapData.phases?.length || 0} phases generated, expected 6-12`,
         )
       }
 
-      console.log(
-        'API - Complete response validated:',
-        roadmapData.phases.length,
-        'phases generated',
-      )
+      logger.debug('API - AI response validated', {
+        phasesGenerated: roadmapData.phases.length
+      })
     } catch (parseError) {
-      console.error('API - JSON parsing error:', parseError)
-      console.error('API - Raw content:', completion.choices[0].message.content)
+      logger.error('API - Failed to parse JSON', { error: parseError })
+      logger.error('API - Raw content', { content: completion.choices[0].message.content })
       return NextResponse.json(
         { error: 'Failed to parse AI response as JSON' },
         { status: 500 },
@@ -173,9 +171,10 @@ export async function POST(request: NextRequest) {
 
     // Create stage records only (no tasks initially)
     if (stageCreationPromise) {
-      console.log(
-        `Creating ${roadmapData.phases.length} stages for roadmap ${roadmap.id}`,
-      )
+      logger.debug('Creating stages for roadmap', {
+        phaseCount: roadmapData.phases.length,
+        roadmapId: roadmap.id
+      })
       try {
         const stageRecords = await stageCreationPromise
         await createProgressStagesFromRecords(
@@ -183,19 +182,19 @@ export async function POST(request: NextRequest) {
           roadmap.id,
           stageRecords,
         )
-        console.log('Stages created successfully')
+        logger.debug('Stages created successfully')
       } catch (stageError) {
-        console.error('Failed to create stages:', stageError)
+        logger.error('Failed to create stages', { error: stageError })
         // Continue anyway - stages can be created later
       }
       // Tasks will be generated on-demand per stage when user clicks "Generate Tasks"
     } else {
-      console.log('No stages found in roadmap data')
+      logger.debug('No stages found in roadmap data')
     }
 
     return NextResponse.json(roadmap)
   } catch (error) {
-    console.error('OpenAI API error:', error)
+    logger.error('OpenAI API error', { error })
     return NextResponse.json(
       { error: 'Failed to generate roadmap' },
       { status: 500 },
@@ -280,7 +279,7 @@ async function createProgressStagesFromRecords(
       roadmap_id: roadmapId,
     }))
 
-  console.log('Inserting stages:', recordsWithRoadmapId.length, 'stages')
+  logger.debug('Inserting stages', { stageCount: recordsWithRoadmapId.length })
 
   const { data, error } = await supabase
     .from('progress_stages')
@@ -288,9 +287,9 @@ async function createProgressStagesFromRecords(
     .select('*')
 
   if (error) {
-    console.error('Failed to create stages:', error)
+    logger.error('Failed to create stages', { error })
     throw error
   } else {
-    console.log('Successfully created stages:', data?.length)
+    logger.debug('Successfully created stages', { createdCount: data?.length })
   }
 }

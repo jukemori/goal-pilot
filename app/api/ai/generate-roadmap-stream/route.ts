@@ -1,4 +1,5 @@
 import { NextRequest } from 'next/server'
+import { logger } from '@/lib/utils/logger'
 import { createClient } from '@/lib/supabase/server'
 import { openai, AI_MODELS } from '@/lib/ai/openai'
 import { generateRoadmapPrompt, ROADMAP_SYSTEM_PROMPT } from '@/lib/ai/prompts'
@@ -138,7 +139,7 @@ export async function POST(request: NextRequest) {
           })}\n\n`))
           
         } catch (error) {
-          console.error('Streaming error:', error)
+          logger.error('Streaming error', { error })
           controller.enqueue(encoder.encode(`data: ${JSON.stringify({ 
             type: 'error', 
             error: 'Generation failed' 
@@ -158,7 +159,7 @@ export async function POST(request: NextRequest) {
     })
     
   } catch (error) {
-    console.error('API error:', error)
+    logger.error('API error', { error })
     return new Response(JSON.stringify({ error: 'Failed to start generation' }), { 
       status: 500,
       headers: { 'Content-Type': 'application/json' }

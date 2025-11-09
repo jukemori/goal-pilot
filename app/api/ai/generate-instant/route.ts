@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { logger } from '@/lib/utils/logger'
 import { createClient } from '@/lib/supabase/server'
 import { findMatchingTemplate } from '@/lib/ai/template-cache'
 import { Json } from '@/types/database'
@@ -32,7 +33,7 @@ export async function POST(request: NextRequest) {
     
     if (template) {
       // Use template for instant generation
-      console.log('Using template for instant generation:', goal.title)
+      logger.debug('Using template for instant generation', { goalTitle: goal.title })
       
       // Calculate total weeks and duration
       const totalWeeks = template.phases.reduce((sum, phase) => sum + phase.weeks, 0)
@@ -129,7 +130,7 @@ export async function POST(request: NextRequest) {
       message: 'No template available, use standard generation',
     })
   } catch (error) {
-    console.error('Instant generation error:', error)
+    logger.error('Instant generation error', { error })
     return NextResponse.json(
       { error: 'Failed to generate roadmap' },
       { status: 500 },

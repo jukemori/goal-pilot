@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { logger } from '@/lib/utils/logger'
 import { createClient } from '@/lib/supabase/server'
 import { openai, AI_MODELS } from '@/lib/ai/openai'
 import { Json, TablesInsert } from '@/types/database'
@@ -137,7 +138,7 @@ Return a JSON with:
 
     return NextResponse.json({ success: true })
   } catch (error) {
-    console.error('Fast stages generation error:', error)
+    logger.error('Fast stages generation error', { error })
     return NextResponse.json(
       { error: 'Failed to generate stages' },
       { status: 500 },

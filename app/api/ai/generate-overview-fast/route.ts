@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { logger } from '@/lib/utils/logger'
 import { createClient } from '@/lib/supabase/server'
 import { openai, AI_MODELS } from '@/lib/ai/openai'
 import { Json, TablesInsert } from '@/types/database'
@@ -109,7 +110,7 @@ export async function POST(request: NextRequest) {
       roadmapId: roadmap.id,
     })
   } catch (error) {
-    console.error('Fast overview generation error:', error)
+    logger.error('Fast overview generation error', { error })
     return NextResponse.json(
       { error: 'Failed to generate overview' },
       { status: 500 },
