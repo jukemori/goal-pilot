@@ -3,6 +3,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import type { ActionResult } from '@/types/actions'
+import { logger } from '@/lib/utils/logger'
 
 export async function completeTask(
   taskId: string,
@@ -31,7 +32,7 @@ export async function completeTask(
       .eq('id', taskId)
 
     if (error) {
-      console.error('Error completing task:', error)
+      logger.error('Failed to complete task', { error, taskId })
       return {
         success: false,
         error: 'Failed to complete task. Please try again.',
@@ -42,7 +43,7 @@ export async function completeTask(
     revalidatePath('/dashboard')
     return { success: true, data: undefined }
   } catch (error) {
-    console.error('Unexpected error in completeTask:', error)
+    logger.error('Unexpected error in completeTask', { error, taskId })
     return {
       success: false,
       error: 'An unexpected error occurred. Please try again.',
@@ -77,7 +78,7 @@ export async function uncompleteTask(
       .eq('id', taskId)
 
     if (error) {
-      console.error('Error uncompleting task:', error)
+      logger.error('Failed to uncomplete task', { error, taskId })
       return {
         success: false,
         error: 'Failed to uncomplete task. Please try again.',
@@ -88,7 +89,7 @@ export async function uncompleteTask(
     revalidatePath('/dashboard')
     return { success: true, data: undefined }
   } catch (error) {
-    console.error('Unexpected error in uncompleteTask:', error)
+    logger.error('Unexpected error in uncompleteTask', { error, taskId })
     return {
       success: false,
       error: 'An unexpected error occurred. Please try again.',
@@ -138,7 +139,7 @@ export async function rescheduleTask(
       .eq('id', taskId)
 
     if (error) {
-      console.error('Error rescheduling task:', error)
+      logger.error('Failed to reschedule task', { error, taskId, newDate })
       return {
         success: false,
         error: 'Failed to reschedule task. Please try again.',
@@ -148,7 +149,7 @@ export async function rescheduleTask(
     revalidatePath('/calendar')
     return { success: true, data: undefined }
   } catch (error) {
-    console.error('Unexpected error in rescheduleTask:', error)
+    logger.error('Unexpected error in rescheduleTask', { error, taskId, newDate })
     return {
       success: false,
       error: 'An unexpected error occurred. Please try again.',
@@ -183,7 +184,7 @@ export async function updateTaskDuration(
       .eq('id', taskId)
 
     if (error) {
-      console.error('Error updating task duration:', error)
+      logger.error('Failed to update task duration', { error, taskId, actualDuration })
       return {
         success: false,
         error: 'Failed to update task duration. Please try again.',
@@ -194,7 +195,7 @@ export async function updateTaskDuration(
     revalidatePath('/dashboard')
     return { success: true, data: undefined }
   } catch (error) {
-    console.error('Unexpected error in updateTaskDuration:', error)
+    logger.error('Unexpected error in updateTaskDuration', { error, taskId, actualDuration })
     return {
       success: false,
       error: 'An unexpected error occurred. Please try again.',

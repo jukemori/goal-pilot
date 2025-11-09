@@ -7,7 +7,7 @@ import { goalFormSchema } from '@/lib/validations/goal'
 import { generateRoadmapAsync } from './ai-async'
 import { ensureUserProfile } from './auth'
 import type { ActionResult } from '@/types/actions'
-import type { Tables } from '@/types/database'
+import { logger } from '@/lib/utils/logger'
 
 export async function createGoal(
   formData: FormData,
@@ -51,9 +51,9 @@ export async function createGoal(
           : null,
     }
 
-    console.log('Creating goal with data:', {
-      user_id: user.id,
-      ...goalData,
+    logger.debug('Creating goal', {
+      userId: user.id,
+      title: goalData.title,
     })
 
     // Create the goal
@@ -67,7 +67,7 @@ export async function createGoal(
       .single()
 
     if (error || !goal) {
-      console.error('Supabase error creating goal:', error)
+      logger.error('Failed to create goal', { error })
       return {
         success: false,
         error: 'Failed to create goal. Please try again.',
@@ -76,13 +76,13 @@ export async function createGoal(
 
     // Start AI roadmap generation asynchronously - don't wait for it
     generateRoadmapAsync(goal.id).catch((error) => {
-      console.error('Background roadmap generation failed:', error)
+      logger.error('Background roadmap generation failed', { error, goalId: goal.id })
     })
 
     revalidatePath('/dashboard')
     return { success: true, data: { goalId: goal.id } }
   } catch (error) {
-    console.error('Unexpected error in createGoal:', error)
+    logger.error('Unexpected error in createGoal', { error })
     return {
       success: false,
       error: 'An unexpected error occurred. Please try again.',
@@ -148,7 +148,7 @@ export async function updateGoal(
       .eq('user_id', user.id)
 
     if (error) {
-      console.error('Error updating goal:', error)
+      logger.error('Failed to update goal', { error, goalId })
       return {
         success: false,
         error: 'Failed to update goal. Please try again.',
@@ -159,7 +159,7 @@ export async function updateGoal(
     revalidatePath(`/goals/${goalId}`)
     return { success: true, data: { goalId } }
   } catch (error) {
-    console.error('Unexpected error in updateGoal:', error)
+    logger.error('Unexpected error in updateGoal', { error, goalId })
     return {
       success: false,
       error: 'An unexpected error occurred. Please try again.',
@@ -192,7 +192,7 @@ export async function deleteGoal(
       .eq('user_id', user.id)
 
     if (error) {
-      console.error('Error deleting goal:', error)
+      logger.error('Failed to delete goal', { error, goalId })
       return {
         success: false,
         error: 'Failed to delete goal. Please try again.',
@@ -203,7 +203,7 @@ export async function deleteGoal(
     revalidatePath('/goals')
     redirect('/goals')
   } catch (error) {
-    console.error('Unexpected error in deleteGoal:', error)
+    logger.error('Unexpected error in deleteGoal', { error, goalId })
     return {
       success: false,
       error: 'An unexpected error occurred. Please try again.',
