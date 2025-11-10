@@ -146,6 +146,9 @@ pnpm run check           # Run type-check, lint, and tests
 
 # Testing
 pnpm run test            # Run all tests once
+pnpm run test:watch      # Run tests in watch mode
+pnpm run test:ui         # Run tests with Vitest UI
+pnpm run test:coverage   # Run tests with coverage report
 
 # Utilities
 pnpm run clean           # Remove build artifacts and caches
@@ -165,6 +168,43 @@ SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 OPENAI_API_KEY=your_openai_api_key
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 ```
+
+## Testing
+
+Goal Pilot uses **Vitest** for testing with comprehensive test coverage across utilities, components, and hooks.
+
+### Running Tests
+
+```bash
+# Run all tests once
+pnpm run test
+
+# Run tests in watch mode (re-runs on file changes)
+pnpm run test:watch
+
+# Run tests with interactive UI
+pnpm run test:ui
+
+# Generate coverage report
+pnpm run test:coverage
+```
+
+### Test Coverage
+
+- **96 tests** across 11 test suites
+- **Unit tests** for utilities (date helpers, utils)
+- **Component tests** for atoms, molecules, and organisms
+- **Hook tests** for React Query hooks (goals, tasks)
+- **API tests** for API routes
+
+### Test Stack
+
+- **Vitest** - Fast unit test framework
+- **Testing Library** - React component testing
+- **MSW (Mock Service Worker)** - API mocking
+- **jsdom** - DOM implementation for Node.js
+
+All tests run automatically in pre-commit hooks via Husky and can be run manually with `pnpm run check` to verify type-check, lint, and tests together.
 
 ## Project Structure
 
