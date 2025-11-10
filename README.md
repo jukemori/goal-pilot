@@ -123,7 +123,8 @@ Experience the full functionality with our interactive demo deployment.
 pnpm install
 
 # Set up environment variables
-cp .env.local.example .env.local
+cp .env.example .env.local
+# Edit .env.local with your Supabase and OpenAI credentials
 
 # Start development server
 pnpm run dev
@@ -141,9 +142,13 @@ pnpm run start           # Start production server
 pnpm run lint            # Run ESLint
 pnpm run format          # Format with Prettier
 pnpm run type-check      # TypeScript checking
+pnpm run check           # Run type-check, lint, and tests
 
 # Testing
 pnpm run test            # Run all tests once
+
+# Utilities
+pnpm run clean           # Remove build artifacts and caches
 
 
 # Database (with Supabase CLI)
