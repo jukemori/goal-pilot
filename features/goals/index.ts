@@ -5,3 +5,4 @@ export {
   useDeleteGoal,
   useUpdateGoalStatus,
 } from './hooks/use-goals'
+export { useGoalForm } from './hooks/use-goal-form'
