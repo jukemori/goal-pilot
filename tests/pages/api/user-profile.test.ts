@@ -8,11 +8,11 @@ vi.mock('@/lib/supabase/server', () => ({
   createClient: vi.fn(() => ({
     auth: {
       getUser: vi.fn().mockResolvedValue({
-        data: { 
-          user: { 
+        data: {
+          user: {
             id: 'test-user-123',
-            email: 'test@example.com'
-          } 
+            email: 'test@example.com',
+          },
         },
         error: null,
       }),
@@ -61,7 +61,9 @@ describe('/api/user/profile API Routes', () => {
 
     it('should return 401 when user is not authenticated', async () => {
       // Mock unauthorized user
-      vi.mocked(await import('@/lib/supabase/server')).createClient.mockReturnValueOnce({
+      vi.mocked(
+        await import('@/lib/supabase/server'),
+      ).createClient.mockReturnValueOnce({
         auth: {
           getUser: vi.fn().mockResolvedValue({
             data: { user: null },
@@ -102,7 +104,9 @@ describe('/api/user/profile API Routes', () => {
 
     it('should return 401 when user is not authenticated for update', async () => {
       // Mock unauthorized user
-      vi.mocked(await import('@/lib/supabase/server')).createClient.mockReturnValueOnce({
+      vi.mocked(
+        await import('@/lib/supabase/server'),
+      ).createClient.mockReturnValueOnce({
         auth: {
           getUser: vi.fn().mockResolvedValue({
             data: { user: null },

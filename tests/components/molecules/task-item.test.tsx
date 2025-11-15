@@ -70,7 +70,9 @@ describe('TaskItem Component', () => {
     expect(title).toHaveClass('line-through')
 
     // Should show completion time - look for any completion time
-    expect(screen.getByText(/Completed \d{1,2}:\d{2} [AP]M/i)).toBeInTheDocument()
+    expect(
+      screen.getByText(/Completed \d{1,2}:\d{2} [AP]M/i),
+    ).toBeInTheDocument()
   })
 
   it('renders without description when not provided', () => {
@@ -87,7 +89,7 @@ describe('TaskItem Component', () => {
 
   it('shows correct priority badges', () => {
     const { rerender } = render(
-      <TaskItem task={createMockTask({ priority: 5 })} />
+      <TaskItem task={createMockTask({ priority: 5 })} />,
     )
     expect(screen.getByText('Critical')).toBeInTheDocument()
 

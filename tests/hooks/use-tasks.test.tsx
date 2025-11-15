@@ -28,14 +28,14 @@ describe('useTasksByGoal Hook', () => {
 
   it('should fetch tasks successfully', async () => {
     const wrapper = createWrapper()
-    
+
     const { result } = renderHook(() => useTasksByGoal('test-goal-123'), {
       wrapper,
     })
 
     // Initially might be loading
     expect(result.current.isLoading).toBe(true)
-    
+
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false)
       expect(result.current.data).toBeDefined()
@@ -44,7 +44,7 @@ describe('useTasksByGoal Hook', () => {
 
   it('should handle loading state', () => {
     const wrapper = createWrapper()
-    
+
     const { result } = renderHook(() => useTasksByGoal('test-goal-123'), {
       wrapper,
     })
@@ -56,7 +56,7 @@ describe('useTasksByGoal Hook', () => {
   it('should handle error state', async () => {
     // You can override MSW handlers for specific tests
     const wrapper = createWrapper()
-    
+
     const { result } = renderHook(() => useTasksByGoal('invalid-goal'), {
       wrapper,
     })

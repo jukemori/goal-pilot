@@ -39,7 +39,7 @@ function AllTheProviders({ children }: { children: ReactNode }) {
 // Custom render function that includes providers
 const customRender = (
   ui: ReactElement,
-  options?: Omit<RenderOptions, 'wrapper'>
+  options?: Omit<RenderOptions, 'wrapper'>,
 ) => render(ui, { wrapper: AllTheProviders, ...options })
 
 // Re-export everything
@@ -66,7 +66,9 @@ export interface TaskWithRoadmap extends MockTask {
 }
 
 // Helper functions for testing
-export const createMockUser = (overrides: Partial<MockUser> = {}): MockUser => ({
+export const createMockUser = (
+  overrides: Partial<MockUser> = {},
+): MockUser => ({
   id: 'test-user-123',
   email: 'test@example.com',
   name: 'Test User',
@@ -76,7 +78,9 @@ export const createMockUser = (overrides: Partial<MockUser> = {}): MockUser => (
   ...overrides,
 })
 
-export const createMockGoal = (overrides: Partial<MockGoal> = {}): MockGoal => ({
+export const createMockGoal = (
+  overrides: Partial<MockGoal> = {},
+): MockGoal => ({
   id: 'test-goal-123',
   user_id: 'test-user-123',
   title: 'Test Goal',
@@ -101,7 +105,9 @@ export const createMockGoal = (overrides: Partial<MockGoal> = {}): MockGoal => (
   ...overrides,
 })
 
-export const createMockTask = (overrides: Partial<MockTask> = {}): MockTask => ({
+export const createMockTask = (
+  overrides: Partial<MockTask> = {},
+): MockTask => ({
   id: 'test-task-123',
   roadmap_id: 'test-roadmap-123',
   title: 'Test Task',
@@ -123,4 +129,4 @@ export const createMockTask = (overrides: Partial<MockTask> = {}): MockTask => (
 
 // Wait for elements to appear/disappear
 export const waitForLoadingToFinish = () =>
-  new Promise(resolve => setTimeout(resolve, 0))
+  new Promise((resolve) => setTimeout(resolve, 0))

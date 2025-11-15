@@ -11,13 +11,13 @@ describe('Utils', () => {
     it('handles conditional classes', () => {
       const isActive = true
       const isDisabled = false
-      
+
       const result = cn(
         'base-class',
         isActive && 'active',
-        isDisabled && 'disabled'
+        isDisabled && 'disabled',
       )
-      
+
       expect(result).toBe('base-class active')
     })
 
@@ -35,10 +35,10 @@ describe('Utils', () => {
     it('handles objects with conditional classes', () => {
       const result = cn({
         'base-class': true,
-        'active': true,
-        'disabled': false,
+        active: true,
+        disabled: false,
       })
-      
+
       expect(result).toBe('base-class active')
     })
 
@@ -48,9 +48,9 @@ describe('Utils', () => {
         undefined,
         null,
         false && 'hidden',
-        'visible'
+        'visible',
       )
-      
+
       expect(result).toBe('base-class visible')
     })
 
@@ -64,9 +64,9 @@ describe('Utils', () => {
       const result = cn(
         'bg-red-500 text-white p-4',
         'bg-blue-500 p-6', // Conflicting bg and padding
-        'hover:bg-green-500'
+        'hover:bg-green-500',
       )
-      
+
       // Should resolve conflicts: blue background and p-6 should win
       expect(result).toContain('bg-blue-500')
       expect(result).toContain('p-6')

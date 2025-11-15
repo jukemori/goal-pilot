@@ -12,8 +12,16 @@ export const mockRoadmaps: Tables<'roadmaps'>[] = [
           title: 'HTML & CSS Fundamentals',
           description: 'Master the building blocks of web development',
           duration_weeks: 4,
-          skills_to_learn: ['HTML5 semantic elements', 'CSS Box Model', 'Flexbox', 'Grid'],
-          learning_objectives: ['Build responsive layouts', 'Understand CSS specificity'],
+          skills_to_learn: [
+            'HTML5 semantic elements',
+            'CSS Box Model',
+            'Flexbox',
+            'Grid',
+          ],
+          learning_objectives: [
+            'Build responsive layouts',
+            'Understand CSS specificity',
+          ],
           outcomes: ['Create a portfolio website'],
         },
         {
@@ -21,8 +29,16 @@ export const mockRoadmaps: Tables<'roadmaps'>[] = [
           title: 'JavaScript Essentials',
           description: 'Learn JavaScript programming fundamentals',
           duration_weeks: 6,
-          skills_to_learn: ['Variables and data types', 'Functions', 'DOM manipulation', 'ES6+ features'],
-          learning_objectives: ['Write interactive web applications', 'Handle user events'],
+          skills_to_learn: [
+            'Variables and data types',
+            'Functions',
+            'DOM manipulation',
+            'ES6+ features',
+          ],
+          learning_objectives: [
+            'Write interactive web applications',
+            'Handle user events',
+          ],
           outcomes: ['Build interactive web components'],
         },
       ],

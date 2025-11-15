@@ -1,7 +1,8 @@
 import { http, HttpResponse } from 'msw'
 import { mockUser } from '../data/users'
 
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://localhost:54321'
+const SUPABASE_URL =
+  process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://localhost:54321'
 
 export const authHandlers = [
   // Get user session
@@ -18,8 +19,8 @@ export const authHandlers = [
 
   // Sign in
   http.post(`${SUPABASE_URL}/auth/v1/token`, async ({ request }) => {
-    const body = await request.json() as any
-    
+    const body = (await request.json()) as any
+
     if (body.grant_type === 'password') {
       return HttpResponse.json({
         access_token: 'mock-access-token',
@@ -30,10 +31,7 @@ export const authHandlers = [
       })
     }
 
-    return HttpResponse.json(
-      { error: 'Invalid credentials' },
-      { status: 400 }
-    )
+    return HttpResponse.json({ error: 'Invalid credentials' }, { status: 400 })
   }),
 
   // Sign out

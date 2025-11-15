@@ -72,7 +72,7 @@ describe('SimpleTaskList Component', () => {
     // Should show statistics about tasks - use more specific selectors
     const totalTasksElements = screen.getAllByText('2')
     const completedTasksElements = screen.getAllByText('1')
-    
+
     expect(totalTasksElements.length).toBeGreaterThan(0) // Total tasks appears in multiple places
     expect(completedTasksElements.length).toBeGreaterThan(0) // Completed tasks
   })
@@ -96,9 +96,9 @@ describe('SimpleTaskList Component', () => {
     render(<SimpleTaskList tasks={mockTasks} goalId="test-goal" />)
 
     // Find the incomplete task checkbox by looking for buttons with the checkbox div
-    const taskCheckboxes = screen.getAllByRole('button').filter(button => 
-      button.querySelector('div.border-gray-300')
-    )
+    const taskCheckboxes = screen
+      .getAllByRole('button')
+      .filter((button) => button.querySelector('div.border-gray-300'))
     const incompleteTaskCheckbox = taskCheckboxes.find((checkbox) =>
       checkbox.closest('div')?.textContent?.includes('Complete HTML Tutorial'),
     )
