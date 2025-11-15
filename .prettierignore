@@ -1,7 +1,6 @@
 # Dependencies
 node_modules/
-bun.lockb
-bun.lock
+pnpm-lock.yaml
 package-lock.json
 yarn.lock
 
@@ -50,3 +49,9 @@ coverage/
 
 # Cache
 .eslintcache 
+
+# Ts
+tsconfig.json
+
+# Vitest
+vitest.config.mts
