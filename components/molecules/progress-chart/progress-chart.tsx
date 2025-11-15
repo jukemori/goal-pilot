@@ -121,7 +121,6 @@ export function ProgressChart({ tasks }: ProgressChartProps) {
     if (isClient) {
       setCurrentStreak(getStreak())
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isClient, tasks])
 
   return (

@@ -4,7 +4,6 @@ import { useCalendarState } from '@/features/calendar/hooks/use-calendar-state'
 import { CalendarGrid } from './calendar-grid'
 import { CalendarSidebar } from './calendar-sidebar'
 
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface CalendarViewProps {
   // Empty interface for future props
 }
