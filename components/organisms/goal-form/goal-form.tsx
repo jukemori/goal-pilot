@@ -30,9 +30,10 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { LoadingSpinner, PulsingDots } from '@/components/atoms/loading-spinner'
 import { AIGenerationOverlay } from '@/components/molecules/ai-generation-overlay'
 import { Target, Calendar } from 'lucide-react'
+import type { ActionResult } from '@/types/actions'
 
 interface GoalFormProps {
-  onSubmit: (data: FormData) => Promise<{ success: boolean; goalId?: string }>
+  onSubmit: (data: FormData) => Promise<ActionResult<{ goalId: string }>>
   defaultValues?: Partial<GoalFormData>
   isEdit?: boolean
 }
@@ -140,8 +141,8 @@ export function GoalForm({
       const result = await onSubmit(formData)
 
       if (result.success) {
-        if (result.goalId) {
-          router.push(`/goals/${result.goalId}`)
+        if (result.data?.goalId) {
+          router.push(`/goals/${result.data.goalId}`)
         }
       } else {
         toast.error(isEdit ? 'Failed to update goal' : 'Failed to create goal')
