@@ -23,7 +23,6 @@ Displays a visual timeline of learning phases for a roadmap.
 
 ```tsx
 import { RoadmapTimeline } from '@/components/organisms/roadmap-timeline/roadmap-timeline'
-
 ;<RoadmapTimeline roadmapId="uuid-here" goalId="uuid-here" />
 ```
 
@@ -53,7 +52,6 @@ Displays a list of tasks with filtering and completion controls.
 
 ```tsx
 import { TaskList } from '@/components/organisms/task-list/task-list'
-
 ;<TaskList
   tasks={tasks}
   onTaskComplete={handleComplete}
@@ -86,7 +84,6 @@ Interactive calendar with task scheduling and visualization.
 
 ```tsx
 import { CalendarView } from '@/components/organisms/calendar/calendar-view'
-
 ;<CalendarView
   selectedDate={date}
   onDateSelect={handleDateSelect}
@@ -119,7 +116,6 @@ Form for creating and editing goals.
 
 ```tsx
 import { GoalForm } from '@/components/organisms/goal-form/goal-form'
-
 ;<GoalForm
   onSubmit={handleSubmit}
   initialData={existingGoal}
@@ -153,7 +149,6 @@ Application navigation sidebar.
 
 ```tsx
 import { Sidebar } from '@/components/organisms/sidebar/sidebar'
-
 ;<Sidebar />
 ```
 
@@ -176,7 +171,6 @@ Tab interface for goal views (Overview, Roadmap, Tasks).
 
 ```tsx
 import { GoalTabs } from '@/components/organisms/goal-tabs/goal-tabs'
-
 ;<GoalTabs goalId={goalId} activeTab="roadmap" onTabChange={handleTabChange} />
 ```
 
@@ -200,7 +194,6 @@ Individual task display component.
 
 ```tsx
 import { TaskItem } from '@/components/molecules/task-item'
-
 ;<TaskItem
   task={task}
   onComplete={handleComplete}
@@ -233,7 +226,6 @@ Button component for deleting goals with confirmation.
 
 ```tsx
 import { DeleteGoalButton } from '@/components/molecules/delete-goal-button'
-
 ;<DeleteGoalButton goalId={goalId} onSuccess={handleDeleted} />
 ```
 
@@ -262,7 +254,6 @@ Primary button component with variants.
 
 ```tsx
 import { Button } from '@/components/atoms/button'
-
 ;<Button variant="default" size="md" onClick={handleClick}>
   Click Me
 </Button>
@@ -300,7 +291,6 @@ import {
   CardTitle,
   CardContent,
 } from '@/components/atoms/card'
-
 ;<Card>
   <CardHeader>
     <CardTitle>Title</CardTitle>
@@ -330,7 +320,6 @@ Text input component with variants.
 
 ```tsx
 import { Input } from '@/components/atoms/input'
-
 ;<Input
   type="text"
   placeholder="Enter text"
@@ -358,7 +347,6 @@ Small status indicator component.
 
 ```tsx
 import { Badge } from '@/components/atoms/badge'
-
 ;<Badge variant="default">Status</Badge>
 ```
 
@@ -386,7 +374,6 @@ Provides performance monitoring context.
 
 ```tsx
 import { PerformanceProvider } from '@/components/providers/performance-provider'
-
 ;<PerformanceProvider>
   <App />
 </PerformanceProvider>
@@ -444,7 +431,6 @@ Components use Tailwind CSS with the `cn()` utility for conditional classes:
 
 ```tsx
 import { cn } from '@/lib/utils'
-
 ;<div className={cn('base-class', condition && 'conditional-class')} />
 ```
 
@@ -460,7 +446,6 @@ Wrap components in ErrorBoundary for graceful error handling:
 
 ```tsx
 import { ErrorBoundary } from '@/components/error-boundary'
-
 ;<ErrorBoundary>
   <YourComponent />
 </ErrorBoundary>

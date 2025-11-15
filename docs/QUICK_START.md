@@ -7,6 +7,7 @@
 ## 📍 Where Are We Now?
 
 ### ✅ COMPLETED (Phases 1 & 3)
+
 - All console statements removed (102 → 0)
 - Structured logging implemented
 - Error handling standardized
@@ -16,10 +17,12 @@
 - Components refactored (no inline queries)
 
 ### 🔄 IN PROGRESS (Phase 2)
+
 - Need to consolidate duplicate AI functions
 - Working on: `app/actions/ai.ts` and `app/actions/ai-async.ts`
 
 ### ⏳ TODO NEXT (Phase 4)
+
 - Add ESLint rules
 - Pre-commit hooks
 - Better documentation
@@ -40,13 +43,13 @@ docs/
 
 ### Which Doc to Read?
 
-| I want to... | Read this |
-|--------------|-----------|
-| See current progress | [REFACTORING_PROGRESS.md](./REFACTORING_PROGRESS.md) |
-| Know what's next | [REFACTORING_PROGRESS.md](./REFACTORING_PROGRESS.md) |
-| Understand code structure | [ARCHITECTURE_GUIDE.md](./ARCHITECTURE_GUIDE.md) |
-| Learn coding patterns | [REFACTORING_BEST_PRACTICES.md](./REFACTORING_BEST_PRACTICES.md) |
-| See full plan | [REFACTORING_PLAN.md](./REFACTORING_PLAN.md) |
+| I want to...              | Read this                                                        |
+| ------------------------- | ---------------------------------------------------------------- |
+| See current progress      | [REFACTORING_PROGRESS.md](./REFACTORING_PROGRESS.md)             |
+| Know what's next          | [REFACTORING_PROGRESS.md](./REFACTORING_PROGRESS.md)             |
+| Understand code structure | [ARCHITECTURE_GUIDE.md](./ARCHITECTURE_GUIDE.md)                 |
+| Learn coding patterns     | [REFACTORING_BEST_PRACTICES.md](./REFACTORING_BEST_PRACTICES.md) |
+| See full plan             | [REFACTORING_PLAN.md](./REFACTORING_PLAN.md)                     |
 
 ---
 
@@ -55,6 +58,7 @@ docs/
 **Task:** Consolidate duplicate AI generation functions
 
 **Files to merge:**
+
 - `app/actions/ai.ts`
 - `app/actions/ai-async.ts`
 
@@ -64,20 +68,21 @@ docs/
 
 ## 📊 Key Metrics
 
-| Metric | Before | After | Status |
-|--------|--------|-------|--------|
-| Console statements | 102 | 0 | ✅ |
-| Duplicate components | 2 | 0 | ✅ |
-| TypeScript strict | ~90% | 100% | ✅ |
-| Feature-based structure | No | Yes | ✅ |
-| React Query optimized | No | Yes | ✅ |
-| Build status | Passing | Passing | ✅ |
+| Metric                  | Before  | After   | Status |
+| ----------------------- | ------- | ------- | ------ |
+| Console statements      | 102     | 0       | ✅     |
+| Duplicate components    | 2       | 0       | ✅     |
+| TypeScript strict       | ~90%    | 100%    | ✅     |
+| Feature-based structure | No      | Yes     | ✅     |
+| React Query optimized   | No      | Yes     | ✅     |
+| Build status            | Passing | Passing | ✅     |
 
 ---
 
 ## 🏗️ Code Organization
 
 ### Current Structure
+
 ```
 app/
   actions/           # Server actions (being moved to features/)
@@ -104,20 +109,21 @@ lib/               # Shared utilities
 
 ### Where Code Lives Now
 
-| Type | Location | Example |
-|------|----------|---------|
-| Roadmap UI | `features/roadmap/components/` | progress-stages.tsx |
-| Roadmap hooks | `features/roadmap/hooks/` | useProgressStages |
-| Goal hooks | `features/goals/hooks/` | useGoals |
-| Task hooks | `features/tasks/hooks/` | useTasks |
-| Shared UI | `components/` | atoms, molecules |
-| Utilities | `lib/utils/` | logger.ts |
+| Type          | Location                       | Example             |
+| ------------- | ------------------------------ | ------------------- |
+| Roadmap UI    | `features/roadmap/components/` | progress-stages.tsx |
+| Roadmap hooks | `features/roadmap/hooks/`      | useProgressStages   |
+| Goal hooks    | `features/goals/hooks/`        | useGoals            |
+| Task hooks    | `features/tasks/hooks/`        | useTasks            |
+| Shared UI     | `components/`                  | atoms, molecules    |
+| Utilities     | `lib/utils/`                   | logger.ts           |
 
 ---
 
 ## 🔍 Recent Changes (Last 2 Weeks)
 
 **Big Wins:**
+
 1. Extracted all Supabase queries to hooks
 2. Roadmap-timeline: 267 lines → 189 lines (cleaner!)
 3. Progress-stages: Now uses 3 separate hooks
@@ -133,6 +139,7 @@ lib/               # Shared utilities
 ## 💡 Key Patterns to Follow
 
 ### Data Fetching
+
 ```typescript
 // ✅ GOOD - Use hooks
 import { useProgressStages } from '@/features/roadmap/hooks/use-progress-stages'
@@ -152,6 +159,7 @@ function MyComponent() {
 ```
 
 ### Logging
+
 ```typescript
 // ✅ GOOD - Use logger
 import { logger } from '@/lib/utils/logger'
@@ -160,10 +168,11 @@ logger.error('Something failed', { error, context })
 
 ```typescript
 // ❌ BAD - Console
-console.log('Debug info')  // Never use in production code!
+console.log('Debug info') // Never use in production code!
 ```
 
 ### Server Actions
+
 ```typescript
 // ✅ GOOD - Return ActionResult
 export async function myAction(): Promise<ActionResult<Data>> {
@@ -197,7 +206,8 @@ export async function myAction(): Promise<ActionResult<Data>> {
 
 ---
 
-**Remember:** 
+**Remember:**
+
 - Always use Serena tools for refactoring
 - Test build after changes
 - Follow existing patterns

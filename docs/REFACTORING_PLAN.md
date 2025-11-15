@@ -15,12 +15,12 @@
 
 ## 📊 Current Status At-A-Glance
 
-| Phase | Status | Details |
-|-------|--------|---------|
-| Phase 1: Code Quality | ✅ **COMPLETE** | See [Progress Doc](./REFACTORING_PROGRESS.md#phase-1-code-quality) |
-| Phase 2: Architecture | 🔄 **60% Done** | See [Progress Doc](./REFACTORING_PROGRESS.md#phase-2-architecture) |
-| Phase 3: Performance | ✅ **COMPLETE** | See [Progress Doc](./REFACTORING_PROGRESS.md#phase-3-performance) |
-| Phase 4: DevEx | ⏳ **Planned** | See [Progress Doc](./REFACTORING_PROGRESS.md#phase-4-developer-experience) |
+| Phase                 | Status          | Details                                                                    |
+| --------------------- | --------------- | -------------------------------------------------------------------------- |
+| Phase 1: Code Quality | ✅ **COMPLETE** | See [Progress Doc](./REFACTORING_PROGRESS.md#phase-1-code-quality)         |
+| Phase 2: Architecture | 🔄 **60% Done** | See [Progress Doc](./REFACTORING_PROGRESS.md#phase-2-architecture)         |
+| Phase 3: Performance  | ✅ **COMPLETE** | See [Progress Doc](./REFACTORING_PROGRESS.md#phase-3-performance)          |
+| Phase 4: DevEx        | ⏳ **Planned**  | See [Progress Doc](./REFACTORING_PROGRESS.md#phase-4-developer-experience) |
 
 **👉 [View Detailed Progress Tracker](./REFACTORING_PROGRESS.md)**
 
@@ -31,6 +31,7 @@
 This document outlines a comprehensive, phased refactoring plan for the Goal Pilot application. The plan addresses code quality, architecture, performance, and maintainability issues identified through codebase analysis.
 
 **Key Findings:**
+
 - 150+ console.log/error statements in production code
 - Duplicate/parallel server action implementations (3 versions of goal creation)
 - Extensive error handling inconsistencies
@@ -71,6 +72,7 @@ This document outlines a comprehensive, phased refactoring plan for the Goal Pil
 ### 1.1 Logging & Debugging Cleanup
 
 #### Issues
+
 - 150+ console.log/error statements throughout codebase
 - Production code contains debugging statements
 - Inconsistent error logging patterns
@@ -93,10 +95,18 @@ This document outlines a comprehensive, phased refactoring plan for the Goal Pil
     ```typescript
     // lib/utils/logger.ts
     export const logger = {
-      error: (message: string, context?: object) => { /* ... */ },
-      warn: (message: string, context?: object) => { /* ... */ },
-      info: (message: string, context?: object) => { /* ... */ },
-      debug: (message: string, context?: object) => { /* ... */ }
+      error: (message: string, context?: object) => {
+        /* ... */
+      },
+      warn: (message: string, context?: object) => {
+        /* ... */
+      },
+      info: (message: string, context?: object) => {
+        /* ... */
+      },
+      debug: (message: string, context?: object) => {
+        /* ... */
+      },
     }
     ```
 
@@ -106,6 +116,7 @@ This document outlines a comprehensive, phased refactoring plan for the Goal Pil
   - User-friendly error messages vs. internal logging
 
 **Files to Update:**
+
 ```
 app/actions/ai.ts (20+ console statements)
 app/actions/ai-async.ts (10+ statements)
@@ -121,6 +132,7 @@ lib/hooks/use-roadmap-generation.ts
 ### 1.2 Error Handling Standardization
 
 #### Issues
+
 - Inconsistent error throwing patterns
 - Generic error messages without context
 - No error boundary implementation in critical paths
@@ -131,22 +143,23 @@ lib/hooks/use-roadmap-generation.ts
 **Priority: P0**
 
 - [ ] **Create standardized error types** (1 day)
+
   ```typescript
   // lib/errors/index.ts
   export class GoalPilotError extends Error {
     constructor(
       message: string,
       public code: string,
-      public context?: object
+      public context?: object,
     ) {
       super(message)
     }
   }
 
-  export class DatabaseError extends GoalPilotError { }
-  export class AIGenerationError extends GoalPilotError { }
-  export class AuthenticationError extends GoalPilotError { }
-  export class ValidationError extends GoalPilotError { }
+  export class DatabaseError extends GoalPilotError {}
+  export class AIGenerationError extends GoalPilotError {}
+  export class AuthenticationError extends GoalPilotError {}
+  export class ValidationError extends GoalPilotError {}
   ```
 
 - [ ] **Standardize error handling in server actions** (3 days)
@@ -160,6 +173,7 @@ lib/hooks/use-roadmap-generation.ts
   - AI generation error boundary with retry logic
 
 **Example Pattern:**
+
 ```typescript
 // Before
 export async function createGoal(data: GoalInput) {
@@ -181,8 +195,8 @@ export async function createGoal(data: GoalInput): Promise<Result<Goal>> {
         success: false,
         error: new DatabaseError('Failed to create goal', 'DB_INSERT_FAILED', {
           table: 'goals',
-          originalError: error
-        })
+          originalError: error,
+        }),
       }
     }
     return { success: true, data: goal }
@@ -198,6 +212,7 @@ export async function createGoal(data: GoalInput): Promise<Result<Goal>> {
 ### 1.3 TypeScript Type Safety Improvements
 
 #### Issues
+
 - Use of `any` type in Supabase client (1 occurrence)
 - Type assertions with `as unknown as Type` patterns
 - Missing proper type guards
@@ -220,15 +235,18 @@ export async function createGoal(data: GoalInput): Promise<Result<Goal>> {
   - Use Zod schemas for AI JSON responses
   - Validate before type casting
   - Example:
+
     ```typescript
     import { z } from 'zod'
 
     const RoadmapSchema = z.object({
-      phases: z.array(z.object({
-        title: z.string(),
-        duration_weeks: z.number(),
-        // ...
-      }))
+      phases: z.array(
+        z.object({
+          title: z.string(),
+          duration_weeks: z.number(),
+          // ...
+        }),
+      ),
     })
 
     const validated = RoadmapSchema.safeParse(aiResponse)
@@ -248,6 +266,7 @@ export async function createGoal(data: GoalInput): Promise<Result<Goal>> {
 ### 2.0 Feature-Based Architecture Migration
 
 #### Issues
+
 - **Business logic mixed with UI components**
   - `progress-stages.tsx` has Supabase queries + mutations
   - `roadmap-timeline.tsx` has data fetching inline
@@ -309,6 +328,7 @@ export async function createGoal(data: GoalInput): Promise<Result<Goal>> {
 ### 2.1 Consolidate Duplicate Server Actions
 
 #### Issues
+
 - **3 parallel implementations** of goal creation:
   - `app/actions/goals.ts` - Original
   - `app/actions/goals-async.ts` - Async variant
@@ -334,7 +354,7 @@ export async function createGoal(data: GoalInput): Promise<Result<Goal>> {
     options: {
       strategy: 'instant' | 'async' | 'legacy'
       templateId?: string
-    }
+    },
   ): Promise<Result<Goal>> {
     // Unified implementation
   }
@@ -355,6 +375,7 @@ export async function createGoal(data: GoalInput): Promise<Result<Goal>> {
   - Move to `lib/utils/`
 
 **Files to Refactor:**
+
 ```
 app/actions/goals.ts → app/actions/goals/create.ts
 app/actions/goals-async.ts → DELETE
@@ -368,6 +389,7 @@ app/actions/ai-async.ts → DELETE
 ### 2.2 API Route Organization
 
 #### Issues
+
 - Nested API routes with unclear purpose
 - Duplicate logic between API routes and server actions
 - Inconsistent response formats
@@ -377,6 +399,7 @@ app/actions/ai-async.ts → DELETE
 **Priority: P1**
 
 - [ ] **Standardize API response format** (2 days)
+
   ```typescript
   // lib/api/response.ts
   export type ApiResponse<T> = {
@@ -406,6 +429,7 @@ app/actions/ai-async.ts → DELETE
 ### 2.3 Component Architecture Improvements
 
 #### Issues
+
 - Mixed client/server component boundaries
 - Unclear component responsibility (organisms/molecules)
 - Some components doing too much
@@ -441,6 +465,7 @@ app/actions/ai-async.ts → DELETE
 ### 3.1 React Query Optimization
 
 #### Issues
+
 - Over-invalidation of caches
 - Multiple cache invalidations for same mutation
 - Missing optimistic updates
@@ -463,7 +488,7 @@ app/actions/ai-async.ts → DELETE
 
   // Optimized
   queryClient.invalidateQueries({
-    queryKey: ['tasks', { goalId, date }]
+    queryKey: ['tasks', { goalId, date }],
   })
   ```
 
@@ -482,6 +507,7 @@ app/actions/ai-async.ts → DELETE
 ### 3.2 AI Generation Performance
 
 #### Issues
+
 - Long wait times for roadmap generation
 - Retry logic with exponential backoff can be slow
 - No progress indication for users during multi-step generation
@@ -517,6 +543,7 @@ app/actions/ai-async.ts → DELETE
 ### 3.3 Database Query Optimization
 
 #### Issues
+
 - Potential N+1 queries
 - Missing database indexes
 - Suboptimal query patterns
@@ -590,6 +617,7 @@ app/actions/ai-async.ts → DELETE
 **Priority: P2**
 
 - [ ] **Organize action files** (2 days)
+
   ```
   app/actions/
     goals/
@@ -695,10 +723,12 @@ app/actions/ai-async.ts → DELETE
    - Use `find_referencing_symbols` to check impact of changes
 
 2. **Test build after EACH refactoring task**
+
    ```bash
    pnpm run type-check
    pnpm run build
    ```
+
    - Fix any TypeScript errors immediately
    - Ensure build completes successfully
    - Check for any runtime warnings
@@ -743,6 +773,7 @@ Before merging any refactoring PR:
 ## Success Metrics
 
 ### Phase 1 Success Criteria
+
 - ✅ Zero console.log in production build
 - ✅ <5 console.error statements (only for critical errors)
 - ✅ All server actions return standardized responses
@@ -750,18 +781,21 @@ Before merging any refactoring PR:
 - ✅ Error tracking service integrated
 
 ### Phase 2 Success Criteria
+
 - ✅ Single goal creation function (3 files merged to 1)
 - ✅ <10 API routes (down from 15+)
 - ✅ All components properly categorized
 - ✅ <5 'use client' directives in app directory
 
 ### Phase 3 Success Criteria
+
 - ✅ 50% reduction in cache invalidations
 - ✅ AI generation <30s for 80% of requests
 - ✅ Template usage >40% of goal creations
 - ✅ All database queries <100ms
 
 ### Phase 4 Success Criteria
+
 - ✅ >60% code coverage for critical paths
 - ✅ Pre-commit hooks active
 - ✅ API documentation complete
@@ -789,13 +823,13 @@ Before merging any refactoring PR:
 
 ## Estimated Timeline
 
-| Phase | Duration | Dependencies | Team Size |
-|-------|----------|--------------|-----------|
-| Phase 1 | 1-2 weeks | None | 1-2 devs |
-| Phase 2 | 3-4 weeks | Phase 1 recommended | 2 devs |
-| Phase 3 | 2-3 weeks | Phase 2 recommended | 1-2 devs |
-| Phase 4 | 2-3 weeks | Can run parallel | 1 dev |
-| Phase 5 | Ongoing | Phases 1-2 | As needed |
+| Phase   | Duration  | Dependencies        | Team Size |
+| ------- | --------- | ------------------- | --------- |
+| Phase 1 | 1-2 weeks | None                | 1-2 devs  |
+| Phase 2 | 3-4 weeks | Phase 1 recommended | 2 devs    |
+| Phase 3 | 2-3 weeks | Phase 2 recommended | 1-2 devs  |
+| Phase 4 | 2-3 weeks | Can run parallel    | 1 dev     |
+| Phase 5 | Ongoing   | Phases 1-2          | As needed |
 
 **Total Core Refactoring Time:** 8-12 weeks with 2 developers
 
@@ -804,6 +838,7 @@ Before merging any refactoring PR:
 ## Risk Assessment
 
 ### High Risk Items
+
 - **AI generation consolidation**: Complex logic, high user impact
   - Mitigation: Feature flags, gradual rollout, extensive testing
 
@@ -811,10 +846,12 @@ Before merging any refactoring PR:
   - Mitigation: Deprecation period, backward compatibility layer
 
 ### Medium Risk Items
+
 - **Database index addition**: Potential performance impact during migration
   - Mitigation: Add during low-traffic periods, monitor closely
 
 ### Low Risk Items
+
 - **Logging cleanup**: Low impact changes
 - **Component reorganization**: Mostly file moves
 - **Documentation**: No code changes

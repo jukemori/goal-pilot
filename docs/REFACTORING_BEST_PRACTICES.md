@@ -35,6 +35,7 @@ The React Compiler is now configured in this project:
 3. **Status:** Active and optimizing all components automatically
 
 **Current Issues in Codebase:**
+
 - `useState` + `useMemo` in `components/organisms/calendar/calendar-view.tsx`
 - `useState` + `useCallback` in multiple files
 - `memo` wrapper in `components/organisms/calendar/simple-task-list.tsx`
@@ -49,6 +50,7 @@ The React Compiler is now configured in this project:
 **The compiler automatically memoizes expensive computations.**
 
 #### Before (Manual Memoization):
+
 ```typescript
 // components/organisms/calendar/calendar-view.tsx
 function CalendarView() {
@@ -70,6 +72,7 @@ function CalendarView() {
 ```
 
 #### After (Compiler Optimized):
+
 ```typescript
 // components/organisms/calendar/calendar-view.tsx
 function CalendarView() {
@@ -87,6 +90,7 @@ function CalendarView() {
 ```
 
 **What the compiler does:**
+
 - Tracks dependencies automatically (`tasks`, `currentDate`)
 - Only recomputes when dependencies actually change
 - More efficient than manual `useMemo` dependencies
@@ -98,6 +102,7 @@ function CalendarView() {
 **The compiler automatically memoizes function references.**
 
 #### Before (Manual Memoization):
+
 ```typescript
 // components/organisms/task-list/task-list.tsx
 function TaskList() {
@@ -129,6 +134,7 @@ function TaskList() {
 ```
 
 #### After (Compiler Optimized):
+
 ```typescript
 // components/organisms/task-list/task-list.tsx
 function TaskList() {
@@ -160,6 +166,7 @@ function TaskList() {
 ```
 
 **What the compiler does:**
+
 - Preserves function identity across renders
 - Only creates new function when captured values change
 - Smarter than manual dependency arrays
@@ -171,6 +178,7 @@ function TaskList() {
 **The compiler automatically prevents unnecessary re-renders.**
 
 #### Before (Manual Memoization):
+
 ```typescript
 // components/organisms/calendar/simple-task-list.tsx
 // ❌ REMOVE - Compiler does this automatically
@@ -188,6 +196,7 @@ const SimpleTaskList = memo(({ tasks, onTaskComplete }: Props) => {
 ```
 
 #### After (Compiler Optimized):
+
 ```typescript
 // components/organisms/calendar/simple-task-list.tsx
 // ✅ Just export the component - compiler handles memo
@@ -205,6 +214,7 @@ export function SimpleTaskList({ tasks, onTaskComplete }: Props) {
 ```
 
 **What the compiler does:**
+
 - Automatically bails out of renders when props haven't changed
 - More granular than `React.memo` (can skip parts of a component)
 - Handles complex prop comparisons automatically
@@ -216,12 +226,14 @@ export function SimpleTaskList({ tasks, onTaskComplete }: Props) {
 **Keep `useMemo`/`useCallback` only for:**
 
 1. **Explicit Dependencies That Compiler Can't Infer**
+
    ```typescript
    // Keep this - external dependency
    const value = useMemo(() => expensiveLibrary.compute(input), [input])
    ```
 
 2. **Referential Equality for External Libraries**
+
    ```typescript
    // Keep this - third-party library expects stable reference
    const config = useMemo(() => ({ api: apiKey }), [apiKey])
@@ -243,11 +255,14 @@ export function SimpleTaskList({ tasks, onTaskComplete }: Props) {
 ### 5. Migration Strategy
 
 #### Step 1: Remove from New Code First
+
 - Don't add `useMemo`/`useCallback`/`memo` to new components
 - Let the compiler handle it
 
 #### Step 2: Remove from Simple Components
+
 Start with components that have simple memoization:
+
 ```typescript
 // BEFORE
 const MyComponent = memo(({ name }) => {
@@ -263,9 +278,11 @@ function MyComponent({ name }) {
 ```
 
 #### Step 3: Remove from Complex Components
+
 Then tackle components with multiple memoizations:
 
 **Files to Update (in order of priority):**
+
 1. `components/organisms/calendar/simple-task-list.tsx` - Remove `memo`
 2. `components/organisms/calendar/calendar-view.tsx` - Remove `useMemo` calls
 3. `components/molecules/progress-chart/progress-chart.tsx` - Remove `useCallback`
@@ -273,6 +290,7 @@ Then tackle components with multiple memoizations:
 5. `components/organisms/task-list/task-list-original.tsx` - Remove `useMemo` and `useCallback`
 
 #### Step 4: Test After Each Change
+
 - Run `pnpm run dev` and test the component
 - Check that performance is the same or better
 - The compiler often optimizes better than manual memoization!
@@ -282,16 +300,19 @@ Then tackle components with multiple memoizations:
 ### 6. Expected Benefits
 
 **Code Size Reduction:**
+
 - Remove ~50-100 lines of memoization code
 - Cleaner, more readable components
 - Fewer dependencies to maintain
 
 **Performance:**
+
 - Compiler is smarter than manual memoization
 - Automatically optimizes based on runtime behavior
 - No risk of stale closures or incorrect dependencies
 
 **Developer Experience:**
+
 - No more "missing dependency" warnings
 - No more debugging why `useCallback` didn't update
 - Focus on logic, not optimization
@@ -301,6 +322,7 @@ Then tackle components with multiple memoizations:
 ### 7. Compiler Output Example
 
 **Your Code:**
+
 ```typescript
 function Component({ data }) {
   const processed = data.map(item => item.value * 2)
@@ -311,6 +333,7 @@ function Component({ data }) {
 ```
 
 **What Compiler Generates:**
+
 ```typescript
 function Component({ data }) {
   const $ = _c(3) // Memoization cache
@@ -337,6 +360,7 @@ function Component({ data }) {
 ```
 
 **Notice:**
+
 - Compiler tracks dependencies automatically
 - Creates optimal memoization blocks
 - Handles all the complexity you'd write with `useMemo`
@@ -365,6 +389,7 @@ function Component({ data }) {
 **Solution:** Separate concerns using feature-based architecture with Next.js App Router patterns.
 
 **Key Principles:**
+
 1. **Server Components for data fetching** - Fetch data at the server level
 2. **Client Components for interactivity** - Mark only interactive parts as 'use client'
 3. **Feature colocation** - Group related code by feature, not technical type
@@ -377,6 +402,7 @@ function Component({ data }) {
 **Best Practice:** Default to Server Components, use Client Components only when needed.
 
 #### Server Components (Default)
+
 ```typescript
 // app/(app)/dashboard/page.tsx
 // No 'use client' directive - this is a Server Component
@@ -410,6 +436,7 @@ export default async function DashboardPage() {
 ```
 
 **Benefits:**
+
 - Data fetching happens on the server (faster, more secure)
 - No client-side JavaScript for this component
 - Automatic code splitting
@@ -418,6 +445,7 @@ export default async function DashboardPage() {
 ---
 
 #### Client Components (When Needed)
+
 ```typescript
 // features/goals/components/goals-list.tsx
 'use client' // Only mark as client when you need interactivity
@@ -446,6 +474,7 @@ export function GoalsList({ initialGoals }: Props) {
 ```
 
 **Use 'use client' when you need:**
+
 - `useState`, `useEffect`, or other React hooks
 - Event handlers (`onClick`, `onChange`, etc.)
 - Browser APIs (`localStorage`, `window`, etc.)
@@ -459,6 +488,7 @@ export function GoalsList({ initialGoals }: Props) {
 **Organize code by feature, not by technical type.**
 
 #### Current Structure (❌ Problem)
+
 ```
 components/
   organisms/
@@ -476,6 +506,7 @@ lib/
 ```
 
 #### Proposed Structure (✅ Solution)
+
 ```
 features/
   goals/
@@ -533,6 +564,7 @@ components/                      # Pure UI only
 ### 3. Extracting Business Logic from UI Components
 
 **Before:** Business logic in component
+
 ```typescript
 // ❌ components/organisms/progress-stages/progress-stages.tsx
 'use client'
@@ -570,6 +602,7 @@ export function ProgressStages({ roadmapId }: Props) {
 ```
 
 **After:** Separated concerns
+
 ```typescript
 // ✅ features/roadmap/hooks/use-progress-stages.ts
 import { useQuery } from '@tanstack/react-query'
@@ -671,13 +704,14 @@ export function ClientModal({ children }: { children: React.ReactNode }) {
 ```
 
 **Why this pattern?**
+
 - Server Components can't import Client Components directly
 - But you can pass Server Components as props/children
 - Keeps server-side benefits while adding interactivity
 
 ---
 
-### 5. Page-Specific Components with _components
+### 5. Page-Specific Components with \_components
 
 **For page-specific UI that's not part of a feature:**
 
@@ -698,6 +732,7 @@ app/
 ```
 
 **Example:**
+
 ```typescript
 // app/(app)/dashboard/page.tsx
 import { DashboardHeader } from './_components/dashboard-header'
@@ -718,7 +753,8 @@ export default async function DashboardPage() {
 }
 ```
 
-**When to use _components:**
+**When to use \_components:**
+
 - Layout composition specific to a page
 - UI that's only used in one route
 - Not feature-specific logic (use features/ for that)
@@ -762,6 +798,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 ```
 
 **For Goal Pilot:**
+
 ```typescript
 // providers/app-providers.tsx
 'use client'
@@ -786,6 +823,7 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
 ### 7. Component Guidelines Summary
 
 **Use in `components/` (Pure UI only):**
+
 - ✅ shadcn/ui components (`Button`, `Card`, `Dialog`)
 - ✅ Truly reusable UI patterns (`LoadingSpinner`, `ErrorBoundary`)
 - ✅ Layout components (`Container`, `Section`)
@@ -794,24 +832,28 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
 - ❌ NO feature-specific logic
 
 **Use in `features/{feature}/components/` (Feature UI):**
+
 - ✅ Feature-specific components
 - ✅ Can use feature hooks for data
 - ✅ Event handlers that call feature actions
 - ❌ NO direct Supabase calls (use hooks)
 
 **Use in `features/{feature}/hooks/` (Data layer):**
+
 - ✅ React Query hooks (`useQuery`, `useMutation`)
 - ✅ Supabase queries
 - ✅ Data transformation logic
 - ✅ Jotai atoms for feature state
 
 **Use in `features/{feature}/actions/` (Server layer):**
+
 - ✅ Server Actions with 'use server'
 - ✅ Server-side Supabase operations
 - ✅ AI generation logic
 - ✅ `revalidatePath` and `revalidateTag`
 
 **Use in `app/(app)/{route}/_components/` (Page-specific):**
+
 - ✅ Page composition components
 - ✅ Layout-specific UI
 - ❌ NO business logic (use features/)
@@ -821,6 +863,7 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
 ### 8. Migration Checklist
 
 **Extract from `components/organisms/progress-stages/`:**
+
 - [ ] Move `progress-stages.tsx` to `features/roadmap/components/`
 - [ ] Extract Supabase query to `features/roadmap/hooks/use-progress-stages.ts`
 - [ ] Extract mutation to `features/roadmap/hooks/use-update-stage.ts`
@@ -828,16 +871,19 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
 - [ ] Remove all Supabase imports from component
 
 **Extract from `components/organisms/roadmap-timeline/`:**
+
 - [ ] Move to `features/roadmap/components/roadmap-timeline.tsx`
 - [ ] Extract queries to `features/roadmap/hooks/use-roadmap.ts`
 - [ ] Remove Supabase calls from component
 
 **Extract from `components/organisms/sidebar/`:**
+
 - [ ] Move to `app/(app)/_components/sidebar.tsx` (layout-specific)
 - [ ] Extract auth logic to `features/auth/hooks/use-auth.ts`
 - [ ] Use Server Component for user data fetching
 
 **General migration for all components:**
+
 - [ ] If it has Supabase queries → extract to `features/{feature}/hooks/`
 - [ ] If it's feature-specific → move to `features/{feature}/components/`
 - [ ] If it's page-specific → move to `app/{route}/_components/`
@@ -848,21 +894,25 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
 ### 9. Expected Benefits
 
 **Code Organization:**
+
 - Clear separation of concerns
 - Easy to find related code
 - Feature can be deleted by removing one folder
 
 **Performance:**
+
 - Server Components = less JavaScript sent to client
 - Automatic code splitting by route and feature
 - Faster initial page loads
 
 **Developer Experience:**
+
 - Easier to reason about data flow
 - Clear boundaries between server and client
 - Colocation makes changes easier
 
 **Type Safety:**
+
 - Better inference with Server/Client separation
 - Clearer prop types between boundaries
 
@@ -895,9 +945,13 @@ export function useCompleteTask() {
       queryClient.setQueryData(['tasks'], (old: Task[]) =>
         old.map((task) =>
           task.id === taskId
-            ? { ...task, completed: true, completed_at: new Date().toISOString() }
-            : task
-        )
+            ? {
+                ...task,
+                completed: true,
+                completed_at: new Date().toISOString(),
+              }
+            : task,
+        ),
       )
 
       // Return context for rollback
@@ -940,7 +994,7 @@ const taskKeys = {
 
 // Then invalidate specifically
 queryClient.invalidateQueries({
-  queryKey: taskKeys.byGoal(goalId)
+  queryKey: taskKeys.byGoal(goalId),
 })
 
 // Or use predicates for complex logic
@@ -948,7 +1002,7 @@ queryClient.invalidateQueries({
   predicate: (query) =>
     query.queryKey[0] === 'tasks' &&
     query.queryKey[1] === 'date' &&
-    new Date(query.queryKey[2] as string) >= today
+    new Date(query.queryKey[2] as string) >= today,
 })
 ```
 
@@ -1022,7 +1076,7 @@ type ActionResult<T> =
   | { success: false; error: string }
 
 export async function createGoal(
-  formData: FormData
+  formData: FormData,
 ): Promise<ActionResult<Goal>> {
   try {
     const supabase = await createClient()
@@ -1036,7 +1090,7 @@ export async function createGoal(
     if (!validated.success) {
       return {
         success: false,
-        error: validated.error.errors[0].message
+        error: validated.error.errors[0].message,
       }
     }
 
@@ -1049,7 +1103,7 @@ export async function createGoal(
     if (error) {
       return {
         success: false,
-        error: 'Failed to create goal. Please try again.'
+        error: 'Failed to create goal. Please try again.',
       }
     }
 
@@ -1061,7 +1115,7 @@ export async function createGoal(
     console.error('Unexpected error in createGoal:', error)
     return {
       success: false,
-      error: 'An unexpected error occurred.'
+      error: 'An unexpected error occurred.',
     }
   }
 }
@@ -1200,7 +1254,7 @@ import type { Database } from '@/types/database'
 export function createClient() {
   return createBrowserClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
   )
 }
 
@@ -1227,7 +1281,7 @@ export async function createClient() {
           cookieStore.set(name, '', options)
         },
       },
-    }
+    },
   )
 }
 ```
@@ -1236,7 +1290,12 @@ export async function createClient() {
 
 ```typescript
 // Import generated types
-import type { Database, Tables, TablesInsert, TablesUpdate } from '@/types/database'
+import type {
+  Database,
+  Tables,
+  TablesInsert,
+  TablesUpdate,
+} from '@/types/database'
 
 // Use in queries
 async function getGoal(id: string): Promise<Tables<'goals'> | null> {
@@ -1252,7 +1311,9 @@ async function getGoal(id: string): Promise<Tables<'goals'> | null> {
 }
 
 // Use in inserts
-async function createGoal(goal: TablesInsert<'goals'>): Promise<Tables<'goals'>> {
+async function createGoal(
+  goal: TablesInsert<'goals'>,
+): Promise<Tables<'goals'>> {
   const supabase = await createClient()
 
   const { data, error } = await supabase
@@ -1268,7 +1329,7 @@ async function createGoal(goal: TablesInsert<'goals'>): Promise<Tables<'goals'>>
 // Use in updates
 async function updateGoal(
   id: string,
-  updates: TablesUpdate<'goals'>
+  updates: TablesUpdate<'goals'>,
 ): Promise<Tables<'goals'>> {
   const supabase = await createClient()
 
@@ -1297,10 +1358,12 @@ async function getGoalWithRoadmap(id: string): Promise<GoalWithRoadmap | null> {
 
   const { data } = await supabase
     .from('goals')
-    .select(`
+    .select(
+      `
       *,
       roadmaps (*)
-    `)
+    `,
+    )
     .eq('id', id)
     .single()
 
@@ -1324,7 +1387,9 @@ import { atom } from 'jotai'
 import { atomWithStorage } from 'jotai/utils'
 
 // Simple state atom
-export const generationStatusAtom = atom<'idle' | 'generating' | 'complete'>('idle')
+export const generationStatusAtom = atom<'idle' | 'generating' | 'complete'>(
+  'idle',
+)
 
 // Derived atom (computed from other atoms)
 export const isGeneratingAtom = atom((get) => {
@@ -1365,7 +1430,7 @@ export const completeTaskAtom = atom(
       set(generationStatusAtom, 'idle')
       throw error
     }
-  }
+  },
 )
 ```
 
@@ -1436,6 +1501,7 @@ function UserProfile() {
 ### Example 1: Migrate Goal Creation
 
 **Before (current - multiple files):**
+
 ```typescript
 // app/actions/goals.ts
 export async function createGoal(data: GoalInput) {
@@ -1462,6 +1528,7 @@ export async function createGoal(data: GoalInput) {
 ```
 
 **After (consolidated with best practices):**
+
 ```typescript
 // app/actions/goals/create.ts
 'use server'
@@ -1483,7 +1550,7 @@ type ActionResult<T> =
 
 export async function createGoal(
   goalData: TablesInsert<'goals'>,
-  options: CreateGoalOptions = {}
+  options: CreateGoalOptions = {},
 ): Promise<ActionResult<Tables<'goals'>>> {
   try {
     const supabase = await createClient()
@@ -1498,7 +1565,7 @@ export async function createGoal(
     if (goalError || !goal) {
       return {
         success: false,
-        error: 'Failed to create goal. Please try again.'
+        error: 'Failed to create goal. Please try again.',
       }
     }
 
@@ -1518,18 +1585,17 @@ export async function createGoal(
     }
 
     // Async AI generation (don't await)
-    generateRoadmapAsync(goal.id).catch(error => {
+    generateRoadmapAsync(goal.id).catch((error) => {
       console.error('Background roadmap generation failed:', error)
     })
 
     revalidatePath('/dashboard')
     return { success: true, data: goal, instant: false }
-
   } catch (error) {
     console.error('Unexpected error in createGoal:', error)
     return {
       success: false,
-      error: 'An unexpected error occurred.'
+      error: 'An unexpected error occurred.',
     }
   }
 }
@@ -1540,7 +1606,7 @@ if (result.success) {
   toast.success(
     result.instant
       ? 'Goal created with instant roadmap!'
-      : 'Goal created! Roadmap is generating...'
+      : 'Goal created! Roadmap is generating...',
   )
 }
 ```
@@ -1548,6 +1614,7 @@ if (result.success) {
 ### Example 2: Migrate Task Completion with Optimistic Updates
 
 **Before:**
+
 ```typescript
 // lib/hooks/use-tasks.ts
 export function useCompleteTask() {
@@ -1558,12 +1625,13 @@ export function useCompleteTask() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tasks'] })
       queryClient.invalidateQueries({ queryKey: ['goals'] })
-    }
+    },
   })
 }
 ```
 
 **After:**
+
 ```typescript
 // lib/hooks/use-tasks.ts
 import { useMutation, useQueryClient } from '@tanstack/react-query'
@@ -1593,12 +1661,16 @@ export function useCompleteTask() {
         { queryKey: taskKeys.all },
         (old: Task[] | undefined) => {
           if (!old) return old
-          return old.map(task =>
+          return old.map((task) =>
             task.id === taskId
-              ? { ...task, completed: true, completed_at: new Date().toISOString() }
-              : task
+              ? {
+                  ...task,
+                  completed: true,
+                  completed_at: new Date().toISOString(),
+                }
+              : task,
           )
-        }
+        },
       )
 
       return { previousTasks }
@@ -1633,6 +1705,7 @@ export const taskKeys = {
 ## Quick Wins Checklist
 
 **IMPORTANT: For each task below:**
+
 1. ✅ Use Serena tools (`find_symbol`, `replace_symbol_body`, etc.) for all code changes
 2. ✅ Run `pnpm run type-check` after each change
 3. ✅ Run `pnpm run build` after each change
@@ -1641,6 +1714,7 @@ export const taskKeys = {
 Apply these patterns immediately:
 
 ### Phase 1: React Compiler Optimization (1-2 days) ✅ COMPLETE
+
 - [x] Install React Compiler: `pnpm add -D babel-plugin-react-compiler@latest` ✅
 - [x] Configure Next.js: Add `reactCompiler: true` to next.config.ts ✅
 - [x] Remove ALL useMemo from codebase (6 instances removed) → Test build ✅
@@ -1650,6 +1724,7 @@ Apply these patterns immediately:
 - [x] All builds passing ✅
 
 **Files cleaned:**
+
 - ✅ `components/organisms/calendar/simple-task-list.tsx` - removed 1 memo, 1 useMemo, 1 useCallback
 - ✅ `components/organisms/calendar/calendar-view.tsx` - removed 5 memo, 2 useMemo
 - ✅ `components/molecules/progress-chart/progress-chart.tsx` - removed 1 useCallback
@@ -1660,6 +1735,7 @@ Apply these patterns immediately:
 - ✅ `lib/hooks/use-sse-generation.ts` - removed 2 useCallback
 
 ### Phase 2: Feature-Based Architecture (1 week)
+
 - [ ] Create `features/` directory structure → Test build
 - [ ] Extract `progress-stages.tsx` → `features/roadmap/` (use Serena) → Test build
 - [ ] Extract `roadmap-timeline.tsx` → `features/roadmap/` (use Serena) → Test build
@@ -1669,22 +1745,26 @@ Apply these patterns immediately:
 - [ ] Clean up `components/` to only have pure UI → Test build
 
 ### Phase 3: TypeScript & Error Handling (2-3 days)
+
 - [ ] Add `ActionResult<T>` type to all server actions (use Serena) → Test build
 - [ ] Replace `throw new Error()` with `return { success: false, error }` (use Serena) → Test build
 - [ ] Add proper TypeScript generics to `createClient<Database>()` (use Serena) → Test build
 - [ ] Remove `any` type from Supabase client (use Serena) → Test build
 
 ### Phase 4: React Query Optimization (1-2 days)
+
 - [ ] Implement optimistic updates for task completion (use Serena) → Test build
 - [ ] Add staleTime and gcTime to all useQuery calls (use Serena) → Test build
 - [ ] Use hierarchical query keys (use Serena) → Test build
 - [ ] Add `await Promise.all()` to multiple invalidations (use Serena) → Test build
 
 ### Phase 5: Server Actions (1 day)
+
 - [ ] Replace broad revalidatePath with specific paths (use Serena) → Test build
 - [ ] Move data fetching from Client to Server Components (use Serena) → Test build
 
 ### Phase 6: State Management (1 day)
+
 - [ ] Use Jotai for UI state (use Serena) → Test build
 
 ---

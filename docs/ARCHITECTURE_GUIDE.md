@@ -23,6 +23,7 @@
 ### 1. Business Logic in UI Components
 
 **Issues Found:**
+
 ```typescript
 // ❌ BAD: components/organisms/progress-stages/progress-stages.tsx
 // This component has:
@@ -43,6 +44,7 @@
 ```
 
 **Why This Is Bad:**
+
 - ❌ Components can't be reused in different contexts
 - ❌ Hard to test UI separately from business logic
 - ❌ Difficult to understand what component actually does
@@ -75,6 +77,7 @@ types/goal.ts
 ```
 
 **Benefits:**
+
 - ✅ Easy to find everything related to a feature
 - ✅ Can delete entire feature by removing one folder
 - ✅ Clear boundaries and dependencies
@@ -236,16 +239,19 @@ goal-pilot/
    - Use `rename_symbol` if renaming is needed
 
 3. **After each task:**
+
    ```bash
    pnpm run type-check    # Fix any TypeScript errors
    pnpm run build         # Ensure build passes
    ```
+
    - Only mark task as complete after build succeeds
    - Update checklist in REFACTORING_PLAN.md
 
 ### Phase 1: Create Feature Directories (Week 1)
 
 **Step 1: Create folder structure**
+
 ```bash
 mkdir -p features/{goals,tasks,roadmap,ai,calendar,templates}/{components,hooks,actions,types,utils}
 ```
@@ -253,6 +259,7 @@ mkdir -p features/{goals,tasks,roadmap,ai,calendar,templates}/{components,hooks,
 **Step 2: Move components by feature**
 
 **Priority 1: Goals Feature**
+
 ```
 Move:
   components/organisms/goal-form/
@@ -272,6 +279,7 @@ Move:
 ```
 
 **Priority 2: Tasks Feature**
+
 ```
 Move:
   components/organisms/task-list/
@@ -294,6 +302,7 @@ Move:
 ```
 
 **Priority 3: Roadmap Feature**
+
 ```
 Move:
   components/organisms/roadmap-view/
@@ -310,6 +319,7 @@ Move:
 ```
 
 **Priority 4: AI Feature**
+
 ```
 Move:
   components/molecules/ai-generation-overlay.tsx
@@ -417,7 +427,7 @@ export function ProgressStages({ roadmapId }: Props) {
 
 ### Phase 3: Simplify Page Components (Week 2-3)
 
-**Use _components for page-specific UI**
+**Use \_components for page-specific UI**
 
 ```typescript
 // ✅ app/(app)/goals/[id]/page.tsx
@@ -607,6 +617,7 @@ export const taskKeys = {
 ### What Goes in `/components` (Pure UI Only)
 
 **✅ ALLOWED:**
+
 ```typescript
 // components/ui/button.tsx
 export function Button({ children, onClick, variant }: Props) {
@@ -639,6 +650,7 @@ export function StatsCard({ title, value, icon }: Props) {
 ```
 
 **❌ NOT ALLOWED:**
+
 ```typescript
 // ❌ NO: Data fetching
 import { useQuery } from '@tanstack/react-query'
@@ -658,6 +670,7 @@ const handleComplete = async (taskId: string) => {
 ### What Goes in `/features/{feature}/components`
 
 **✅ ALLOWED:**
+
 ```typescript
 // features/goals/components/goal-form.tsx
 'use client'
@@ -769,6 +782,7 @@ export function DashboardStats() {
 ## Benefits After Migration
 
 ### Before (Current)
+
 ```
 ❌ Business logic scattered across components
 ❌ Can't reuse TaskList without Supabase
@@ -778,6 +792,7 @@ export function DashboardStats() {
 ```
 
 ### After (Feature-Based)
+
 ```
 ✅ All goal code in features/goals/
 ✅ Components are pure UI (testable with props)
