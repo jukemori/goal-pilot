@@ -37,6 +37,7 @@ import {
   RoadmapTimelineSkeleton,
 } from '@/components/atoms/skeletons'
 import { StatsCard } from '@/components/molecules/stats-card'
+import { Suspense } from 'react'
 
 // Component prop types for proper TypeScript handling
 type RoadmapViewRoadmapType = {
@@ -72,54 +73,34 @@ type RoadmapViewRoadmapType = {
 }
 
 // Lazy load heavy components to reduce initial bundle size
-const RoadmapView = dynamic(
-  () =>
-    import('@/components/organisms/roadmap-view/roadmap-view').then((mod) => ({
-      default: mod.RoadmapView,
-    })),
-  {
-    loading: () => <RoadmapSkeleton />,
-  },
+const RoadmapView = dynamic(() =>
+  import('@/components/organisms/roadmap-view/roadmap-view').then((mod) => ({
+    default: mod.RoadmapView,
+  })),
 )
 
-const TaskList = dynamic(
-  () =>
-    import('@/components/organisms/task-list/task-list').then((mod) => ({
-      default: mod.TaskList,
-    })),
-  {
-    loading: () => <TaskListSkeleton />,
-  },
+const TaskList = dynamic(() =>
+  import('@/components/organisms/task-list/task-list').then((mod) => ({
+    default: mod.TaskList,
+  })),
 )
 
-const ProgressChart = dynamic(
-  () =>
-    import('@/components/molecules/progress-chart/progress-chart').then(
-      (mod) => ({ default: mod.ProgressChart }),
-    ),
-  {
-    loading: () => <ProgressChartSkeleton />,
-  },
+const ProgressChart = dynamic(() =>
+  import('@/components/molecules/progress-chart/progress-chart').then(
+    (mod) => ({ default: mod.ProgressChart }),
+  ),
 )
 
-const ProgressStages = dynamic(
-  () =>
-    import('@/features/roadmap/components/progress-stages').then((mod) => ({
-      default: mod.ProgressStages,
-    })),
-  {
-    loading: () => <ProgressStagesSkeleton />,
-  },
+const ProgressStages = dynamic(() =>
+  import('@/features/roadmap/components/progress-stages').then((mod) => ({
+    default: mod.ProgressStages,
+  })),
 )
 
-const RoadmapTimeline = dynamic(
-  () =>
-    import('@/components/organisms/roadmap-timeline/roadmap-timeline').then(
-      (mod) => ({ default: mod.RoadmapTimeline }),
-    ),
-  {
-    loading: () => <RoadmapTimelineSkeleton />,
-  },
+const RoadmapTimeline = dynamic(() =>
+  import('@/components/organisms/roadmap-timeline/roadmap-timeline').then(
+    (mod) => ({ default: mod.RoadmapTimeline }),
+  ),
 )
 
 interface GoalPageProps {
@@ -332,9 +313,11 @@ export default async function GoalPage({ params }: GoalPageProps) {
                 <CardContent>
                   {roadmap ? (
                     <RoadmapErrorBoundary>
-                      <RoadmapView
-                        roadmap={roadmap as unknown as RoadmapViewRoadmapType}
-                      />
+                      <Suspense fallback={<RoadmapSkeleton />}>
+                        <RoadmapView
+                          roadmap={roadmap as unknown as RoadmapViewRoadmapType}
+                        />
+                      </Suspense>
                     </RoadmapErrorBoundary>
                   ) : (
                     <div className="py-12 text-center">
@@ -363,7 +346,12 @@ export default async function GoalPage({ params }: GoalPageProps) {
               {roadmap ? (
                 <div className="space-y-6">
                   <RoadmapErrorBoundary>
-                    <RoadmapTimeline roadmapId={roadmap.id} goalId={goal.id} />
+                    <Suspense fallback={<RoadmapTimelineSkeleton />}>
+                      <RoadmapTimeline
+                        roadmapId={roadmap.id}
+                        goalId={goal.id}
+                      />
+                    </Suspense>
                   </RoadmapErrorBoundary>
                 </div>
               ) : (
@@ -383,7 +371,9 @@ export default async function GoalPage({ params }: GoalPageProps) {
               {roadmap ? (
                 <div className="space-y-6">
                   <RoadmapErrorBoundary>
-                    <ProgressStages roadmapId={roadmap.id} goalId={goal.id} />
+                    <Suspense fallback={<ProgressStagesSkeleton />}>
+                      <ProgressStages roadmapId={roadmap.id} goalId={goal.id} />
+                    </Suspense>
                   </RoadmapErrorBoundary>
                 </div>
               ) : (
@@ -404,7 +394,9 @@ export default async function GoalPage({ params }: GoalPageProps) {
               <div className="space-y-4">
                 <div className="bg-card rounded-lg border p-4 md:p-6">
                   <ErrorBoundary>
-                    <ProgressChart tasks={tasks as Tables<'tasks'>[]} />
+                    <Suspense fallback={<ProgressChartSkeleton />}>
+                      <ProgressChart tasks={tasks as Tables<'tasks'>[]} />
+                    </Suspense>
                   </ErrorBoundary>
                 </div>
               </div>
@@ -419,10 +411,12 @@ export default async function GoalPage({ params }: GoalPageProps) {
                 </div>
                 <div className="bg-card rounded-lg border p-4 md:p-6">
                   <TaskErrorBoundary>
-                    <TaskList
-                      tasks={tasks as Tables<'tasks'>[]}
-                      goalId={goal.id}
-                    />
+                    <Suspense fallback={<TaskListSkeleton />}>
+                      <TaskList
+                        tasks={tasks as Tables<'tasks'>[]}
+                        goalId={goal.id}
+                      />
+                    </Suspense>
                   </TaskErrorBoundary>
                 </div>
               </div>

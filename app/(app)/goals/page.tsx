@@ -13,6 +13,7 @@ import { Tables } from '@/types/database'
 import dynamic from 'next/dynamic'
 import { ErrorBoundary } from '@/components/error-boundary'
 import { TemplatesSkeleton } from '@/components/atoms/skeletons'
+import { Suspense } from 'react'
 
 // Type for GoalCard component props
 type GoalCardGoalType = Tables<'goals'> & {
@@ -24,14 +25,10 @@ type GoalCardGoalType = Tables<'goals'> & {
 }
 
 // Lazy load TemplatesSection to reduce initial bundle
-const TemplatesSection = dynamic(
-  () =>
-    import('@/components/organisms/goal-templates/templates-section').then(
-      (mod) => ({ default: mod.TemplatesSection }),
-    ),
-  {
-    loading: () => <TemplatesSkeleton />,
-  },
+const TemplatesSection = dynamic(() =>
+  import('@/components/organisms/goal-templates/templates-section').then(
+    (mod) => ({ default: mod.TemplatesSection }),
+  ),
 )
 
 export default async function GoalsPage() {
@@ -84,7 +81,9 @@ export default async function GoalsPage() {
 
       {/* Goal Templates Section */}
       <ErrorBoundary>
-        <TemplatesSection hasActiveGoals={activeGoals.length > 0} />
+        <Suspense fallback={<TemplatesSkeleton />}>
+          <TemplatesSection hasActiveGoals={activeGoals.length > 0} />
+        </Suspense>
       </ErrorBoundary>
 
       {/* Active Goals */}
