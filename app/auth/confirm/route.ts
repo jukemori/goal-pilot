@@ -33,7 +33,9 @@ export async function GET(request: NextRequest) {
         // Successfully verified and profile created, redirect to dashboard
         return NextResponse.redirect(redirectTo)
       } catch (profileError) {
-        logger.error('Profile creation error after email verification', { error: profileError })
+        logger.error('Profile creation error after email verification', {
+          error: profileError,
+        })
         // Even if profile creation fails, still redirect to dashboard
         // The middleware will handle creating the profile later
         return NextResponse.redirect(redirectTo)

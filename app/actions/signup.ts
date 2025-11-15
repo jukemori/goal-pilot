@@ -37,7 +37,10 @@ export async function signup(formData: FormData) {
     })
 
     if (profileError) {
-      logger.error('Profile creation error', { error: profileError, userId: authData.user.id })
+      logger.error('Profile creation error', {
+        error: profileError,
+        userId: authData.user.id,
+      })
       // Continue to dashboard even if profile creation fails
       // The dashboard layout will handle creating it
     }

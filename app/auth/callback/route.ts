@@ -30,7 +30,10 @@ export async function GET(request: NextRequest) {
 
       // Ignore error if user already exists
       if (profileError && !profileError.message.includes('duplicate key')) {
-        logger.error('Profile creation error', { error: profileError, userId: data.user.id })
+        logger.error('Profile creation error', {
+          error: profileError,
+          userId: data.user.id,
+        })
       }
 
       const forwardedHost = request.headers.get('x-forwarded-host')

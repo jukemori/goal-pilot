@@ -26,7 +26,10 @@ export function useProgressStages(roadmapId: string) {
         .order('phase_number')
 
       if (stagesError) {
-        logger.error('Failed to fetch stages', { error: stagesError, roadmapId })
+        logger.error('Failed to fetch stages', {
+          error: stagesError,
+          roadmapId,
+        })
         throw stagesError
       }
 
@@ -63,7 +66,7 @@ export function useProgressStages(roadmapId: string) {
 
       logger.debug('Fetched stages with task counts', {
         roadmapId,
-        stageCount: stagesWithTaskCounts.length
+        stageCount: stagesWithTaskCounts.length,
       })
       return stagesWithTaskCounts
     },

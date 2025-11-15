@@ -2,7 +2,12 @@
 import { logger } from '@/lib/utils/logger'
 
 import { Component, type PropsWithChildren, type ErrorInfo } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms/card'
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@/components/atoms/card'
 import { Button } from '@/components/atoms/button'
 import { AlertTriangle, RefreshCw } from 'lucide-react'
 

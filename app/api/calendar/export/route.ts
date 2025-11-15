@@ -57,10 +57,13 @@ export async function GET(request: NextRequest) {
 
     logger.debug('Calendar export: Found tasks', {
       count: tasks?.length || 0,
-      dateRange: tasks && tasks.length > 0 ? {
-        start: tasks[0].scheduled_date,
-        end: tasks[tasks.length - 1].scheduled_date
-      } : null
+      dateRange:
+        tasks && tasks.length > 0
+          ? {
+              start: tasks[0].scheduled_date,
+              end: tasks[tasks.length - 1].scheduled_date,
+            }
+          : null,
     })
 
     if (format === 'ics') {

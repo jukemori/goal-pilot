@@ -30,16 +30,21 @@ export async function POST(request: NextRequest) {
 
     // Check if we have a template match
     const template = findMatchingTemplate(goal.title)
-    
+
     if (template) {
       // Use template for instant generation
-      logger.debug('Using template for instant generation', { goalTitle: goal.title })
-      
+      logger.debug('Using template for instant generation', {
+        goalTitle: goal.title,
+      })
+
       // Calculate total weeks and duration
-      const totalWeeks = template.phases.reduce((sum, phase) => sum + phase.weeks, 0)
+      const totalWeeks = template.phases.reduce(
+        (sum, phase) => sum + phase.weeks,
+        0,
+      )
       const endDate = new Date(goal.start_date)
       endDate.setDate(endDate.getDate() + totalWeeks * 7)
-      
+
       // Create roadmap with template data
       const roadmapData = {
         overview: template.overview,
@@ -99,9 +104,11 @@ export async function POST(request: NextRequest) {
           .slice(0, index)
           .reduce((sum, p) => sum + p.weeks, 0)
         phaseStartDate.setDate(phaseStartDate.getDate() + weeksBeforePhase * 7)
-        
+
         const phaseEndDate = new Date(phaseStartDate)
-        phaseEndDate.setDate(phaseEndDate.getDate() + phase.duration_weeks * 7 - 1)
+        phaseEndDate.setDate(
+          phaseEndDate.getDate() + phase.duration_weeks * 7 - 1,
+        )
 
         return {
           roadmap_id: roadmap.id,

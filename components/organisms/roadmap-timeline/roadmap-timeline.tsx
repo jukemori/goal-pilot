@@ -7,13 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/atoms/card'
-import {
-  Clock,
-  Target,
-  CheckCircle2,
-  MapPin,
-  Calendar,
-} from 'lucide-react'
+import { Clock, Target, CheckCircle2, MapPin, Calendar } from 'lucide-react'
 import { useRoadmapVisual } from '@/features/roadmap/hooks/use-roadmap-visual'
 
 interface RoadmapTimelineProps {
@@ -82,7 +76,7 @@ export function RoadmapTimeline({
       {/* Roadmap Phases */}
       <div className="relative space-y-4">
         {/* Connecting Line */}
-        <div className="absolute left-6 top-8 bottom-8 w-0.5 bg-gray-200" />
+        <div className="absolute top-8 bottom-8 left-6 w-0.5 bg-gray-200" />
 
         {roadmapPhases.map((phase, index) => {
           const Icon = phase.iconComponent
@@ -94,7 +88,7 @@ export function RoadmapTimeline({
               className="relative border-gray-200 transition-all hover:shadow-md"
             >
               {/* Phase Number Badge */}
-              <div className="bg-primary absolute -left-3 top-6 z-10 flex h-12 w-12 items-center justify-center rounded-full border-4 border-white shadow-sm">
+              <div className="bg-primary absolute top-6 -left-3 z-10 flex h-12 w-12 items-center justify-center rounded-full border-4 border-white shadow-sm">
                 <Icon className="h-6 w-6 text-white" />
               </div>
 
@@ -170,7 +164,9 @@ export function RoadmapTimeline({
                   </div>
                   {totalHours && (
                     <div className="mt-2 flex items-center justify-between text-sm">
-                      <span className="text-gray-600">Total Hours Required</span>
+                      <span className="text-gray-600">
+                        Total Hours Required
+                      </span>
                       <div className="flex items-center gap-2 font-medium text-gray-900">
                         <Clock className="h-4 w-4" />
                         {totalHours} hours

@@ -1,7 +1,12 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/atoms/card'
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@/components/atoms/card'
 import { Badge } from '@/components/atoms/badge'
 import { Monitor, Activity, Clock, Zap } from 'lucide-react'
 

@@ -48,9 +48,11 @@ export default async function DashboardPage() {
     .limit(3)
 
   // Type the goals with roadmaps relationship
-  const goals = goalsData as (Tables<'goals'> & {
-    roadmaps: { id: string }[]
-  })[] | null
+  const goals = goalsData as
+    | (Tables<'goals'> & {
+        roadmaps: { id: string }[]
+      })[]
+    | null
 
   // Get today's tasks
   const today = new Date().toISOString().split('T')[0]

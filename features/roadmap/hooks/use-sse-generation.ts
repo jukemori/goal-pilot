@@ -20,13 +20,15 @@ interface UseSSEGenerationOptions {
 
 export function useSSEGeneration(options: UseSSEGenerationOptions = {}) {
   const [isGenerating, setIsGenerating] = useState(false)
-  const [progress, setProgress] = useState<StreamingProgress>({ message: 'Starting...' })
+  const [progress, setProgress] = useState<StreamingProgress>({
+    message: 'Starting...',
+  })
   const eventSourceRef = useRef<EventSource | null>(null)
-  
+
   // Optimized by React Compiler
   const startGeneration = async (
     endpoint: string,
-    body: Record<string, unknown>
+    body: Record<string, unknown>,
   ) => {
     try {
       setIsGenerating(true)
@@ -101,14 +103,15 @@ export function useSSEGeneration(options: UseSSEGenerationOptions = {}) {
         // Keep the last incomplete line in the buffer
         buffer = lines[lines.length - 1]
       }
-
     } catch (error) {
       logger.error('SSE generation error', { error, endpoint })
       setIsGenerating(false)
-      options.onError?.(error instanceof Error ? error.message : 'Generation failed')
+      options.onError?.(
+        error instanceof Error ? error.message : 'Generation failed',
+      )
     }
   }
-  
+
   // Optimized by React Compiler
   const cancelGeneration = () => {
     if (eventSourceRef.current) {
@@ -117,7 +120,7 @@ export function useSSEGeneration(options: UseSSEGenerationOptions = {}) {
     }
     setIsGenerating(false)
   }
-  
+
   return {
     isGenerating,
     progress,

@@ -123,16 +123,18 @@ Return a JSON with:
       description?: string
       duration_weeks?: number
     }
-    const stages: ProgressStageInsert[] = stagesData.phases.map((phase: Phase, index: number) => ({
-      roadmap_id: roadmapId,
-      phase_id: phase.id || `phase-${index + 1}`,
-      phase_number: index + 1,
-      title: phase.title,
-      description: phase.description || '',
-      duration_weeks: phase.duration_weeks || template[index].weeks,
-      start_date: calculateStartDate(goal.start_date, index, template),
-      end_date: calculateEndDate(goal.start_date, index, template),
-    }))
+    const stages: ProgressStageInsert[] = stagesData.phases.map(
+      (phase: Phase, index: number) => ({
+        roadmap_id: roadmapId,
+        phase_id: phase.id || `phase-${index + 1}`,
+        phase_number: index + 1,
+        title: phase.title,
+        description: phase.description || '',
+        duration_weeks: phase.duration_weeks || template[index].weeks,
+        start_date: calculateStartDate(goal.start_date, index, template),
+        end_date: calculateEndDate(goal.start_date, index, template),
+      }),
+    )
 
     await supabase.from('progress_stages').insert(stages)
 

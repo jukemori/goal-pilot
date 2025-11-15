@@ -10,7 +10,10 @@ export function useGenerateTasks(roadmapId: string) {
 
   return useMutation({
     mutationFn: async (stage: ProgressStage) => {
-      logger.debug('Generating tasks for stage', { stageId: stage.id, stageTitle: stage.title })
+      logger.debug('Generating tasks for stage', {
+        stageId: stage.id,
+        stageTitle: stage.title,
+      })
       const response = await fetch('/api/tasks/generate-phase-fast', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

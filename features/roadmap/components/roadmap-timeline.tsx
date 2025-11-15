@@ -2,13 +2,11 @@
 
 import React from 'react'
 import { Card, CardHeader, CardTitle } from '@/components/atoms/card'
+import { Clock, Target, CheckCircle2, MapPin } from 'lucide-react'
 import {
-  Clock,
-  Target,
-  CheckCircle2,
-  MapPin,
-} from 'lucide-react'
-import { useRoadmapVisual, type RoadmapVisualData } from '../hooks/use-roadmap-visual'
+  useRoadmapVisual,
+  type RoadmapVisualData,
+} from '../hooks/use-roadmap-visual'
 
 interface RoadmapTimelineProps {
   roadmapId: string

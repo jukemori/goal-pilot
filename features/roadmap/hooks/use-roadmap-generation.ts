@@ -5,7 +5,12 @@ import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 
 interface GenerationStatus {
-  status: 'idle' | 'generating-overview' | 'generating-stages' | 'completed' | 'error'
+  status:
+    | 'idle'
+    | 'generating-overview'
+    | 'generating-stages'
+    | 'completed'
+    | 'error'
   progress: number
   message: string
 }

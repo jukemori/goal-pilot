@@ -27,12 +27,14 @@ export function PerformanceProvider({
 
           if (entry.entryType === 'paint') {
             logger.debug(`[Performance] ${entry.name}`, {
-              time: `${entry.startTime.toFixed(2)}ms`
+              time: `${entry.startTime.toFixed(2)}ms`,
             })
           }
 
           if (entry.entryType === 'largest-contentful-paint') {
-            logger.debug('[Performance] LCP', { time: `${entry.startTime.toFixed(2)}ms` })
+            logger.debug('[Performance] LCP', {
+              time: `${entry.startTime.toFixed(2)}ms`,
+            })
           }
         }
       })
@@ -53,7 +55,7 @@ export function PerformanceProvider({
         )
 
         logger.debug('[Performance] JavaScript Bundle Size', {
-          size: `${(totalJSSize / 1024).toFixed(2)}KB`
+          size: `${(totalJSSize / 1024).toFixed(2)}KB`,
         })
       }
 

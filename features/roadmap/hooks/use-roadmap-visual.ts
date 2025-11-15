@@ -107,7 +107,10 @@ export function useRoadmapVisual(roadmapId: string) {
         .single()
 
       if (roadmapError) {
-        logger.error('Failed to fetch roadmap', { error: roadmapError, roadmapId })
+        logger.error('Failed to fetch roadmap', {
+          error: roadmapError,
+          roadmapId,
+        })
         throw roadmapError
       }
 

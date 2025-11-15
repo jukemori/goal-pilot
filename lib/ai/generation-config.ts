@@ -48,7 +48,7 @@ interface GoalData {
 
 interface RoadmapOverview {
   overview: string
-  phaseTitles: string[]  // This will be used to generate phases
+  phaseTitles: string[] // This will be used to generate phases
   estimated_completion_date: string
   total_hours_required: number
   milestones: Milestone[]
@@ -59,20 +59,25 @@ interface RoadmapOverview {
 export async function generateRoadmapInChunks(
   openai: OpenAI,
   goalData: GoalData,
-  onProgress?: (phase: Phase, index: number) => void
+  onProgress?: (phase: Phase, index: number) => void,
 ): Promise<RoadmapPlan> {
   // First, generate a quick overview with phase titles
   const overview = await generateOverview(openai, goalData)
-  
+
   // Then generate detailed phases in parallel
   const phases = await Promise.all(
     overview.phaseTitles.map(async (phaseTitle: string, index: number) => {
-      const phase = await generatePhaseDetails(openai, goalData, phaseTitle, index)
+      const phase = await generatePhaseDetails(
+        openai,
+        goalData,
+        phaseTitle,
+        index,
+      )
       onProgress?.(phase, index)
       return phase
-    })
+    }),
   )
-  
+
   // Construct the final RoadmapPlan object
   const roadmapPlan: RoadmapPlan = {
     overview: overview.overview,
@@ -82,11 +87,14 @@ export async function generateRoadmapInChunks(
     milestones: overview.milestones,
     roadmap_phases: overview.roadmap_phases,
   }
-  
+
   return roadmapPlan
 }
 
-async function generateOverview(openai: OpenAI, goalData: GoalData): Promise<RoadmapOverview> {
+async function generateOverview(
+  openai: OpenAI,
+  goalData: GoalData,
+): Promise<RoadmapOverview> {
   // Quick generation of roadmap structure
   const response = await openai.chat.completions.create({
     model: GENERATION_CONFIG.roadmap.overview.model,
@@ -103,7 +111,7 @@ async function generateOverview(openai: OpenAI, goalData: GoalData): Promise<Roa
     max_tokens: GENERATION_CONFIG.roadmap.overview.max_tokens,
     temperature: GENERATION_CONFIG.roadmap.overview.temperature,
   })
-  
+
   return JSON.parse(response.choices[0].message.content!) as RoadmapOverview
 }
 
@@ -111,7 +119,7 @@ async function generatePhaseDetails(
   openai: OpenAI,
   goalData: GoalData,
   phaseTitle: string,
-  phaseIndex: number
+  phaseIndex: number,
 ): Promise<Phase> {
   // Generate detailed phase information
   const response = await openai.chat.completions.create({
@@ -132,6 +140,6 @@ Daily commitment: ${goalData.daily_time_commitment} minutes`,
     max_tokens: GENERATION_CONFIG.roadmap.phases.max_tokens,
     temperature: GENERATION_CONFIG.roadmap.phases.temperature,
   })
-  
+
   return JSON.parse(response.choices[0].message.content!) as Phase
 }

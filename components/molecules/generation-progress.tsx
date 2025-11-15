@@ -5,7 +5,12 @@ import { Loader2, CheckCircle, Sparkles } from 'lucide-react'
 import { Progress } from '@/components/atoms/progress'
 
 interface GenerationProgressProps {
-  status: 'idle' | 'generating-overview' | 'generating-stages' | 'completed' | 'error'
+  status:
+    | 'idle'
+    | 'generating-overview'
+    | 'generating-stages'
+    | 'completed'
+    | 'error'
   progress: number
   message: string
 }
@@ -29,7 +34,7 @@ export function GenerationProgress({
         animate={{ scale: 1 }}
         className="mx-4 w-full max-w-md rounded-lg border border-gray-200 bg-white p-6 shadow-xl"
       >
-        <div className="flex items-center justify-center mb-4">
+        <div className="mb-4 flex items-center justify-center">
           {status === 'completed' ? (
             <motion.div
               initial={{ scale: 0 }}
@@ -39,7 +44,7 @@ export function GenerationProgress({
               <CheckCircle className="h-12 w-12 text-green-500" />
             </motion.div>
           ) : status === 'error' ? (
-            <div className="h-12 w-12 rounded-full bg-red-100 flex items-center justify-center">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
               <span className="text-2xl">⚠️</span>
             </div>
           ) : (
@@ -52,15 +57,15 @@ export function GenerationProgress({
           )}
         </div>
 
-        <h3 className="text-center text-lg font-semibold text-gray-900 mb-2">
+        <h3 className="mb-2 text-center text-lg font-semibold text-gray-900">
           {status === 'completed'
             ? 'All Set!'
             : status === 'error'
-            ? 'Something went wrong'
-            : 'Creating Your Roadmap'}
+              ? 'Something went wrong'
+              : 'Creating Your Roadmap'}
         </h3>
 
-        <p className="text-center text-sm text-gray-600 mb-4">{message}</p>
+        <p className="mb-4 text-center text-sm text-gray-600">{message}</p>
 
         {status !== 'error' && status !== 'completed' && (
           <>

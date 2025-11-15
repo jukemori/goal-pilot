@@ -34,7 +34,10 @@ export async function ensureUserProfile() {
     })
 
     if (insertError) {
-      logger.error('Failed to create user profile', { error: insertError, userId: user.id })
+      logger.error('Failed to create user profile', {
+        error: insertError,
+        userId: user.id,
+      })
       throw new Error(`Failed to create user profile: ${insertError.message}`)
     }
   }

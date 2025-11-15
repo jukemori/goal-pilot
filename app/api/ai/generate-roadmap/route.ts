@@ -73,7 +73,11 @@ export async function POST(request: NextRequest) {
         // If we get here, the request succeeded
         break
       } catch (error) {
-        logger.error(`AI generation attempt ${attempt} failed`, { error, attempt, maxRetries })
+        logger.error(`AI generation attempt ${attempt} failed`, {
+          error,
+          attempt,
+          maxRetries,
+        })
         lastError = error
 
         if (attempt < maxRetries) {
@@ -122,7 +126,7 @@ export async function POST(request: NextRequest) {
       ) {
         logger.error('API - Incomplete AI response', {
           phasesGenerated: roadmapData.phases?.length || 0,
-          expected: '6-12'
+          expected: '6-12',
         })
         throw new Error(
           `Incomplete AI response: only ${roadmapData.phases?.length || 0} phases generated, expected 6-12`,
@@ -130,11 +134,13 @@ export async function POST(request: NextRequest) {
       }
 
       logger.debug('API - AI response validated', {
-        phasesGenerated: roadmapData.phases.length
+        phasesGenerated: roadmapData.phases.length,
       })
     } catch (parseError) {
       logger.error('API - Failed to parse JSON', { error: parseError })
-      logger.error('API - Raw content', { content: completion.choices[0].message.content })
+      logger.error('API - Raw content', {
+        content: completion.choices[0].message.content,
+      })
       return NextResponse.json(
         { error: 'Failed to parse AI response as JSON' },
         { status: 500 },
@@ -173,7 +179,7 @@ export async function POST(request: NextRequest) {
     if (stageCreationPromise) {
       logger.debug('Creating stages for roadmap', {
         phaseCount: roadmapData.phases.length,
-        roadmapId: roadmap.id
+        roadmapId: roadmap.id,
       })
       try {
         const stageRecords = await stageCreationPromise

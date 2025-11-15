@@ -19,7 +19,8 @@ interface AIGenerationOverlayProps {
 const stageConfig = {
   roadmap: {
     title: 'Creating Your Personalized Roadmap',
-    subtitle: 'Our AI is analyzing your goal and crafting a detailed learning path tailored just for you.',
+    subtitle:
+      'Our AI is analyzing your goal and crafting a detailed learning path tailored just for you.',
     icon: Brain,
     estimatedTime: '15-30 seconds',
   },
@@ -45,35 +46,35 @@ export function AIGenerationOverlayStreaming({
 }: AIGenerationOverlayProps) {
   const [dots, setDots] = useState('')
   const [elapsedTime, setElapsedTime] = useState(0)
-  
+
   const config = stageConfig[stage]
   const IconComponent = config.icon
-  
+
   // Animate dots
   useEffect(() => {
     if (!isVisible) return
-    
+
     const interval = setInterval(() => {
       setDots((prev) => (prev.length >= 3 ? '' : prev + '.'))
     }, 500)
-    
+
     return () => clearInterval(interval)
   }, [isVisible])
-  
+
   // Track elapsed time
   useEffect(() => {
     if (!isVisible) {
       setElapsedTime(0)
       return
     }
-    
+
     const interval = setInterval(() => {
       setElapsedTime((prev) => prev + 1)
     }, 1000)
-    
+
     return () => clearInterval(interval)
   }, [isVisible])
-  
+
   // Prevent background scrolling
   useEffect(() => {
     if (isVisible) {
@@ -81,18 +82,18 @@ export function AIGenerationOverlayStreaming({
     } else {
       document.body.style.overflow = 'unset'
     }
-    
+
     return () => {
       document.body.style.overflow = 'unset'
     }
   }, [isVisible])
-  
+
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60)
     const secs = seconds % 60
     return mins > 0 ? `${mins}m ${secs}s` : `${secs}s`
   }
-  
+
   return (
     <AnimatePresence>
       {isVisible && (
@@ -125,17 +126,17 @@ export function AIGenerationOverlayStreaming({
               >
                 <IconComponent className="h-8 w-8" />
               </motion.div>
-              
+
               {/* Title */}
               <h2 className="mb-2 text-2xl font-bold text-gray-900">
                 {config.title}
               </h2>
-              
+
               {/* Subtitle */}
               <p className="mb-6 leading-relaxed text-gray-600">
                 {config.subtitle}
               </p>
-              
+
               {/* Real-time progress */}
               <div className="mb-6 space-y-4">
                 {/* Current status message */}
@@ -147,28 +148,34 @@ export function AIGenerationOverlayStreaming({
                 >
                   <Sparkles className="text-primary h-4 w-4" />
                   <span className="text-sm font-medium">
-                    {streamingProgress?.message || 'Starting generation'}{dots}
+                    {streamingProgress?.message || 'Starting generation'}
+                    {dots}
                   </span>
                 </motion.div>
-                
+
                 {/* Progress details */}
-                {(streamingProgress?.phaseCount || streamingProgress?.taskCount) && (
+                {(streamingProgress?.phaseCount ||
+                  streamingProgress?.taskCount) && (
                   <div className="flex justify-center gap-6 text-sm">
                     {streamingProgress.phaseCount && (
                       <div className="flex items-center gap-1">
                         <CheckCircle2 className="h-4 w-4 text-green-600" />
-                        <span className="font-medium">{streamingProgress.phaseCount} phases</span>
+                        <span className="font-medium">
+                          {streamingProgress.phaseCount} phases
+                        </span>
                       </div>
                     )}
                     {streamingProgress.taskCount && (
                       <div className="flex items-center gap-1">
                         <CheckCircle2 className="h-4 w-4 text-green-600" />
-                        <span className="font-medium">{streamingProgress.taskCount} tasks</span>
+                        <span className="font-medium">
+                          {streamingProgress.taskCount} tasks
+                        </span>
                       </div>
                     )}
                   </div>
                 )}
-                
+
                 {/* Progress bar */}
                 {streamingProgress?.percentage !== undefined && (
                   <div className="mx-auto w-full max-w-xs">
@@ -177,7 +184,7 @@ export function AIGenerationOverlayStreaming({
                         initial={{ width: 0 }}
                         animate={{ width: `${streamingProgress.percentage}%` }}
                         transition={{ duration: 0.3 }}
-                        className="h-full bg-gradient-to-r from-primary to-primary/80"
+                        className="from-primary to-primary/80 h-full bg-gradient-to-r"
                       />
                     </div>
                     <div className="mt-1 text-xs text-gray-600">
@@ -186,22 +193,22 @@ export function AIGenerationOverlayStreaming({
                   </div>
                 )}
               </div>
-              
+
               {/* Time tracker */}
               <div className="mb-6 flex justify-center gap-4 text-xs text-gray-500">
                 <span>Elapsed: {formatTime(elapsedTime)}</span>
                 <span>•</span>
                 <span>Est: {config.estimatedTime}</span>
               </div>
-              
+
               {/* Info message */}
               <div className="mb-6 rounded-xl border border-blue-200 bg-blue-50 p-4">
                 <p className="text-xs leading-relaxed text-blue-700">
-                  Generation is optimized for quality. The process streams results
-                  in real-time to keep you updated on progress.
+                  Generation is optimized for quality. The process streams
+                  results in real-time to keep you updated on progress.
                 </p>
               </div>
-              
+
               {/* Cancel button */}
               {onCancel && (
                 <button

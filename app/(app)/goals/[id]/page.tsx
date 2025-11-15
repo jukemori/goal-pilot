@@ -104,9 +104,9 @@ const ProgressChart = dynamic(
 
 const ProgressStages = dynamic(
   () =>
-    import('@/features/roadmap/components/progress-stages').then(
-      (mod) => ({ default: mod.ProgressStages }),
-    ),
+    import('@/features/roadmap/components/progress-stages').then((mod) => ({
+      default: mod.ProgressStages,
+    })),
   {
     loading: () => <ProgressStagesSkeleton />,
   },

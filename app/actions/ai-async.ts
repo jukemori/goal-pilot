@@ -46,10 +46,13 @@ interface EnhancedTemplate {
 async function generateFromEnhancedTemplate(
   goal: Goal,
   template: EnhancedTemplate,
-  supabase: SupabaseClient<Database, 'public', any>
+  supabase: SupabaseClient<Database, 'public', any>,
 ) {
-  const totalWeeks = template.phases.reduce((sum: number, phase: EnhancedPhase) => sum + phase.weeks, 0)
-  
+  const totalWeeks = template.phases.reduce(
+    (sum: number, phase: EnhancedPhase) => sum + phase.weeks,
+    0,
+  )
+
   const roadmapData = {
     overview: template.overview,
     approach: template.approach,
@@ -70,9 +73,13 @@ async function generateFromEnhancedTemplate(
       resources: phase.resources,
     })),
     milestones: template.phases.map((phase: EnhancedPhase, index: number) => ({
-      week: template.phases.slice(0, index + 1).reduce((sum: number, p: EnhancedPhase) => sum + p.weeks, 0),
+      week: template.phases
+        .slice(0, index + 1)
+        .reduce((sum: number, p: EnhancedPhase) => sum + p.weeks, 0),
       title: `Complete ${phase.title}`,
-      description: phase.milestones?.[0] || `Successfully finish all objectives in ${phase.title}`,
+      description:
+        phase.milestones?.[0] ||
+        `Successfully finish all objectives in ${phase.title}`,
     })),
     success_metrics: template.success_metrics,
     common_challenges: template.common_challenges,
@@ -98,34 +105,51 @@ async function generateFromEnhancedTemplate(
 
   if (roadmap) {
     // Create detailed progress stages
-    const stages: ProgressStageInsert[] = roadmapData.phases.map((phase: { id: string; title: string; description: string; duration_weeks: number; skills_to_learn: string[]; learning_objectives: string[]; key_concepts: string[]; daily_activities: string[]; resources: string[] }, index: number) => {
-      const phaseStartDate = new Date(goal.start_date)
-      const weeksBeforePhase = template.phases
-        .slice(0, index)
-        .reduce((sum: number, p: EnhancedPhase) => sum + p.weeks, 0)
-      phaseStartDate.setDate(phaseStartDate.getDate() + weeksBeforePhase * 7)
-      
-      const phaseEndDate = new Date(phaseStartDate)
-      phaseEndDate.setDate(phaseEndDate.getDate() + phase.duration_weeks * 7 - 1)
+    const stages: ProgressStageInsert[] = roadmapData.phases.map(
+      (
+        phase: {
+          id: string
+          title: string
+          description: string
+          duration_weeks: number
+          skills_to_learn: string[]
+          learning_objectives: string[]
+          key_concepts: string[]
+          daily_activities: string[]
+          resources: string[]
+        },
+        index: number,
+      ) => {
+        const phaseStartDate = new Date(goal.start_date)
+        const weeksBeforePhase = template.phases
+          .slice(0, index)
+          .reduce((sum: number, p: EnhancedPhase) => sum + p.weeks, 0)
+        phaseStartDate.setDate(phaseStartDate.getDate() + weeksBeforePhase * 7)
 
-      return {
-        roadmap_id: roadmap.id,
-        phase_id: phase.id,
-        phase_number: index + 1,
-        title: phase.title,
-        description: phase.description,
-        duration_weeks: phase.duration_weeks,
-        start_date: phaseStartDate.toISOString().split('T')[0],
-        end_date: phaseEndDate.toISOString().split('T')[0],
-        skills_to_learn: phase.skills_to_learn,
-        learning_objectives: phase.learning_objectives,
-        key_concepts: phase.key_concepts,
-        resources: {
-          daily_activities: phase.daily_activities,
-          resources: phase.resources,
-        } as unknown as Json,
-      }
-    })
+        const phaseEndDate = new Date(phaseStartDate)
+        phaseEndDate.setDate(
+          phaseEndDate.getDate() + phase.duration_weeks * 7 - 1,
+        )
+
+        return {
+          roadmap_id: roadmap.id,
+          phase_id: phase.id,
+          phase_number: index + 1,
+          title: phase.title,
+          description: phase.description,
+          duration_weeks: phase.duration_weeks,
+          start_date: phaseStartDate.toISOString().split('T')[0],
+          end_date: phaseEndDate.toISOString().split('T')[0],
+          skills_to_learn: phase.skills_to_learn,
+          learning_objectives: phase.learning_objectives,
+          key_concepts: phase.key_concepts,
+          resources: {
+            daily_activities: phase.daily_activities,
+            resources: phase.resources,
+          } as unknown as Json,
+        }
+      },
+    )
 
     await supabase.from('progress_stages').insert(stages)
   }
@@ -171,20 +195,28 @@ export async function generateRoadmapAsync(goalId: string) {
   }
 
   // First try enhanced template-based generation
-  const { findEnhancedTemplate, personalizeTemplate } = await import('@/lib/ai/enhanced-templates')
+  const { findEnhancedTemplate, personalizeTemplate } = await import(
+    '@/lib/ai/enhanced-templates'
+  )
   const baseTemplate = findEnhancedTemplate(goal.title)
-  
+
   if (baseTemplate) {
-    logger.debug('Using enhanced template for roadmap generation', { goalTitle: goal.title })
-    
+    logger.debug('Using enhanced template for roadmap generation', {
+      goalTitle: goal.title,
+    })
+
     // Personalize template based on user context
     const personalizedTemplate = personalizeTemplate(baseTemplate, {
       currentLevel: goal.current_level || 'beginner',
       timeCommitment: goal.daily_time_commitment || 30,
       targetDate: goal.target_date || undefined,
     })
-    
-    return await generateFromEnhancedTemplate(goal, personalizedTemplate, supabase)
+
+    return await generateFromEnhancedTemplate(
+      goal,
+      personalizedTemplate,
+      supabase,
+    )
   }
 
   // Step 1: Generate overview with reduced token count and simpler prompt
@@ -247,20 +279,25 @@ export async function generateRoadmapAsync(goalId: string) {
     }
 
     // Step 2: Generate stages asynchronously
-    void generateStagesAsync(roadmap.id, goal, roadmapOverview).catch((error) => {
-      logger.error('Failed to generate stages', { error, roadmapId: roadmap.id })
-      // Update status to indicate failure
-      void supabase
-        .from('roadmaps')
-        .update({
-          ai_generated_plan: {
-            ...(roadmapOverview as object),
-            generation_status: 'failed',
-            error: error.message,
-          } as unknown as Json,
+    void generateStagesAsync(roadmap.id, goal, roadmapOverview).catch(
+      (error) => {
+        logger.error('Failed to generate stages', {
+          error,
+          roadmapId: roadmap.id,
         })
-        .eq('id', roadmap.id)
-    })
+        // Update status to indicate failure
+        void supabase
+          .from('roadmaps')
+          .update({
+            ai_generated_plan: {
+              ...(roadmapOverview as object),
+              generation_status: 'failed',
+              error: error.message,
+            } as unknown as Json,
+          })
+          .eq('id', roadmap.id)
+      },
+    )
 
     return roadmap
   } catch (error) {
@@ -330,24 +367,26 @@ async function generateStagesAsync(
       .eq('id', roadmapId)
 
     // Create progress stages records
-    const stages: ProgressStageInsert[] = stagesData.phases.map((phase, index) => ({
-      roadmap_id: roadmapId,
-      phase_id: phase.id || `phase-${index + 1}`,
-      phase_number: index + 1,
-      title: phase.title,
-      description: phase.description || '',
-      duration_weeks: phase.duration_weeks || 1,
-      start_date: calculatePhaseStartDate(
-        goal.start_date,
-        index,
-        stagesData.phases,
-      ),
-      end_date: calculatePhaseEndDate(
-        goal.start_date,
-        index,
-        stagesData.phases,
-      ),
-    }))
+    const stages: ProgressStageInsert[] = stagesData.phases.map(
+      (phase, index) => ({
+        roadmap_id: roadmapId,
+        phase_id: phase.id || `phase-${index + 1}`,
+        phase_number: index + 1,
+        title: phase.title,
+        description: phase.description || '',
+        duration_weeks: phase.duration_weeks || 1,
+        start_date: calculatePhaseStartDate(
+          goal.start_date,
+          index,
+          stagesData.phases,
+        ),
+        end_date: calculatePhaseEndDate(
+          goal.start_date,
+          index,
+          stagesData.phases,
+        ),
+      }),
+    )
 
     await supabase.from('progress_stages').insert(stages)
   } catch (error) {

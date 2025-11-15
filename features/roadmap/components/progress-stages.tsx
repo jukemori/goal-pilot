@@ -114,7 +114,7 @@ export function ProgressStages({
 
   logger.debug('Rendering stages', {
     stageCount: stages.length,
-    roadmapId
+    roadmapId,
   })
 
   return (

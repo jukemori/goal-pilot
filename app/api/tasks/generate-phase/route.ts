@@ -99,7 +99,9 @@ export async function POST(request: NextRequest) {
       goal.title,
     )
 
-    logger.debug('Generating tasks with AI for stage', { stageTitle: stage.title })
+    logger.debug('Generating tasks with AI for stage', {
+      stageTitle: stage.title,
+    })
 
     // AI generation with retry logic for reliability
     let completion
@@ -132,7 +134,11 @@ export async function POST(request: NextRequest) {
         // If we get here, the request succeeded
         break
       } catch (error) {
-        logger.error(`AI task generation attempt ${attempt} failed`, { error, attempt, maxRetries })
+        logger.error(`AI task generation attempt ${attempt} failed`, {
+          error,
+          attempt,
+          maxRetries,
+        })
         lastError = error
 
         if (attempt < maxRetries) {
@@ -183,7 +189,9 @@ export async function POST(request: NextRequest) {
 
         if (lastCompletePos > 0) {
           repairedContent = content.substring(0, lastCompletePos + 1)
-          logger.debug('Repaired JSON by truncating at position', { position: lastCompletePos + 1 })
+          logger.debug('Repaired JSON by truncating at position', {
+            position: lastCompletePos + 1,
+          })
         }
 
         content = repairedContent
@@ -204,11 +212,13 @@ export async function POST(request: NextRequest) {
         }
       }
 
-      logger.debug('Successfully parsed AI task data', { taskCount: taskData?.task_patterns?.length || 0 })
+      logger.debug('Successfully parsed AI task data', {
+        taskCount: taskData?.task_patterns?.length || 0,
+      })
     } catch (parseError) {
       logger.error('Failed to parse AI task generation response', {
         error: parseError,
-        rawContent: completion.choices[0].message.content
+        rawContent: completion.choices[0].message.content,
       })
 
       // If parsing fails, fall back to using the existing fallback tasks
@@ -232,7 +242,9 @@ export async function POST(request: NextRequest) {
       availableDays,
     )
 
-    logger.debug('Pre-calculated available dates for scheduling', { count: availableDates.length })
+    logger.debug('Pre-calculated available dates for scheduling', {
+      count: availableDates.length,
+    })
 
     const tasks: TablesInsert<'tasks'>[] = []
 
@@ -333,8 +345,8 @@ export async function POST(request: NextRequest) {
       stageTitle: stage.title,
       dateRange: {
         start: tasks[0]?.scheduled_date,
-        end: tasks[tasks.length - 1]?.scheduled_date
-      }
+        end: tasks[tasks.length - 1]?.scheduled_date,
+      },
     })
 
     // Insert tasks

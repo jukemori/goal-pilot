@@ -180,9 +180,7 @@ export function useRescheduleTask() {
         (old: Task[] | undefined) => {
           if (!old) return old
           return old.map((task) =>
-            task.id === taskId
-              ? { ...task, scheduled_date: newDate }
-              : task,
+            task.id === taskId ? { ...task, scheduled_date: newDate } : task,
           )
         },
       )

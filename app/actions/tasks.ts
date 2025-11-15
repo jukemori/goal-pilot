@@ -149,7 +149,11 @@ export async function rescheduleTask(
     revalidatePath('/calendar')
     return { success: true, data: undefined }
   } catch (error) {
-    logger.error('Unexpected error in rescheduleTask', { error, taskId, newDate })
+    logger.error('Unexpected error in rescheduleTask', {
+      error,
+      taskId,
+      newDate,
+    })
     return {
       success: false,
       error: 'An unexpected error occurred. Please try again.',
@@ -184,7 +188,11 @@ export async function updateTaskDuration(
       .eq('id', taskId)
 
     if (error) {
-      logger.error('Failed to update task duration', { error, taskId, actualDuration })
+      logger.error('Failed to update task duration', {
+        error,
+        taskId,
+        actualDuration,
+      })
       return {
         success: false,
         error: 'Failed to update task duration. Please try again.',
@@ -195,7 +203,11 @@ export async function updateTaskDuration(
     revalidatePath('/dashboard')
     return { success: true, data: undefined }
   } catch (error) {
-    logger.error('Unexpected error in updateTaskDuration', { error, taskId, actualDuration })
+    logger.error('Unexpected error in updateTaskDuration', {
+      error,
+      taskId,
+      actualDuration,
+    })
     return {
       success: false,
       error: 'An unexpected error occurred. Please try again.',

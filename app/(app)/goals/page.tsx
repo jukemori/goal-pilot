@@ -42,9 +42,11 @@ export default async function GoalsPage() {
     .select('*, roadmaps(id)')
     .order('created_at', { ascending: false })
 
-  const goals = goalsData as (Tables<'goals'> & {
-    roadmaps: { id: string }[]
-  })[] | null
+  const goals = goalsData as
+    | (Tables<'goals'> & {
+        roadmaps: { id: string }[]
+      })[]
+    | null
 
   const activeGoals = goals?.filter((g) => g.status === 'active') || []
   const completedGoals = goals?.filter((g) => g.status === 'completed') || []

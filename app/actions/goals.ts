@@ -76,7 +76,10 @@ export async function createGoal(
 
     // Start AI roadmap generation asynchronously - don't wait for it
     generateRoadmapAsync(goal.id).catch((error) => {
-      logger.error('Background roadmap generation failed', { error, goalId: goal.id })
+      logger.error('Background roadmap generation failed', {
+        error,
+        goalId: goal.id,
+      })
     })
 
     revalidatePath('/dashboard')
@@ -167,9 +170,7 @@ export async function updateGoal(
   }
 }
 
-export async function deleteGoal(
-  goalId: string,
-): Promise<ActionResult<void>> {
+export async function deleteGoal(goalId: string): Promise<ActionResult<void>> {
   try {
     const supabase = await createClient()
 
